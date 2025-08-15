@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { useTradeStore } from "@/lib/tradeStore";
+import { useParams } from "next/navigation";
 
-export default function TradeDetailPage({ params }: { params: { id: string } }) {
+export default function TradeDetailPage() {
+  const { id } = useParams<{ id: string }>(); // ✅ typed
   const trades = useTradeStore((state) => state.trades);
-  const trade = trades.find((t) => t.id === Number(params.id));
+  const trade = trades.find((t) => t.id === Number(id));
 
   if (!trade) return <p className="p-4">Trade not found</p>;
 

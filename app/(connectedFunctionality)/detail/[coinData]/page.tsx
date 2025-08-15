@@ -16,6 +16,8 @@ import {
 } from "chart.js";
 import { useTradeStore } from "@/lib/tradeStore";
 
+import { useParams } from "next/navigation";
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -24,14 +26,10 @@ ChartJS.register(
   Tooltip
 );
 
-interface Props {
-  params: {
-    coin: string;
-  };
-}
 
-export default function CoinDetailPage({ params }: Props) {
-  const coin = getCoin(params.coin);
+export default function CoinDetailPage() {
+  const { coinData } = useParams<{ coinData: string }>(); // ✅ typed
+  const coin = getCoin(coinData);
   const [showModal, setShowModal] = useState(false);
 
   if (!coin) {
