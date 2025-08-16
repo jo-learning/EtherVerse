@@ -35,7 +35,7 @@ const menuItems = [
   { icon: <FaChartLine size={16} />, label: "Leverage", route: "/tradeHistory" },
   { icon: <FaChartLine size={16} />, label: "Activities", route: "/" },
   { icon: <FaChartLine size={16} />, label: "Statistics", route: "/" },
-  { icon: <FaComments size={16} />, label: "Chat", route: "/" },
+  { icon: <FaComments size={16} />, label: "Chat", route: "/chat" },
   { icon: <FaCogs size={16} />, label: "Settings", route: "/" },
 ];
 
@@ -145,7 +145,23 @@ export default function RootLayout({
           </aside>
 
           {/* Main content */}
-          <main className="flex-1  pt-16 lg:pt-6 ">{children}</main>
+          <main className="flex-1  pt-16 lg:pt-6 ">
+            {children}
+            {/* Floating Chat Button */}
+            {
+             pathname != '/chat' && (
+              <button
+              className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-full shadow-lg p-4 flex items-center gap-2 hover:scale-105 transition-transform"
+              onClick={() => handleNav("/chat")}
+              aria-label="Chat with Customer Service"
+            >
+              <FaComments size={22} />
+              <span className="hidden sm:inline font-semibold">Chat</span>
+            </button>
+             )
+            }
+            
+          </main>
         </div>
       </body>
     </html>
