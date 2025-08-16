@@ -47,7 +47,7 @@ export default function CoinDetailPage() {
 
   const [deliveryTime, setDeliveryTime] = useState("30S");
   const [amount, setAmount] = useState("");
-  const direction = "Buy long"; // Could be dynamic later if you have toggle
+  const [direction, setDirection] = useState<"Buy long" | "Buy short">("Buy long"); // Now dynamic
 
   function calculateProfit(amount: any, time: any) {
     const amt = parseFloat(amount) || 0;
@@ -168,7 +168,7 @@ export default function CoinDetailPage() {
             {/* Coin Info */}
             <div className="flex items-center gap-3 mb-4">
               <img
-                src={`/coins/${coin.symbol.toLowerCase()}.png`}
+                src={coin.logo}
                 alt={coin.name}
                 className="w-8 h-8"
               />
@@ -177,6 +177,41 @@ export default function CoinDetailPage() {
                 <span className="text-sm opacity-70">{direction}</span>
               </div>
               <span className="ml-auto text-sm text-gray-500">0.00 USDT</span>
+            </div>
+
+            {/* Buy Direction Switch */}
+            <div className="flex justify-center mb-4">
+              <div className="flex bg-gray-100 rounded-full p-1 gap-2">
+                <button
+                  type="button"
+                  className={`px-6 py-2 rounded-full font-semibold transition-colors duration-200 ${
+                    direction === "Buy long"
+                      ? "bg-gradient-to-r from-green-400 to-green-600 text-white shadow"
+                      : "bg-white text-gray-700"
+                  }`}
+                  onClick={() => setDirection("Buy long")}
+                  style={{
+                    boxShadow: direction === "Buy long" ? "0 2px 8px rgba(34,197,94,0.2)" : undefined,
+                  }}
+                >
+                  Buy Long
+                </button>
+                <button
+                  type="button"
+                  className={`px-6 py-2 rounded-full font-semibold transition-colors duration-200 ${
+                    direction === "Buy short"
+                      ? "bg-gradient-to-r from-red-400 to-red-600 text-white shadow"
+                      : "bg-white text-gray-700"
+                  }`}
+                  onClick={() => setDirection("Buy short")}
+                  style={{
+                    boxShadow: direction === "Buy short" ? "0 2px 8px rgba(239,68,68,0.2)" : undefined, 
+                  }}
+                    
+                    >
+                  Buy Short
+                </button>
+              </div>
             </div>
 
             {/* Account Type */}
