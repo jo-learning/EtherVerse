@@ -17,6 +17,8 @@ import {
 import { useTradeStore } from "@/lib/tradeStore";
 
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
+const TradingViewWidget = dynamic(( ) => import('../../../../components/TradingViewTest'), { ssr: false })
 
 ChartJS.register(
   CategoryScale,
@@ -31,6 +33,7 @@ export default function CoinDetailPage() {
   const { coinData } = useParams<{ coinData: string }>(); // ✅ typed
   const coin = getCoin(coinData);
   const [showModal, setShowModal] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
 
   if (!coin) {
     return (
@@ -133,7 +136,7 @@ export default function CoinDetailPage() {
       </div>
 
       {/* Chart */}
-      <div className="mt-6 bg-white rounded-xl p-2 sm:p-4 text-gray-900 shadow-lg">
+      {/* <div className="mt-6 bg-white rounded-xl p-2 sm:p-4 text-gray-900 shadow-lg">
         <Line
           data={fakeChartData}
           options={{
@@ -141,7 +144,13 @@ export default function CoinDetailPage() {
             plugins: { legend: { display: false } },
           }}
         />
-      </div>
+      </div> */}
+      <TradingViewWidget
+    symbol={`BINANCE:${coin.symbol}USD`}
+    interval="D"
+    width="100%"
+    height={300}
+  />
 
       {/* Entrust Button */}
       <div className="left-0 right-0 px-2 sm:px-4 py-2">
