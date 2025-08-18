@@ -28,15 +28,15 @@ const geistMono = Geist_Mono({
 });
 
 const menuItems = [
-  { icon: <FaUser size={16} />, label: "Account", route: "/account" },
-  { icon: <FaExchangeAlt size={16} />, label: "Transactions", route: "/trade" },
-  { icon: <MdOutlineDashboard size={18} />, label: "Arbitrage", route: "" },
-  { icon: <FaGift size={16} />, label: "Mining", route: "" },
-  { icon: <FaChartLine size={16} />, label: "Leverage", route: "/tradeHistory" },
-  { icon: <FaChartLine size={16} />, label: "Activities", route: "" },
-  { icon: <FaChartLine size={16} />, label: "Statistics", route: "" },
-  { icon: <FaComments size={16} />, label: "Chat", route: "/chat" },
-  { icon: <FaCogs size={16} />, label: "Settings", route: "/setting" },
+  { icon: <FaUser size={16} />, label: "Dashboard", route: "/dashboard" },
+  { icon: <FaExchangeAlt size={16} />, label: "User Managment", route: "/user" },
+//   { icon: <MdOutlineDashboard size={18} />, label: "Arbitrage", route: "" },
+//   { icon: <FaGift size={16} />, label: "Mining", route: "" },
+//   { icon: <FaChartLine size={16} />, label: "Leverage", route: "/tradeHistory" },
+//   { icon: <FaChartLine size={16} />, label: "Activities", route: "" },
+//   { icon: <FaChartLine size={16} />, label: "Statistics", route: "" },
+  { icon: <FaComments size={16} />, label: "Chat", route: "/adminChat" },
+  { icon: <FaCogs size={16} />, label: "Settings", route: "" },
 ];
 
 export default function RootLayout({
@@ -105,7 +105,7 @@ export default function RootLayout({
                   EtherVerse
                 </h2>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  UID: 60600243
+                  MID: 60600243
                 </p>
               </div>
               <button
@@ -148,7 +148,7 @@ export default function RootLayout({
           <main className="flex-1  pt-16 lg:pt-6 ">
             {children}
             {/* Floating Chat Button */}
-            {
+            {/* {
              pathname != '/chat' && (
               <button
               className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-full shadow-lg p-4 flex items-center gap-2 hover:scale-105 transition-transform"
@@ -159,7 +159,7 @@ export default function RootLayout({
               <span className="hidden sm:inline font-semibold">Chat</span>
             </button>
              )
-            }
+            } */}
             
           </main>
         </div>
