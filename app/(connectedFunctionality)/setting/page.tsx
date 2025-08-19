@@ -5,7 +5,7 @@ import { FaShieldAlt, FaIdCard, FaEnvelope, FaBell, FaLanguage, FaTrash } from "
 const settings = [
   { icon: <FaShieldAlt />, label: "Google 2FA", href: "/setting/2fa" },
   { icon: <FaIdCard />, label: "KYC Verification", href: "/setting/kyc" },
-  { icon: <FaEnvelope />, label: "Email", href: "/setting/email" },
+  // { icon: <FaEnvelope />, label: "Email", href: "/setting/email" },
   { icon: <FaBell />, label: "Notification", href: "/setting/notification" },
   { icon: <FaLanguage />, label: "Language", href: "/setting/language" },
   { icon: <FaTrash />, label: "Clean Cache", href: "/setting/cache" },
