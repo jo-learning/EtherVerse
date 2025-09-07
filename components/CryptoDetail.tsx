@@ -15,7 +15,7 @@ export default function CryptoDetail({ coin }: { coin: Coin }) {
             <div className="text-sm opacity-90">Available</div>
             <div className="text-sm opacity-90">Frozen: 0.00000000</div>
           </div>
-          <div className="mt-3 text-3xl font-bold">US$ {formatUsd(coin.priceUsd * 3.24).replace("$", "")}</div>
+          <div className="mt-3 text-3xl font-bold">US$ {formatUsd(Number(coin.priceUsd) * 3.24).replace("$", "")}</div>
           <div className="mt-1 text-sm opacity-90">3.24000000 {coin.symbol}</div>
           <div className="mt-6 grid grid-cols-3 gap-3">
             <button className="w-full bg-gradient-to-r from-purple-600 to-blue-500 text-white py-2 rounded-xl shadow hover:shadow-lg transition-all">Receive</button>
@@ -36,7 +36,7 @@ export default function CryptoDetail({ coin }: { coin: Coin }) {
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm text-gray-500 dark:text-gray-400">{coin.name}</div>
-              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-1">{formatUsd(coin.priceUsd)}</div>
+              <div className="text-2xl font-bold text-gray-800 dark:text-gray-200 mt-1">{formatUsd(Number(coin.priceUsd))}</div>
             </div>
             <div className={`bg-gradient-to-r from-purple-600 to-blue-500 text-white px-3 py-1 rounded-xl text-xs font-semibold ${up ? "" : "opacity-70"}`}>
               {(up ? "+" : "") + (coin.change24hPct * 100).toFixed(2)}%

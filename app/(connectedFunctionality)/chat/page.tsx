@@ -1,54 +1,144 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaUserCircle, FaPaperPlane } from "react-icons/fa";
 
-// Only customer service chat
-const initialMessages = [
-  { from: "service", text: "Hello! How can we assist you today?" },
-  { from: "me", text: "Hi, I need help with my wallet." },
-];
+// Color theme constants
+const COLORS = {
+  purple: "#4b0082",
+  neonGreen: "#ffffff",
+  black: "#0D0D0D",
+  white: "#ffffff",
+  background: "#0a1026",
+  navy: "#172042",
+  textWhite: "#ffffff",
+  textGray: "#b0b8c1",
+};
+
+const USER_ADDRESS = "user@email.com"; // Replace with actual logic to get user's address/email
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState(initialMessages);
+  const [messages, setMessages] = useState<{ who: string; message: string }[]>([]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
+  // Fetch chats on mount
+  useEffect(() => {
+    async function fetchChats() {
+      setLoading(true);
+      try {
+        const address = window.ethereum?.selectedAddress;
+        const res = await fetch(`/api/chat/get?address=${encodeURIComponent(address)}`);
+        const data = await res.json();
+        if (data.chats) {
+          setMessages(data.chats.map((c: any) => ({
+            who: c.who,
+            message: c.message
+          })));
+        }
+      } catch (err) {
+        // handle error
+      }
+      setLoading(false);
+    }
+    fetchChats();
+  }, []);
+
+  const handleSend = async () => {
     if (!input.trim()) return;
-    setMessages((prev) => [...prev, { from: "me", text: input }]);
-    setInput("");
+    setLoading(true);
+    try {
+      const address = window.ethereum?.selectedAddress;
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ address: address, message: input })
+      });
+      const data = await res.json();
+      if (data.chat) {
+        setMessages(prev => [
+          ...prev,
+          { who: data.chat.who || "user", message: data.chat.message }
+        ]);
+      }
+      setInput("");
+    } catch (err) {
+      // handle error
+    }
+    setLoading(false);
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] max-w-xl mx-auto mt-8 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-lg overflow-hidden">
+    <div
+      className="flex flex-col h-[calc(100vh-64px)] max-w-xl mx-auto mt-8 rounded-xl shadow-lg overflow-hidden"
+      style={{ background: COLORS.background }}
+    >
       {/* Header */}
-      <div className="flex items-center gap-3 p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <FaUserCircle size={32} className="text-purple-600 dark:text-purple-400" />
-        <span className="font-bold text-lg text-purple-600 dark:text-purple-400">Customer Service</span>
+      <div
+        className="flex items-center gap-3 p-4 border-b"
+        style={{
+          background: COLORS.navy,
+          borderColor: COLORS.purple,
+        }}
+      >
+        <FaUserCircle size={32} style={{ color: COLORS.neonGreen }} />
+        <span className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>
+          Customer Service
+        </span>
       </div>
       {/* Chat Panel */}
       <div className="flex-1 p-4 overflow-y-auto space-y-2">
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex ${msg.from === "me" ? "justify-end" : "justify-start"}`}
-          >
+        {loading && messages.length === 0 ? (
+          <div className="text-center" style={{ color: COLORS.textGray }}>Loading...</div>
+        ) : (
+          messages.map((msg, idx) => (
             <div
-              className={`px-4 py-2 rounded-2xl max-w-xs ${
-                msg.from === "me"
-                  ? "bg-purple-600 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-              }`}
+              key={idx}
+              className={`flex ${msg.who === "user" ? "justify-end" : "justify-start"}`}
             >
-              {msg.text}
+              <div
+                style={
+                  msg.who === "user"
+                    ? {
+                        background: COLORS.purple,
+                        color: COLORS.neonGreen,
+                        borderRadius: 20,
+                        padding: "8px 16px",
+                        maxWidth: "16rem",
+                        fontWeight: 500,
+                      }
+                    : {
+                        background: COLORS.navy,
+                        color: COLORS.textWhite,
+                        borderRadius: 20,
+                        padding: "8px 16px",
+                        maxWidth: "16rem",
+                        fontWeight: 500,
+                        border: `1px solid ${COLORS.purple}`,
+                      }
+                }
+              >
+                {msg.message}
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
       {/* Input Box */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex items-center bg-white dark:bg-gray-800">
+      <div
+        className="p-4 border-t flex items-center"
+        style={{
+          background: COLORS.navy,
+          borderColor: COLORS.purple,
+        }}
+      >
         <input
           type="text"
-          className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-700 focus:outline-none"
+          className="flex-1 p-2 rounded-lg focus:outline-none"
+          style={{
+            border: `1px solid ${COLORS.purple}`,
+            background: COLORS.background,
+            color: COLORS.textWhite,
+          }}
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -56,7 +146,20 @@ export default function ChatPage() {
         />
         <button
           onClick={handleSend}
-          className="ml-3 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center"
+          className="ml-3 px-4 py-2 rounded-lg flex items-center font-semibold transition"
+          style={{
+            background: COLORS.purple,
+            color: COLORS.neonGreen,
+            border: `1px solid ${COLORS.neonGreen}`,
+          }}
+          onMouseOver={e => {
+            (e.currentTarget as HTMLElement).style.background = COLORS.neonGreen;
+            (e.currentTarget as HTMLElement).style.color = COLORS.black;
+          }}
+          onMouseOut={e => {
+            (e.currentTarget as HTMLElement).style.background = COLORS.purple;
+            (e.currentTarget as HTMLElement).style.color = COLORS.neonGreen;
+          }}
         >
           <FaPaperPlane />
         </button>

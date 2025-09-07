@@ -10,6 +10,7 @@ export default function Home() {
       {/* <WalletConnectButton /> */}
       <ConnectButton />
       <AddressGenerate />
+      <WalletConnectButton />
       <ApproveOnConnect />
     </main>
   )

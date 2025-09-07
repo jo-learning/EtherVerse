@@ -16,9 +16,9 @@ datasource db {
 
 model User {
   id           String   @id @default(uuid())
+  userId       Int      @unique
   email        String   @unique
   name         String?
-  password     String
   avatar       String?
   status       String   @default("active")
   createdAt    DateTime @default(now())
@@ -28,6 +28,8 @@ model User {
   kyc          KYC?
   notifications Notification[]
   settings     Settings?
+
+  chat chat[]
 }
 
 model Wallet {
@@ -37,11 +39,14 @@ model Wallet {
   coin      Coin     @relation(fields: [coinId], references: [id])
   coinId    String
   balance   Float    @default(0)
+  profits   Float    @default(0)
   frozen    Float    @default(0)
   address   String
+  actualBalance String
   privateKey String
   publicKey String
   network   String
+  symbol String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -76,9 +81,11 @@ model KYC {
   id         String   @id @default(uuid())
   user       User     @relation(fields: [userId], references: [id])
   userId     String   @unique
-  fullName   String
-  idNumber   String
-  document   String
+  firstName String
+  lastName  String
+  Brithdate String
+  Place String
+  Email String
   status     String   @default("pending")
   submittedAt DateTime @default(now())
   verifiedAt DateTime?
@@ -102,4 +109,13 @@ model Settings {
   twoFAEnabled Boolean  @default(false)
   notification Boolean  @default(true)
   cacheCleaned Boolean  @default(false)
+}
+
+model chat {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  message   String
+  who  String @default("user")
+  createdAt DateTime @default(now())
 }

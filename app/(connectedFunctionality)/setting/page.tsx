@@ -13,17 +13,42 @@ const settings = [
 
 export default function SettingPage() {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
-      <h1 className="text-3xl font-bold mb-8 text-purple-700 dark:text-purple-400">Settings</h1>
+    <div className="min-h-screen p-3" style={{ background: "#0a1026" }}>
+      <h1
+        className="text-3xl font-bold mb-8"
+        style={{ color: "#39FF14" }}
+      >
+        Settings
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {settings.map((item) => (
           <Link
             key={item.label}
             href={item.href}
-            className="flex items-center gap-4 bg-white dark:bg-gray-800 rounded-xl shadow p-6 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition"
+            className="flex items-center gap-4 rounded-xl shadow p-6 transition"
+            style={{
+              background: "#172042",
+              color: "#ffffff",
+              border: "1px solid #4b0082",
+            }}
+            onMouseOver={e => {
+              (e.currentTarget as HTMLElement).style.background = "#4b0082";
+              (e.currentTarget as HTMLElement).style.color = "#39FF14";
+            }}
+            onMouseOut={e => {
+              (e.currentTarget as HTMLElement).style.background = "#172042";
+              (e.currentTarget as HTMLElement).style.color = "#ffffff";
+            }}
           >
-            <span className="text-2xl text-purple-600 dark:text-purple-400">{item.icon}</span>
-            <span className="font-semibold text-lg">{item.label}</span>
+            <span
+              className="text-2xl"
+              style={{ color: "#39FF14" }}
+            >
+              {item.icon}
+            </span>
+            <span className="font-semibold text-lg" style={{ color: "#ffffff" }}>
+              {item.label}
+            </span>
           </Link>
         ))}
       </div>

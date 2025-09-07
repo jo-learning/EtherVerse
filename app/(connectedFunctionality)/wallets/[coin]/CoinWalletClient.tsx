@@ -1,8 +1,22 @@
 "use client";
 
+import { fetchWallet, getWallet } from "@/lib/data";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { FaArrowLeft, FaQrcode, FaPaperPlane, FaSync } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaQrcode, FaPaperPlane, FaSync, FaWallet, FaCoins, FaLock, FaArrowLeft, FaExchangeAlt } from "react-icons/fa";
+import Link from "next/link";
+
+// Color palette
+const COLORS = {
+  purple: "#4b0082",      // Dark purple
+  neonGreen: "#39FF14",   // Neon green
+  black: "#0D0D0D",
+  white: "#ffffff",
+  background: "#0a1026",
+  navy: "#172042",        // Slightly lighter navy blue
+  textWhite: "#ffffff",
+  textGray: "#b0b8c1"
+};
 
 interface Props {
   coin: string;
@@ -12,186 +26,253 @@ export default function CoinWalletClient({ coin }: Props) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"receive" | "send" | "convert">("receive");
+  const staticCoins = getWallet(coin);
+  const [coinData, setCoins] = useState(staticCoins);
+  const [showContactModal, setShowContactModal] = useState(false);
 
-  const coinData: Record<
-    string,
-    {
-      name: string;
-      logo: string;
-      balanceUSD: string;
-      balanceCoin: string;
-      frozen: string;
-      address: string;
-      network: string;
-    }
-  > = {
-    eth: {
-      name: "ETH Wallet",
-      logo: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-      balanceUSD: "7,284.49",
-      balanceCoin: "3.2400 ETH",
-      frozen: "0.0000 ETH",
-      address: "0xAC7f193bDD0E...A3956a9A20E8A0",
-      network: "ERC20",
-    },
-    btc: {
-      name: "BTC Wallet",
-      logo: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png",
-      balanceUSD: "0.00",
-      balanceCoin: "0.0000 BTC",
-      frozen: "0.0000 BTC",
-      address: "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-      network: "Bitcoin",
-    },
-    usdt: {
-      name: "USDT Wallet",
-      logo: "https://assets.coingecko.com/coins/images/325/large/Tether.png",
-      balanceUSD: "7,282.30",
-      balanceCoin: "7,282.3000 USDT",
-      frozen: "0.0000 USDT",
-      address: "0xB123456789...ABCDEF123456",
-      network: "TRC20",
-    },
-    
-  };
-
-  const coinKey = coin.toLowerCase();
-  const coinInfo = coinData[coinKey] || {
-    name: "Unknown Wallet",
-    logo: "",
-    balanceUSD: "0.00",
-    balanceCoin: "0.0000",
-    frozen: "0.0000",
-    address: "N/A",
-    network: "N/A",
-  };
+  useEffect(() => {
+    const address = window.ethereum?.selectedAddress;
+    fetchWallet(coin, address).then(setCoins);
+  }, []);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(coinInfo.address);
+    navigator.clipboard.writeText(coinData?.address ? coinData?.address : "");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-500 via-blue-400 to-white dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
-      {/* Header */}
-      <header className="flex items-center p-4 bg-white/20 dark:bg-gray-800/50 backdrop-blur-md shadow-md">
-        <button onClick={() => router.back()} className="mr-3">
-          <FaArrowLeft size={20} />
-        </button>
-        <h1 className="text-lg font-bold">{coinInfo.name}</h1>
-      </header>
-
-      {/* Logo */}
-      {coinInfo.logo && (
-        <div className="flex justify-center mt-6">
-          <img src={coinInfo.logo} alt={coinInfo.name} className="w-16 h-16 rounded-full" />
+    <div
+      className="min-h-screen flex flex-col items-center"
+      style={{
+        background: `linear-gradient(135deg, ${COLORS.background} 0%, ${COLORS.navy} 100%)`,
+        color: COLORS.textWhite,
+      }}
+    >
+      {/* Coin Logo & Balance */}
+      <div className="flex flex-col items-center mt-4 mb-2">
+        {coinData?.logo && (
+          <div
+            className="rounded-full shadow-lg flex items-center justify-center"
+            style={{
+              background: COLORS.white,
+              width: 72,
+              height: 72,
+              border: `3px solid ${COLORS.purple}`,
+              boxShadow: `0 0 16px ${COLORS.purple}55`
+            }}
+          >
+            <img src={coinData?.logo} alt={coinData?.name} className="w-14 h-14 object-contain" />
+          </div>
+        )}
+        <div className="mt-4 text-3xl font-extrabold flex items-center gap-2" style={{ color: COLORS.textWhite }}>
+          <FaCoins className="text-yellow-400" />
+          {coinData?.priceUsd}
         </div>
-      )}
-
-      {/* Balance Card */}
-      <div className="max-w-lg mx-auto mt-4 bg-white/80 dark:bg-gray-800/90 rounded-2xl p-6 shadow-lg backdrop-blur-md border border-gray-200/40 dark:border-gray-700 text-center">
-        <h2 className="text-3xl font-bold">${coinInfo.balanceUSD}</h2>
-        <p className="text-purple-600 dark:text-purple-400 font-medium">{coinInfo.balanceCoin}</p>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Frozen: {coinInfo.frozen}</p>
+        <div className="mt-1 text-lg font-semibold" style={{ color: COLORS.neonGreen }}>
+          {parseFloat(coinData?.balance ?? "0").toFixed(2)} {coinData?.symbol}
+        </div>
+        <div className="text-xs mt-1 flex items-center gap-1" style={{ color: COLORS.textGray }}>
+          <FaLock /> Frozen: 0
+        </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="max-w-lg mx-auto mt-6 grid grid-cols-3 gap-3">
-        <button
-          onClick={() => setActiveTab("receive")}
-          className={`py-2 rounded-lg flex flex-col items-center justify-center ${
-            activeTab === "receive" ? "bg-purple-600 text-white" : "bg-white/60 dark:bg-gray-700"
-          }`}
-        >
-          <FaQrcode />
-          <span className="text-sm">Receive</span>
-        </button>
-        <button
-          onClick={() => setActiveTab("send")}
-          className={`py-2 rounded-lg flex flex-col items-center justify-center ${
-            activeTab === "send" ? "bg-blue-600 text-white" : "bg-white/60 dark:bg-gray-700"
-          }`}
-        >
-          <FaPaperPlane />
-          <span className="text-sm">Send</span>
-        </button>
-        <button
-          onClick={() => setActiveTab("convert")}
-          className={`py-2 rounded-lg flex flex-col items-center justify-center ${
-            activeTab === "convert" ? "bg-green-600 text-white" : "bg-white/60 dark:bg-gray-700"
-          }`}
-        >
-          <FaSync />
-          <span className="text-sm">Convert</span>
-        </button>
-      </div>
+      {/* Action Tabs */}
+     <div className="max-w-2xl w-full mt-6 px-4">
+  <div className="grid grid-cols-3 bg-[#181c2f] rounded-xl p-1 shadow border border-[#23232a]">
+    {/* Receive Tab */}
+    <button
+      onClick={() => setActiveTab("receive")}
+      className={`py-1 rounded-lg flex flex-row items-center justify-center font-semibold transition-all ${
+        activeTab === "receive"
+          ? "bg-[#232327] text-neonGreen"
+          : "text-white hover:text-purple-400"
+      }`}
+    >
+      <FaQrcode size={12} />
+      <span className="text-sm pl-1">Receive</span>
+    </button>
+
+    {/* Send Tab */}
+    <button
+      onClick={() => setActiveTab("send")}
+      className={`py-1  rounded-lg flex flex-row items-center justify-center font-semibold transition-all ${
+        activeTab === "send"
+          ? "bg-[#232327] text-purple-500"
+          : "text-white hover:text-purple-400"
+      }`}
+    >
+      <FaPaperPlane size={12} />
+      <span className="text-sm pl-1">Send</span>
+    </button>
+
+    {/* Convert Tab */}
+    <button
+      onClick={() => setActiveTab("convert")}
+      className={`py-1 rounded-lg flex flex-row items-center justify-center font-semibold transition-all ${
+        activeTab === "convert"
+          ? "bg-[#232327] text-green-500"
+          : "text-white hover:text-purple-400"
+      }`}
+    >
+      <FaExchangeAlt size={12} />
+      <span className="text-sm  pl-1">Convert</span>
+    </button>
+  </div>
+</div>
+
 
       {/* Tab Content */}
-      <div className="max-w-lg mx-auto mt-6 bg-white/80 dark:bg-gray-800/90 rounded-2xl p-6 shadow-lg backdrop-blur-md border border-gray-200/40 dark:border-gray-700">
+      <div
+        className="max-w-2xl w-full mt-6 rounded-2xl p-6 shadow-xl border"
+        style={{
+          background: COLORS.navy,
+          borderColor: COLORS.purple,
+          color: COLORS.textWhite
+        }}
+      >
         {activeTab === "receive" && (
-          <div className="text-center">
-            <span className="inline-block bg-orange-500 text-white text-xs px-3 py-1 rounded-full mb-4">
-              {coinInfo.network}
+          <div className="text-center pb-16">
+            <span
+              className="inline-block text-xs px-3 py-1 rounded-full mb-4 font-semibold tracking-wide"
+              style={{
+                background: COLORS.purple,
+                color: COLORS.white,
+                letterSpacing: 1.5
+              }}
+            >
+              {coinData?.network}
             </span>
-            <div className="mx-auto w-40 h-40 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                {/* QR Code */}
-                <img
+            <div
+              className="mx-auto w-40 h-40 rounded-xl flex items-center justify-center mb-4"
+              style={{
+                background: "#181c2f",
+                border: `2px solid ${COLORS.purple}`,
+                boxShadow: `0 0 12px ${COLORS.purple}55`
+              }}
+            >
+              {/* QR Code */}
+              <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(
-                  coinInfo.address
+                  coinData?.address || ""
                 )}`}
                 alt="QR Code"
                 className="w-36 h-36"
-                />
+              />
             </div>
-            <p className="mt-4 break-all text-sm">{coinInfo.address}</p>
-            <button
-              onClick={handleCopy}
-              className="mt-3 text-purple-600 dark:text-purple-400 hover:underline"
-            >
-              {copied ? "Copied!" : "Copy address"}
-            </button>
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <span className="break-all text-sm font-mono px-2 py-1 rounded bg-[#23232a]">{coinData?.address}</span>
+              <button
+                onClick={handleCopy}
+                className="rounded-full p-2 transition"
+                style={{
+                  background: COLORS.purple,
+                  color: COLORS.white
+                }}
+                aria-label="Copy address"
+              >
+                {copied ? (
+                  <span className="text-xs font-semibold">Copied!</span>
+                ) : (
+                  <FaQrcode size={16} />
+                )}
+              </button>
+            </div>
+            <div className="mt-2 text-xs" style={{ color: COLORS.textGray }}>
+              Scan or copy your address to receive funds.
+            </div>
           </div>
         )}
 
         {activeTab === "send" && (
           <div>
-            <h3 className="text-lg font-bold mb-3">Send {coinKey.toUpperCase()}</h3>
+            <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: COLORS.purple }}>
+              <FaPaperPlane /> Send {coin.toUpperCase()}
+            </h3>
             <input
               type="text"
               placeholder="Recipient address"
-              className="w-full p-2 mb-3 border rounded-lg dark:bg-gray-700"
+              className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
+              style={{ background: "#23232a" }}
             />
             <input
               type="number"
               placeholder="Amount"
-              className="w-full p-2 mb-3 border rounded-lg dark:bg-gray-700"
+              className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
+              style={{ background: "#23232a" }}
             />
-            <button className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+            <button
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition"
+              onClick={() => setShowContactModal(true)}
+            >
               Send Now
             </button>
+            {/* Contact Customer Service Modal */}
+            {showContactModal && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "#0a1026cc" }}>
+                <div className="bg-[#181c2f] rounded-2xl p-8 shadow-2xl text-center max-w-sm w-full border" style={{ borderColor: COLORS.purple }}>
+                  <h2 className="text-xl font-bold mb-4" style={{ color: COLORS.purple }}>
+                    Contact Customer Service
+                  </h2>
+                  <p className="mb-6" style={{ color: COLORS.textGray }}>
+                    To send funds, please contact our customer service team for assistance.
+                  </p>
+                  <Link href="/chat">
+                    <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:scale-105 transition mb-2">
+                      Go to Chat
+                    </button>
+                  </Link>
+                  <button
+                    className="block w-full mt-2 text-sm"
+                    style={{ color: COLORS.textGray }}
+                    onClick={() => setShowContactModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "convert" && (
           <div>
-            <h3 className="text-lg font-bold mb-3">Convert {coinKey.toUpperCase()}</h3>
+            <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: "#22c55e" }}>
+              <FaSync /> Convert {coin.toUpperCase()}
+            </h3>
             <input
               type="number"
               placeholder="Amount"
-              className="w-full p-2 mb-3 border rounded-lg dark:bg-gray-700"
+              className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
+              style={{ background: "#23232a" }}
             />
-            <select className="w-full p-2 mb-3 border rounded-lg dark:bg-gray-700">
-              <option>BTC</option>
-              <option>ETH</option>
+            <select
+              className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white"
+              style={{ background: "#23232a" }}
+            >
               <option>USDT</option>
             </select>
-            <button className="w-full py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+            <button className="w-full py-3 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition">
               Convert Now
             </button>
           </div>
         )}
       </div>
+      {/* Footer */}
+      {/* <div className="w-full max-w-2xl mx-auto mt-10 mb-4 flex justify-center gap-8">
+        <div className="flex flex-col items-center">
+          <FaWallet size={22} style={{ color: COLORS.purple }} />
+          <span className="text-xs mt-1" style={{ color: COLORS.textGray }}>Wallet</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <FaCoins size={22} style={{ color: COLORS.neonGreen }} />
+          <span className="text-xs mt-1" style={{ color: COLORS.textGray }}>Assets</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <FaExchangeAlt size={22} style={{ color: "#22c55e" }} />
+          <span className="text-xs mt-1" style={{ color: COLORS.textGray }}>Exchange</span>
+        </div>
+      </div> */}
     </div>
   );
 }

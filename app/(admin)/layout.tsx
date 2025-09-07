@@ -1,7 +1,4 @@
 "use client";
-
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import {
   FaChartLine,
@@ -17,15 +14,6 @@ import { AiOutlineClose } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi"; // Hamburger icon
 import { usePathname } from "next/navigation";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const menuItems = [
   { icon: <FaUser size={16} />, label: "Dashboard", route: "/dashboard" },
@@ -60,9 +48,7 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body>
         {/* Loading Overlay */}
         {loading && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-black bg-opacity-40">

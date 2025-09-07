@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export type Trade = {
-  id: number;
+  id: number; // I’d recommend making this a timestamp instead of number if it’s a Date
   pair: string;
   date: string;
   purchaseAmount: number;
@@ -11,13 +11,14 @@ export type Trade = {
   contract: number;
   profit: number;
   deliveryPrice: number;
-  deliveryTime: string;
+  deliveryTime: number; // ⬅️ make this a number (seconds or ms), easier to compare
   status: "wait" | "finished";
 };
 
 type TradeStore = {
   trades: Trade[];
   addTrade: (trade: Trade) => void;
+  updateTrade: (id: number, updates: Partial<Trade>) => void;
 };
 
 export const useTradeStore = create<TradeStore>()(
@@ -27,6 +28,12 @@ export const useTradeStore = create<TradeStore>()(
       addTrade: (trade) =>
         set((state) => ({
           trades: [...state.trades, trade],
+        })),
+      updateTrade: (id, updates) =>
+        set((state) => ({
+          trades: state.trades.map((t) =>
+            t.id === id ? { ...t, ...updates } : t
+          ),
         })),
     }),
     {
