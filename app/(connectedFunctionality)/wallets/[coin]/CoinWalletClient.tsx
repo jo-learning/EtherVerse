@@ -89,7 +89,7 @@ export default function CoinWalletClient({ coin }: Props) {
           : "text-white hover:text-purple-400"
       }`}
     >
-      <FaQrcode size={12} />
+      <FaCoins size={12} />
       <span className="text-sm pl-1">Receive</span>
     </button>
 

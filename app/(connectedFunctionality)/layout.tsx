@@ -19,7 +19,7 @@ var uId = 60600242;
 
 const menuItems = [
   { icon: <FaUser size={16} />, label: "Account", route: "/account" },
-  { icon: <FaExchangeAlt size={16} />, label: "Transactions", route: "/trade" },
+  { icon: <FaExchangeAlt size={16} />, label: "Trans...", route: "/trade" },
   { icon: <MdOutlineDashboard size={18} />, label: "Arbitrage", route: "" },
   { icon: <FaGift size={16} />, label: "Mining", route: "" },
   { icon: <FaChartLine size={16} />, label: "Leverage", route: "/leverage" },
@@ -56,19 +56,18 @@ export default function RootLayout({
         uId = 1111;
         return;
       }
-      const response =  await fetch(`/api/getId?userId=${address}`, {
+      const response = await fetch(`/api/getId?userId=${address}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
       });
-      const data = await response.json()
+      const data = await response.json();
       uId = data.uId.userId;
-      console.log(data)
+      console.log(data);
     } catch (error) {
       console.error("Error creating user:", error);
     }
   };
 
-  // Show loading spinner when navigating
   const handleNav = (route: string) => {
     if (pathname !== route) {
       setLoading(true);
@@ -77,28 +76,35 @@ export default function RootLayout({
       setDrawerOpen(false);
     }
   };
-  useEffect(()=>{
-    getUserId();
-},[])
 
-  // Determine if back button should show (e.g., /wallets/usdt, but not /wallets)
+  useEffect(() => {
+    getUserId();
+  }, []);
+
   const showBackButton = pathname.split("/").length === 3 || pathname.split("/").length === 4;
-  const showSavingButton =  pathname.split("/").length === 3 && pathname.startsWith("/wallets") ;
-  let coin = ""; 
-  if (showSavingButton){
-     coin = pathname.split("/")[2];
+  const showSavingButton = pathname.split("/").length === 3 && pathname.startsWith("/wallets");
+  let coin = "";
+  if (showSavingButton) {
+    coin = pathname.split("/")[2];
   }
 
   return (
     <html lang="en">
-      <body style={{ background: COLORS.background }}>
+      <body style={{ background: COLORS.background, overflowX: "hidden" }}>
         {/* Loading Overlay */}
-        
         {loading && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center"
-            style={{ background: COLORS.white, backgroundColor: COLORS.white, opacity: 0.4 }}>
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4"
-              style={{ borderColor: COLORS.purple }}></div>
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center"
+            style={{
+              background: COLORS.white,
+              backgroundColor: COLORS.white,
+              opacity: 0.4,
+            }}
+          >
+            <div
+              className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4"
+              style={{ borderColor: COLORS.purple }}
+            ></div>
           </div>
         )}
         <div className="flex min-h-screen">
@@ -117,8 +123,7 @@ export default function RootLayout({
                   className="mr-2 text-white hover:text-purple-300"
                   aria-label="Back"
                 >
-                  <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"
-                    strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                  <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
                     <path d="M15 18l-6-6 6-6" />
                   </svg>
                 </button>
@@ -134,23 +139,21 @@ export default function RootLayout({
             <h2 className="font-bold text-lg" style={{ color: COLORS.white }}>
               EtherVerse
             </h2>
-            <div className="w-6" /> {/* Spacer for balance */}
-             {showSavingButton && (
-                <button
-                  onClick={() => window.location.href = `/wallets/${coin}/transaction`}
-                  className="mr-2 text-white hover:text-purple-300"
-                  aria-label="Back"
-                >
-                 
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-label="Save">
-  <title>Save</title>
-  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="1.6"/>
-  <path d="M7 9h10v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="12" cy="12" r="1.2" fill="currentColor"/>
-</svg>
-
-                </button>
-              )}
+            <div className="w-6" />
+            {showSavingButton && (
+              <button
+                onClick={() => (window.location.href = `/wallets/${coin}/transaction`)}
+                className="mr-2 text-white hover:text-purple-300"
+                aria-label="Save"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" role="img" aria-label="Save">
+                  <title>Save</title>
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" fill="none" stroke="currentColor" strokeWidth="1.6" />
+                  <path d="M7 9h10v6a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2V9z" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="12" cy="12" r="1.2" fill="currentColor" />
+                </svg>
+              </button>
+            )}
           </header>
 
           {/* Mobile overlay */}
@@ -170,11 +173,11 @@ export default function RootLayout({
             style={{
               background: COLORS.background,
               borderColor: COLORS.purple,
+              overflowY: "auto", // Allow scrolling inside sidebar if necessary
             }}
           >
             {/* Sidebar header */}
-            <div className="p-5 border-b flex justify-between items-center"
-              style={{ borderColor: COLORS.purple }}>
+            <div className="p-5 border-b flex justify-between items-center" style={{ borderColor: COLORS.purple }}>
               <div>
                 <h2 className="font-bold text-xl" style={{ color: COLORS.white }}>
                   EtherVerse
@@ -193,13 +196,13 @@ export default function RootLayout({
             </div>
 
             {/* Navigation */}
-            <nav className="p-4 space-y-1">
+            <nav className="p-4 grid grid-cols-2 gap-4 overflow-hidden">
               {menuItems.map((item, index) => {
                 const isActive = pathname === item.route;
                 return (
                   <button
                     key={index}
-                    className={`flex items-center w-full space-x-3 p-3 rounded-xl transition-all duration-200 font-medium`}
+                    className={`flex items-center justify-start space-x-3 p-3 rounded-xl transition-all duration-200 font-medium`}
                     style={{
                       background: isActive ? COLORS.white + "20" : undefined,
                       color: isActive ? COLORS.white : COLORS.white,
@@ -221,29 +224,28 @@ export default function RootLayout({
           </aside>
 
           {/* Main content */}
-          <main className="flex-1  pt-16 lg:pt-6 ">
+          <main className="flex-1 pt-16 lg:pt-6 overflow-x-hidden">
             <LoadingProvider loading={false}>{children}</LoadingProvider>
+
             {/* Floating Chat Button */}
-            {
-             pathname != '/chat' && (
+            {pathname !== "/chat" && (
               <button
-              className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg p-4 flex items-center gap-2 hover:scale-105 transition-transform"
-              style={{
-                background: `linear-gradient(90deg, ${COLORS.purple} 0%, ${COLORS.neonGreen} 100%)`,
-                color: COLORS.white
-              }}
-              onClick={() => handleNav("/chat")}
-              aria-label="Chat with Customer Service"
-            >
-              <FaComments size={22} />
-              <span className="hidden sm:inline font-semibold">Chat</span>
-            </button>
-             )
-            }
-            
+                                className="fixed bottom-6 right-6 z-50 rounded-full shadow-lg p-4 flex items-center gap-2 hover:scale-105 transition-transform"
+                style={{
+                  background: `linear-gradient(90deg, ${COLORS.purple} 0%, ${COLORS.neonGreen} 100%)`,
+                  color: COLORS.white,
+                }}
+                onClick={() => handleNav("/chat")}
+                aria-label="Chat with Customer Service"
+              >
+                <FaComments size={22} />
+                <span className="hidden sm:inline font-semibold">Chat</span>
+              </button>
+            )}
           </main>
         </div>
       </body>
     </html>
   );
 }
+

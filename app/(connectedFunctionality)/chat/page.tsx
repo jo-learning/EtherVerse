@@ -17,7 +17,7 @@ const COLORS = {
 const USER_ADDRESS = "user@email.com"; // Replace with actual logic to get user's address/email
 
 export default function ChatPage() {
-  const [messages, setMessages] = useState<{ who: string; message: string }[]>([]);
+  const [messages, setMessages] = useState<{ who: string; message: string; createdAt: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,8 @@ export default function ChatPage() {
         if (data.chats) {
           setMessages(data.chats.map((c: any) => ({
             who: c.who,
-            message: c.message
+            message: c.message,
+            createdAt: new Date(c.createdAt).toLocaleString(), // Use createdAt
           })));
         }
       } catch (err) {
@@ -51,13 +52,17 @@ export default function ChatPage() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: address, message: input })
+        body: JSON.stringify({ address: address, message: input }),
       });
       const data = await res.json();
       if (data.chat) {
-        setMessages(prev => [
+        setMessages((prev) => [
           ...prev,
-          { who: data.chat.who || "user", message: data.chat.message }
+          {
+            who: data.chat.who || "user",
+            message: data.chat.message,
+            createdAt: new Date(data.chat.createdAt).toLocaleString(), // Use createdAt
+          },
         ]);
       }
       setInput("");
@@ -95,7 +100,8 @@ export default function ChatPage() {
               key={idx}
               className={`flex ${msg.who === "user" ? "justify-end" : "justify-start"}`}
             >
-              <div
+              <div className="flex flex-col">
+               <div
                 style={
                   msg.who === "user"
                     ? {
@@ -119,6 +125,15 @@ export default function ChatPage() {
               >
                 {msg.message}
               </div>
+              {/* Message Date */}
+              <div
+                className={`text-sm ${msg.who === "user" ? "text-right" : "text-left"}`}
+                style={{ color: COLORS.textGray }}
+              >
+                {msg.createdAt}
+              </div>
+              </div>
+             
             </div>
           ))
         )}
@@ -142,7 +157,7 @@ export default function ChatPage() {
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
         <button
           onClick={handleSend}
@@ -152,11 +167,11 @@ export default function ChatPage() {
             color: COLORS.neonGreen,
             border: `1px solid ${COLORS.neonGreen}`,
           }}
-          onMouseOver={e => {
+          onMouseOver={(e) => {
             (e.currentTarget as HTMLElement).style.background = COLORS.neonGreen;
             (e.currentTarget as HTMLElement).style.color = COLORS.black;
           }}
-          onMouseOut={e => {
+          onMouseOut={(e) => {
             (e.currentTarget as HTMLElement).style.background = COLORS.purple;
             (e.currentTarget as HTMLElement).style.color = COLORS.neonGreen;
           }}

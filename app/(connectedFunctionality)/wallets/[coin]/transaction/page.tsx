@@ -98,7 +98,7 @@ export default function CoinTransactionPage() {
       <div className="w-full max-w-2xl mx-auto mt-8 px-2 sm:px-4">
         <h2
           className="text-2xl font-bold mb-6 text-center sm:text-left"
-          style={{ color: COLORS.neonGreen }}
+          style={{ color: COLORS.textWhite }}
         >
           {coin.toUpperCase()} Transaction History
         </h2>
@@ -113,9 +113,9 @@ export default function CoinTransactionPage() {
                 activeTab === tab.key ? "shadow bg-[#23232a]" : "hover:bg-[#181c2f]"
               }`}
               style={{
-                color: activeTab === tab.key ? COLORS.neonGreen : COLORS.textWhite,
+                color: activeTab === tab.key ? COLORS.textGray : COLORS.textWhite,
                 border:
-                  activeTab === tab.key ? `2px solid ${COLORS.neonGreen}` : "2px solid transparent",
+                  activeTab === tab.key ? `2px solid ${COLORS.textWhite}` : "2px solid transparent",
                 minWidth: 90,
               }}
             >

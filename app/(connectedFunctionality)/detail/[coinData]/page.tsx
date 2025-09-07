@@ -31,7 +31,7 @@ ChartJS.register(
 // Color palette
 const COLORS = {
   purple: "#4b0082", // Dark purple
-  neonGreen: "#39FF14", // Neon green
+  neonGreen: "#ffffff", // Neon green
   black: "#0D0D0D",
   white: "#ffffff",
   background: "#0a1026",
@@ -45,6 +45,7 @@ export default function CoinDetailPage() {
   const coin = getCoin(coinData);
   const [showModal, setShowModal] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
+  const [selectedDirection, setSelectedDirection] = useState<"Buy long" | "Buy short">("Buy long");
 
   // Real-time price state
   const [realPrice, setRealPrice] = useState<number | null>(null);
@@ -97,20 +98,26 @@ export default function CoinDetailPage() {
   const [deliveryTime, setDeliveryTime] = useState("30S");
   const [accountType, setAccountType] = useState("Real Account")
   const [amount, setAmount] = useState("");
-  const [direction, setDirection] = useState<"Buy long" | "Buy short">("Buy long"); // Now dynamic
+  const [direction, setDirection] = useState<"Buy long" | "Buy short">("Buy long");
+  const [inputValue, setInputValue] = useState("");
 
   function calculateProfit(amount: any, time: any) {
     const amt = parseFloat(amount) || 0;
-    if (time === "30S") return amt * 0.2;
-    if (time === "120S") return amt * 0.15;
-    if (time === "200S") return amt * 0.1;
+    // Profit calculation based on delivery time
+    if (time === "30S") return amt * 0.8; // 80% profit for 30 seconds
+    if (time === "60S") return amt * 0.7; // 70% profit for 60 seconds
+    if (time === "120S") return amt * 0.6; // 60% profit for 120 seconds
+    if (time === "3600S") return amt * 0.5; // 50% profit for 1 hour
+    if (time === "10800S") return amt * 0.4; // 40% profit for 3 hours
+    if (time === "21600S") return amt * 0.3; // 30% profit for 6 hours
+    if (time === "43200S") return amt * 0.2; // 20% profit for 12 hours
     return 0;
   }
 
   function handleEntrustNow() {
     const profit = calculateProfit(amount, deliveryTime);
 
-    if (!coin) return; // Prevent usage if coin is undefined
+    if (!coin) return;
     if (!amount || isNaN(parseFloat(amount))) {
       alert("Please enter a valid amount.");
       return;
@@ -125,7 +132,7 @@ export default function CoinDetailPage() {
       purchaseAmount: parseFloat(amount) || 0,
       direction,
       purchasePrice: parseFloat(coin.priceUsd as any),
-      contract: 30, // If you have this dynamically, replace
+      contract: 30,
       profit,
       deliveryPrice: parseFloat(coin.priceUsd as any),
       deliveryTime: parseInt(deliveryTimeNumber, 10),
@@ -134,6 +141,7 @@ export default function CoinDetailPage() {
     
 
     setShowModal(false);
+    setInputValue("");
   }
 
   const up = coin.change24hPct >= 0;
@@ -149,6 +157,19 @@ export default function CoinDetailPage() {
         tension: 0.4,
       },
     ],
+  };
+
+  const handleNumberInput = (value: string) => {
+    if (value === "backspace") {
+      setInputValue(prev => prev.slice(0, -1));
+    } else if (value === "done") {
+      setAmount(inputValue);
+      handleEntrustNow();
+    } else if (value === "." && !inputValue.includes(".")) {
+      setInputValue(prev => prev + value);
+    } else if (value !== ".") {
+      setInputValue(prev => prev + value);
+    }
   };
 
   return (
@@ -219,18 +240,37 @@ export default function CoinDetailPage() {
         />
       </div>
 
-      {/* Entrust Button */}
-      <div className="left-0 right-0 px-2 sm:px-4 py-2">
+      {/* Split Entrust Buttons */}
+      <div className="relative w-full h-16 mt-6 mb-4">
         <button
-          onClick={() => setShowModal(true)}
-          className="w-full py-3 text-lg font-bold shadow-lg"
+          onClick={() => {
+            setSelectedDirection("Buy long");
+            setShowModal(true);
+            setDirection("Buy long");
+          }}
+          className="absolute left-0 w-2/4 h-full text-lg font-bold transform -skew-x-12 overflow-hidden z-10"
           style={{
-            background: `linear-gradient(90deg, ${COLORS.purple}, ${COLORS.neonGreen})`,
-            color: COLORS.textWhite,
-            borderRadius: 16,
+            background: `linear-gradient(90deg, ${COLORS.neonGreen}, ${COLORS.purple})`,
+            color: COLORS.black,
+            borderRadius: "12px 0 0 12px",
           }}
         >
-          Entrust Now
+          <span className="block transform skew-x-12">BUY LONG</span>
+        </button>
+        <button
+          onClick={() => {
+            setSelectedDirection("Buy short");
+            setShowModal(true);
+            setDirection("Buy short");
+          }}
+          className="absolute right-0 w-2/4 h-full text-lg font-bold transform -skew-x-12 overflow-hidden"
+          style={{
+            background: `linear-gradient(90deg, #ff3b3b, ${COLORS.purple})`,
+            color: COLORS.white,
+            borderRadius: "0 12px 12px 0",
+          }}
+        >
+          <span className="block transform skew-x-12">BUY SHORT</span>
         </button>
       </div>
 
@@ -244,7 +284,10 @@ export default function CoinDetailPage() {
             style={{ background: COLORS.navy, color: COLORS.textWhite }}
           >
             <button
-              onClick={() => setShowModal(false)}
+              onClick={() => {
+                setShowModal(false);
+                setInputValue("");
+              }}
               className="absolute right-4 top-4"
               style={{ color: COLORS.textGray }}
             >
@@ -284,15 +327,11 @@ export default function CoinDetailPage() {
                     background:
                       direction === "Buy long"
                         ? `linear-gradient(90deg, ${COLORS.neonGreen}, ${COLORS.purple})`
-                        : COLORS.white,
+                        : "transparent",
                     color:
                       direction === "Buy long"
                         ? COLORS.black
                         : COLORS.textGray,
-                    boxShadow:
-                      direction === "Buy long"
-                        ? "0 2px 8px rgba(57,255,20,0.2)"
-                        : undefined,
                   }}
                   onClick={() => setDirection("Buy long")}
                 >
@@ -305,15 +344,11 @@ export default function CoinDetailPage() {
                     background:
                       direction === "Buy short"
                         ? `linear-gradient(90deg, #ff3b3b, ${COLORS.purple})`
-                        : COLORS.white,
+                        : "transparent",
                     color:
                       direction === "Buy short"
                         ? COLORS.white
                         : COLORS.textGray,
-                    boxShadow:
-                      direction === "Buy short"
-                        ? "0 2px 8px rgba(255,59,59,0.2)"
-                        : undefined,
                   }}
                   onClick={() => setDirection("Buy short")}
                 >
@@ -322,120 +357,186 @@ export default function CoinDetailPage() {
               </div>
             </div>
 
-            {/* Account Type */}
-            <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-              Account Type
-            </label>
-            <select
-              className="w-full rounded-lg p-2 mb-3"
-              style={{
-                background: COLORS.background,
-                color: COLORS.textWhite,
-                border: `1px solid ${COLORS.purple}`,
-              }}
-              value={accountType}
-              onChange={(e) => setAccountType(e.target.value)}
-            >
-              <option>Real Account</option>
-              <option>Demo Account</option>
-            </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Left Column - Form Inputs */}
+              <div className="space-y-4">
+                {/* Account Type Buttons */}
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                    Account Type
+                  </label>
+                  <div className="flex rounded-lg overflow-hidden">
+                    <button
+                      type="button"
+                      className={`flex-1 py-2 text-center font-semibold ${
+                        accountType === "Real Account" 
+                          ? "bg-green-600 text-white" 
+                          : "bg-gray-700 text-gray-300"
+                      }`}
+                      onClick={() => setAccountType("Real Account")}
+                    >
+                      Real
+                    </button>
+                    <button
+                      type="button"
+                      className={`flex-1 py-2 text-center font-semibold ${
+                        accountType === "Demo Account" 
+                          ? "bg-blue-600 text-white" 
+                          : "bg-gray-700 text-gray-300"
+                      }`}
+                      onClick={() => setAccountType("Demo Account")}
+                    >
+                      Demo
+                    </button>
+                  </div>
+                </div>
 
-            {/* Delivery Time */}
-            <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-              Delivery Time
-            </label>
-            <select
-              value={deliveryTime}
-              onChange={(e) => setDeliveryTime(e.target.value)}
-              className="w-full rounded-lg p-2 mb-3"
-              style={{
-                background: COLORS.background,
-                color: COLORS.textWhite,
-                border: `1px solid ${COLORS.purple}`,
-              }}
-            >
-              <option>30S</option>
-              <option>120S</option>
-              <option>200S</option>
-            </select>
+                {/* Delivery Time */}
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                    Delivery Time
+                  </label>
+                  <select
+                    value={deliveryTime}
+                    onChange={(e) => setDeliveryTime(e.target.value)}
+                    className="w-full rounded-lg p-2"
+                    style={{
+                      background: COLORS.background,
+                      color: COLORS.textWhite,
+                      border: `1px solid ${COLORS.purple}`,
+                    }}
+                  >
+                    <option value="30S">30S</option>
+                    <option value="60S">60S</option>
+                    <option value="120S">120S</option>
+                    <option value="3600S">1H</option>
+                    <option value="10800S">3H</option>
+                    <option value="21600S">6H</option>
+                    <option value="43200S">12H</option>
+                  </select>
+                </div>
 
-            {/* Price Range */}
-            <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-              Price Range
-            </label>
-            <select
-              className="w-full rounded-lg p-2 mb-3"
-              style={{
-                background: COLORS.background,
-                color: COLORS.textWhite,
-                border: `1px solid ${COLORS.purple}`,
-              }}
-            >
-              <option>(±20%)</option>
-            </select>
+                {/* Price Range */}
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                    Price Range
+                  </label>
+                  <select
+                    className="w-full rounded-lg p-2"
+                    style={{
+                      background: COLORS.background,
+                      color: COLORS.textWhite,
+                      border: `1px solid ${COLORS.purple}`,
+                    }}
+                  >
+                    {(() => {
+                      // Get the base percentage based on delivery time
+                      let basePercentage = 20;
+                      
+                      if (deliveryTime === "60S") basePercentage = 25;
+                      else if (deliveryTime === "120S") basePercentage = 30;
+                      else if (deliveryTime === "3600S") basePercentage = 35;
+                      else if (deliveryTime === "10800S") basePercentage = 40;
+                      else if (deliveryTime === "21600S") basePercentage = 45;
+                      else if (deliveryTime === "43200S") basePercentage = 50;
+                      
+                      // Generate options with increasing percentages
+                      const options = [];
+                      for (let i = 0; i < 5; i++) {
+                        const percentage = basePercentage + (i * 5);
+                        options.push(
+                          <option key={i} value={percentage}>
+                            (±{percentage}%)
+                          </option>
+                        );
+                      }
+                      
+                      return options;
+                    })()}
+                  </select>
+                </div>
 
-            {/* Amount */}
-            <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-              USDT Amount
-            </label>
-            <div className="flex gap-2 mb-4">
-              <input
-                type="number"
-                placeholder="Amount"
-                value={amount}
-                max={coinWallet?.balance ?? undefined}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  // Prevent input above max balance
-                  if (
-                    coinWallet?.balance !== undefined &&
-                    parseFloat(val) > Number(coinWallet.balance)
-                  ) {
-                    setAmount(`${coinWallet.balance}`);
-                  } else {
-                    setAmount(val);
-                  }
-                }}
-                className="flex-1 rounded-lg p-2"
-                style={{
-                  background: COLORS.background,
-                  color: COLORS.textWhite,
-                  border: `1px solid ${COLORS.purple}`,
-                }}
-              />
-              <button
-                type="button"
-                className="px-3 py-2 rounded-lg"
-                style={{
-                  background: COLORS.purple,
-                  color: COLORS.neonGreen,
-                }}
-                onClick={() => setAmount(`${coinWallet?.balance ?? ""}`)}
-              >
-                Max
-              </button>
+                {/* Amount Display */}
+                <div>
+                  <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                    USDT Amount
+                  </label>
+                  <div className="flex gap-2">
+                    <div className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
+                      style={{
+                        background: COLORS.background,
+                        color: COLORS.textWhite,
+                        border: `1px solid ${COLORS.purple}`,
+                        minHeight: '50px'
+                      }}
+                    >
+                      {inputValue || "0"} USDT
+                    </div>
+                    <button
+                      type="button"
+                      className="px-3 py-2 rounded-lg"
+                      style={{
+                        background: COLORS.purple,
+                        color: COLORS.neonGreen,
+                      }}
+                      onClick={() => {
+                        setInputValue(coinWallet?.balance?.toString() || "");
+                      }}
+                    >
+                      Max
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center">
+                  <p className="text-xs" style={{ color: COLORS.textGray }}>
+                    Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
+                  </p>
+                  <p className="text-xs" style={{ color: COLORS.neonGreen }}>
+                    Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column - Keyboard and Done Button */}
+              <div className="space-y-4">
+                {/* Numeric Keyboard */}
+                <div className="grid grid-cols-3 gap-2">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => handleNumberInput(item.toString())}
+                      className="p-3 rounded-lg text-lg font-medium"
+                      style={{
+                        background: COLORS.background,
+                        color: COLORS.textWhite,
+                        border: `1px solid ${COLORS.purple}`,
+                      }}
+                    >
+                      {item === "backspace" ? "⌫" : item}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Done Button */}
+                <button
+                  onClick={() => {
+                    setAmount(inputValue);
+                    handleNumberInput("done");
+                  }}
+                  className="w-full py-3 font-bold mt-2"
+                  style={{
+                    background: direction === "Buy long" 
+                      ? `linear-gradient(90deg, ${COLORS.neonGreen}, ${COLORS.purple})`
+                      : `linear-gradient(90deg, #ff3b3b, ${COLORS.purple})`,
+                    color: COLORS.textWhite,
+                    borderRadius: 16,
+                  }}
+                >
+                  DONE
+                </button>
+              </div>
             </div>
-            <div className="flex justify-between items-center">
-              <p className="text-xs mb-4" style={{ color: COLORS.textGray }}>
-                Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
-              </p>
-              <p className="text-xs mb-4" style={{ color: COLORS.neonGreen }}>
-                Estimated Profit: {calculateProfit(amount, deliveryTime).toFixed(2)} USDT
-              </p>
-            </div>
-
-            {/* Submit */}
-            <button
-              onClick={handleEntrustNow}
-              className="w-full py-3 font-bold"
-              style={{
-                background: `linear-gradient(90deg, ${COLORS.purple}, ${COLORS.neonGreen})`,
-                color: COLORS.textWhite,
-                borderRadius: 16,
-              }}
-            >
-              Entrust Now
-            </button>
           </div>
         </div>
       )}

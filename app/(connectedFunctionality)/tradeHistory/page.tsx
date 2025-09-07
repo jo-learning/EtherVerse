@@ -6,13 +6,13 @@ import { useTradeStore } from "@/lib/tradeStore";
 
 const COLORS = {
   purple: "#4b0082", // Dark purple
-  neonGreen: "#39FF14", // Neon green
-  black: "#0D0D0D",
   white: "#ffffff",
   background: "#0a1026",
   navy: "#172042", // Slightly lighter navy blue
   textWhite: "#ffffff",
   textGray: "#b0b8c1",
+  lightGray: "#d1d5db",
+  darkGray: "#374151",
 };
 
 export default function HistoryPage() {
@@ -66,55 +66,66 @@ export default function HistoryPage() {
     >
       {/* Header */}
       <div
-        className="p-4 flex items-center"
+        className="p-4 flex items-center justify-between"
         style={{
-          background: `linear-gradient(90deg, ${COLORS.purple}, ${COLORS.neonGreen})`,
+          background: COLORS.navy,
           color: COLORS.textWhite,
+          borderBottom: `1px solid ${COLORS.purple}`,
         }}
       >
-        {/* Uncomment if you want a back button */}
-        {/* <Link href="/trade" className="mr-4 text-2xl" style={{ color: COLORS.textWhite }}>←</Link> */}
-        <h1 className="text-lg font-semibold">My contract</h1>
+        <div className="flex items-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="mr-2">
+            <path d="M9 12H15M9 16H15M9 8H15M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z" 
+                  stroke={COLORS.textWhite} strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+          <h1 className="text-lg font-semibold">Trade History</h1>
+        </div>
+        <span className="text-sm px-3 py-1 rounded-full" 
+              style={{ 
+                background: COLORS.purple, 
+                color: COLORS.textWhite 
+              }}>
+          Demo Account
+        </span>
       </div>
 
       {/* Tabs */}
-      <div className="flex justify-between p-4 items-center">
-        <div className="flex gap-4">
+      <div className="flex p-4 items-center justify-between">
+        <div className="flex gap-2 rounded-lg p-1" style={{ background: COLORS.navy }}>
           <button
             onClick={() => setTab("wait")}
-            className="pb-1"
+            className="px-4 py-2 rounded-md transition-all"
             style={{
-              borderBottom: tab === "wait" ? `2px solid ${COLORS.purple}` : "none",
-              color: tab === "wait" ? COLORS.neonGreen : COLORS.textGray,
-              fontWeight: tab === "wait" ? 700 : 400,
-              background: "transparent",
+              background: tab === "wait" ? COLORS.purple : "transparent",
+              color: tab === "wait" ? COLORS.textWhite : COLORS.textGray,
+              fontWeight: tab === "wait" ? 600 : 400,
             }}
           >
-            wait
+            Pending
           </button>
           <button
             onClick={() => setTab("finished")}
-            className="pb-1"
+            className="px-4 py-2 rounded-md transition-all"
             style={{
-              borderBottom: tab === "finished" ? `2px solid ${COLORS.purple}` : "none",
-              color: tab === "finished" ? COLORS.neonGreen : COLORS.textGray,
-              fontWeight: tab === "finished" ? 700 : 400,
-              background: "transparent",
+              background: tab === "finished" ? COLORS.purple : "transparent",
+              color: tab === "finished" ? COLORS.textWhite : COLORS.textGray,
+              fontWeight: tab === "finished" ? 600 : 400,
             }}
           >
-            finished
+            Completed
           </button>
         </div>
-        <span className="text-sm" style={{ color: COLORS.textGray }}>
-          {/* You can display account type here if you have such state */}
-          Demo Account
-        </span>
       </div>
 
       {/* Trade list */}
       <div className="p-4 space-y-3">
         {filtered.length === 0 && (
-          <p className="text-center" style={{ color: COLORS.textGray }}>No more</p>
+          <div className="text-center py-8" style={{ color: COLORS.textGray }}>
+            <svg className="mx-auto mb-4 w-12 h-12" fill="none" stroke={COLORS.textGray} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <p>No trades found</p>
+          </div>
         )}
         {filtered.map((trade) => {
           const start = new Date(trade.id).getTime();
@@ -126,30 +137,47 @@ export default function HistoryPage() {
             <Link
               key={trade.id}
               href={`/tradeHistory/${trade.id}`}
-              className="flex justify-between p-4 rounded-lg shadow hover:shadow-md transition"
+              className="flex justify-between p-4 rounded-xl shadow hover:shadow-lg transition-all duration-200"
               style={{
                 background: COLORS.navy,
                 color: COLORS.textWhite,
                 border: `1px solid ${COLORS.purple}`,
               }}
             >
-              <div>
-                <div className="flex items-center gap-2">
-                  <span style={{ color: COLORS.neonGreen }}>🪙</span>
-                  <span className="font-semibold">{trade.pair}</span>
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg" style={{ background: COLORS.background }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 12H15M9 16H15M9 8H15M5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21Z" 
+                          stroke={COLORS.textWhite} strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
                 </div>
-                <p className="text-xs" style={{ color: COLORS.textGray }}>
-                  {trade.date} {trade.status === "wait" && `• ⏳ ${remaining}s`}
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold">{trade.pair}</span>
+                    <span className="text-xs px-2 py-1 rounded-full" 
+                          style={{ 
+                            background: trade.direction === "Buy long" ? "#10B981" : "#EF4444",
+                            color: COLORS.textWhite
+                          }}>
+                      {trade.direction}
+                    </span>
+                  </div>
+                  <p className="text-xs" style={{ color: COLORS.textGray }}>
+                    {trade.date} {trade.status === "wait" && `• ${remaining}s remaining`}
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="font-semibold text-lg">
+                  {trade.profit >= 0 ? "+" : ""}{trade.profit.toFixed(2)}
+                </p>
+                <p className="text-xs" style={{ 
+                  color: trade.profit >= 0 ? COLORS.textWhite : "#EF4444",
+                  opacity: 0.8 
+                }}>
+                  USDT
                 </p>
               </div>
-              <p
-                className="font-semibold"
-                style={{
-                  color: trade.profit >= 0 ? COLORS.neonGreen : "#ff3b3b",
-                }}
-              >
-                {trade.profit}
-              </p>
             </Link>
           );
         })}

@@ -121,7 +121,7 @@ export default function WalletPage() {
       balance: "0.00 DOT",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/121/large/polkadot.png",
+      logo: "https://static.coingecko.com/s/polkadot-73b0c058cae10a2f076a82dcade5cbe38601fad05d5e6211188f09eb96fa4617.gif",
     },
     {
       name: "LTC Wallet",
@@ -139,7 +139,7 @@ export default function WalletPage() {
       balance: "0.00 LINK",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/877/large/chainlink.png",
+      logo: "https://assets.coingecko.com/coins/images/877/standard/chainlink-new-logo.png",
     },
     {
       name: "UNI Wallet",
@@ -148,7 +148,7 @@ export default function WalletPage() {
       balance: "0.00 UNI",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/125/large/uniswap.png",
+      logo: "https://assets.coingecko.com/coins/images/50744/standard/CUQw_tZe_400x400.jpg",
     },
     {
       name: "AVAX Wallet",

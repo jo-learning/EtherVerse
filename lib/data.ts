@@ -15,6 +15,12 @@ export const coins: Coin[] = [
   { symbol: "ADA", name: "ADA Coin", priceUsd: "0", change24hPct: 0.0512, spark: [1,1,2,3,4,5,6,6,7,7], logo: "https://assets.coingecko.com/coins/images/975/large/cardano.png" },
   { symbol: "DOGE", name: "DOGE Coin", priceUsd: "0", change24hPct: 0.0271, spark: [2,2,3,3,4,3,4,4,5,5], logo: "https://assets.coingecko.com/coins/images/5/large/dogecoin.png" },
   { symbol: "EOS", name: "EOS Coin", priceUsd: "0", change24hPct: 0.0152, spark: [1,2,2,1,2,3,2,3,3,4], logo: "https://assets.coingecko.com/coins/images/7383/large/eos-eos-logo.png" },
+{ symbol: "XAU", name: "Gold", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "https://example.com/gold.png" },
+{ symbol: "XAG", name: "Silver", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://example.com/silver.png" },
+{ symbol: "XPT", name: "Platinum", priceUsd: "0", change24hPct: 0.0032, spark: [4,5,4,6,6,7,6,8,8,9], logo: "https://example.com/platinum.png" },
+{ symbol: "EUR", name: "Euro", priceUsd: "0", change24hPct: 0.0005, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://example.com/euro.png" },
+{ symbol: "GBP", name: "British Pound", priceUsd: "0", change24hPct: 0.0007, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://example.com/pound.png" },
+{ symbol: "JPY", name: "Japanese Yen", priceUsd: "0", change24hPct: 0.0003, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://example.com/yen.png" },
 ];
 
 export const walletsData: Wallet[] = [

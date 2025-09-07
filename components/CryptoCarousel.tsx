@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const CryptoCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -14,7 +15,8 @@ const CryptoCarousel = () => {
       buttonText: "Trade Now",
       buttonColor: "from-purple-600 to-blue-500",
       image: "slider 1.jpg", // Your image path
-      cryptoElements: ["₿", "Ξ", "◎"]
+      cryptoElements: ["₿", "Ξ", "◎"],
+      link: "/leverage" // Add link for each slide
     },
     {
       title: "Secure Crypto Wallet",
@@ -22,7 +24,8 @@ const CryptoCarousel = () => {
       buttonText: "Learn More",
       buttonColor: "from-green-500 to-teal-500",
       image: "slider 1.jpg", // Your image path
-      cryptoElements: ["₿", "€", "£"]
+      cryptoElements: ["₿", "€", "£"],
+      link: "/leverage" // Add link for each slide
     },
     {
       title: "Advanced Market Analysis",
@@ -30,7 +33,8 @@ const CryptoCarousel = () => {
       buttonText: "Explore Tools",
       buttonColor: "from-orange-500 to-red-500",
       image: "slider 1.jpg", // Your image path
-      cryptoElements: ["$", "¥", "₿"]
+      cryptoElements: ["$", "¥", "₿"],
+      link: "/leverage" // Add link for each slide
     }
   ];
 
@@ -75,46 +79,36 @@ const CryptoCarousel = () => {
                     : 'opacity-0 translate-x-10 scale-95'
               }`}
             >
-              {/* Background Image */}
-              <div className="absolute inset-0 rounded-2xl overflow-hidden">
+              {/* Background Image with Link */}
+              <Link href={slide.link} className="absolute inset-0 rounded-2xl overflow-hidden cursor-pointer">
                 <img
                   src={slide.image}
                   alt={slide.title}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40"></div>
-              </div>
-              
-              {/* Animated crypto elements floating in background */}
-              {/* {slide.cryptoElements.map((element, i) => (
-                <div 
-                  key={i}
-                  className="absolute text-3xl opacity-30 animate-float"
-                  style={{
-                    top: `${20 + (i * 25)}%`,
-                    left: `${10 + (i * 25)}%`,
-                    animationDelay: `${i * 0.5}s`,
-                    animationDuration: `${5 + i * 2}s`
-                  }}
-                >
-                  {element}
-                </div>
-              ))} */}
+              </Link>
               
               {/* Main slide content */}
               <div className="absolute inset-0 rounded-2xl overflow-hidden ">
                 <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
                 
                 <div className="absolute inset-0 flex flex-col justify-start items-start pt-5 pl-2 pr-15 md:pl-10 text-white">
-                  <h2 className="text-xl md:text-2xl font-bold mb-2 drop-shadow-lg max-w-xs">
-                    {slide.title}
-                  </h2>
-                  <p className="text-sm mb-4 drop-shadow-md max-w-xs text-gray-100">
-                    {slide.description}
-                  </p>
-                  {/* <button className={`bg-gradient-to-r ${slide.buttonColor} hover:scale-105 transition-transform text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-lg backdrop-blur-sm border border-white/10`}>
-                    {slide.buttonText}
-                  </button> */}
+                  <Link href={slide.link} className="cursor-pointer">
+                    <h2 className="text-xl md:text-2xl font-bold mb-2 drop-shadow-lg max-w-xs hover:opacity-90 transition-opacity">
+                      {slide.title}
+                    </h2>
+                  </Link>
+                  <Link href={slide.link} className="cursor-pointer">
+                    <p className="text-sm mb-4 drop-shadow-md max-w-xs text-gray-100 hover:opacity-90 transition-opacity">
+                      {slide.description}
+                    </p>
+                  </Link>
+                  {/* <Link href={slide.link}>
+                    <button className={`bg-gradient-to-r ${slide.buttonColor} hover:scale-105 transition-transform text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-lg backdrop-blur-sm border border-white/10 cursor-pointer`}>
+                      {slide.buttonText}
+                    </button>
+                  </Link> */}
                 </div>
                 
                 {/* Digital particles effect */}
