@@ -14,6 +14,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi"; // Hamburger icon
 import { usePathname, useRouter } from "next/navigation";
 import { LoadingProvider } from "@/components/loadingPage";
+import { useAccount } from "wagmi";
 
 // var uId = 60600242;
 
@@ -48,10 +49,11 @@ export default function RootLayout({
   const [uId, setUId] = useState(60600242)
   const router = useRouter();
   const pathname = usePathname();
+  const { address } = useAccount();
 
   const getUserId = async () => {
     try {
-      const address = window.ethereum?.selectedAddress;
+      // const address = window.ethereum?.selectedAddress;
       if (!address) {
         console.error("No Ethereum address found");
         // uId = 1111;
@@ -82,7 +84,7 @@ export default function RootLayout({
 
   useEffect(() => {
     getUserId();
-  }, []);
+  }, [address]);
 
   const showBackButton = pathname.split("/").length === 3 || pathname.split("/").length === 4;
   const showSavingButton = pathname.split("/").length === 3 && pathname.startsWith("/wallets");

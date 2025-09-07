@@ -15,6 +15,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 import { AiOutlineBars, AiOutlineClose } from "react-icons/ai";
 import { log } from "console";
 import { useLoading } from "@/components/loadingPage";
+import { useAccount } from "wagmi";
 
 // Color palette
 const COLORS = {
@@ -32,6 +33,7 @@ export default function WalletPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [activeWallet, setActiveWallet] = useState("USDT Wallet");
   const [searchQuery, setSearchQuery] = useState("");
+  const { address} = useAccount();
   const [wallets, setWallets] = useState([
     {
       name: "BTC Wallet",
@@ -377,7 +379,7 @@ export default function WalletPage() {
 
   const getWallets = async () => {
     try {
-      const address = window.ethereum?.selectedAddress;
+      // const address = window.ethereum?.selectedAddress;
       const response = await fetch(`/api/getUserAddress?userId=${address}`);
       const data = await response.json();
 
@@ -427,7 +429,7 @@ export default function WalletPage() {
 
   useEffect(() => {
     getWallets();
-  }, []);
+  }, [address]);
 
   return (
     <div

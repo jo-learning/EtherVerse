@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaQrcode, FaPaperPlane, FaSync, FaWallet, FaCoins, FaLock, FaArrowLeft, FaExchangeAlt } from "react-icons/fa";
 import Link from "next/link";
+import { useAccount } from "wagmi";
 
 // Color palette
 const COLORS = {
@@ -29,11 +30,12 @@ export default function CoinWalletClient({ coin }: Props) {
   const staticCoins = getWallet(coin);
   const [coinData, setCoins] = useState(staticCoins);
   const [showContactModal, setShowContactModal] = useState(false);
+  const { address } = useAccount();
 
   useEffect(() => {
-    const address = window.ethereum?.selectedAddress;
-    fetchWallet(coin, address).then(setCoins);
-  }, []);
+    // const address = window.ethereum?.selectedAddress;
+    fetchWallet(coin, address ?? "").then(setCoins);
+  }, [address]);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(coinData?.address ? coinData?.address : "");

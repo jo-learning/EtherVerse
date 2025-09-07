@@ -18,7 +18,7 @@ const COLORS = {
 };
 
 export default function HomePage() {
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const [loading, setLoading] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
   // const { setLoading } = useLoading();
@@ -39,7 +39,7 @@ export default function HomePage() {
   useEffect(() => {
     if (isConnected) {
       setLoading(true);
-      const address = window.ethereum?.selectedAddress;
+      // const address = window.ethereum?.selectedAddress;
       if (address) {
         createUser(address);
       }
