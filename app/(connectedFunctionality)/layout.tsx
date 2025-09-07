@@ -15,7 +15,7 @@ import { FiMenu } from "react-icons/fi"; // Hamburger icon
 import { usePathname, useRouter } from "next/navigation";
 import { LoadingProvider } from "@/components/loadingPage";
 
-var uId = 60600242;
+// var uId = 60600242;
 
 const menuItems = [
   { icon: <FaUser size={16} />, label: "Account", route: "/account" },
@@ -45,6 +45,7 @@ export default function RootLayout({
 }>) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uId, setUId] = useState(60600242)
   const router = useRouter();
   const pathname = usePathname();
 
@@ -53,7 +54,8 @@ export default function RootLayout({
       const address = window.ethereum?.selectedAddress;
       if (!address) {
         console.error("No Ethereum address found");
-        uId = 1111;
+        // uId = 1111;
+        setUId(1111)
         return;
       }
       const response = await fetch(`/api/getId?userId=${address}`, {
@@ -61,8 +63,9 @@ export default function RootLayout({
         headers: { "Content-Type": "application/json" },
       });
       const data = await response.json();
-      uId = data.uId.userId;
-      console.log(data);
+      const uId1 = data.uId.userId;
+      setUId(uId1)
+      // console.log(data);
     } catch (error) {
       console.error("Error creating user:", error);
     }
