@@ -26,21 +26,21 @@ const NEWS = [
     url: "#",
     time: "2m ago",
     source: "CryptoNews",
-    image: "https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=029",
+    image: "/images.jpeg",
   },
   {
     title: "Ethereum 2.0 upgrade launches successfully",
     url: "#",
     time: "10m ago",
     source: "CoinDesk",
-    image: "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=029",
+    image: "/image1.jpg",
   },
   {
     title: "Binance announces new trading pairs",
     url: "#",
     time: "30m ago",
     source: "Binance Blog",
-    image: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=029",
+    image: "/image3.webp",
   }
 ];
 
@@ -176,7 +176,7 @@ export default function Page() {
                           width: 48,
                           height: 48,
                           objectFit: "cover",
-                          border: `2px solid ${COLORS.neonGreen}`,
+                          border: `2px solid ${COLORS.textGray}`,
                           background: COLORS.background
                         }}
                       />
@@ -197,7 +197,7 @@ export default function Page() {
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs px-2 py-0.5 rounded-full" style={{
                           background: COLORS.background,
-                          color: COLORS.neonGreen,
+                          color: COLORS.purple,
                           fontWeight: 600,
                           letterSpacing: 0.5
                         }}>
@@ -206,7 +206,7 @@ export default function Page() {
                         <span className="text-xs" style={{ color: COLORS.textGray || "#b0b8c1" }}>{news.time}</span>
                       </div>
                     </div>
-                    <span className="ml-2 text-lg" style={{ color: COLORS.neonGreen }}>→</span>
+                    <span className="ml-2 text-lg" style={{ color: COLORS.textGray }}>→</span>
                   </li>
                 ))}
               </ul>

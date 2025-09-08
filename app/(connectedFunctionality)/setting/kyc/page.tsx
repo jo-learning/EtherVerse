@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 
 // Color theme constants
 const COLORS = {
@@ -108,251 +108,317 @@ export default function KYCPage() {
 
   return (
     <div className="min-h-screen p-6" style={{ background: COLORS.background }}>
-      <h1 className="text-2xl font-bold mb-4" style={{ color: COLORS.neonGreen }}>KYC Verification</h1>
-      <p className="mb-6" style={{ color: COLORS.textGray }}>
-        Upload your documents and verify your identity to enable full dApp features.
-      </p>
-      {kycData ? (
-        <div className="max-w-md mx-auto rounded-xl shadow p-6 space-y-4" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
-          <h2 className="text-xl font-bold mb-2" style={{ color: COLORS.neonGreen }}>KYC Information</h2>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>Country:</span> {kycData.country}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>First Name:</span> {kycData.firstName}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>Last Name:</span> {kycData.lastName}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>Certificate Type:</span> {kycData.certificateType}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>Certificate Number:</span> {kycData.certificateNumber}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>ID Phone:</span> {kycData.idPhone}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>ID Front:</span> {kycData.idFront}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>ID Back:</span> {kycData.idBack}</div>
-          <div><span className="font-medium" style={{ color: COLORS.neonGreen }}>Hand-held ID:</span> {kycData.handHeld}</div>
-          <div className="mt-4 font-bold" style={{ color: COLORS.neonGreen }}>KYC Status: Approved!</div>
-        </div>
-      ) : (
-        <form
-          className="max-w-md mx-auto rounded-xl shadow p-6 space-y-4"
-          style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}
-          onSubmit={handleSubmit}
-        >
-          <div>
-            <label className="block font-medium mb-1" style={{ color: COLORS.textWhite }}>Country</label>
-            <select
-              required
-              value={country}
-              onChange={e => setCountry(e.target.value)}
-              className="w-full p-2 rounded-lg"
-              style={{
-                border: `1px solid ${COLORS.purple}`,
-                background: COLORS.background,
-                color: COLORS.textWhite,
-              }}
-            >
-              <option value="">Select Country</option>
-              <option value="United States">United States</option>
-              <option value="Canada">Canada</option>
-              <option value="United Kingdom">United Kingdom</option>
-              <option value="Australia">Australia</option>
-              <option value="Germany">Germany</option>
-              <option value="France">France</option>
-              <option value="India">India</option>
-              <option value="Japan">Japan</option>
-              <option value="China">China</option>
-              <option value="Brazil">Brazil</option>
-              {/* ... */}
-            </select>
-          </div>
-          <div>
-            <label className="block font-medium mb-1" style={{ color: COLORS.textWhite }}>First Name</label>
-            <input
-              type="text"
-              required
-              value={firstName}
-              onChange={e => setFirstName(e.target.value)}
-              className="w-full p-2 rounded-lg"
-              style={{
-                border: `1px solid ${COLORS.purple}`,
-                background: COLORS.background,
-                color: COLORS.textWhite,
-              }}
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1" style={{ color: COLORS.textWhite }}>Last Name</label>
-            <input
-              type="text"
-              required
-              value={lastName}
-              onChange={e => setLastName(e.target.value)}
-              className="w-full p-2 rounded-lg"
-              style={{
-                border: `1px solid ${COLORS.purple}`,
-                background: COLORS.background,
-                color: COLORS.textWhite,
-              }}
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1" style={{ color: COLORS.textWhite }}>Certificate Type</label>
-            <select
-              required
-              value={certificateType}
-              onChange={e => setCertificateType(e.target.value)}
-              className="w-full p-2 rounded-lg"
-              style={{
-                border: `1px solid ${COLORS.purple}`,
-                background: COLORS.background,
-                color: COLORS.textWhite,
-              }}
-            >
-              <option value="">Select Certificate Type</option>
-              <option value="Passport">Passport</option>
-              <option value="National ID">National ID</option>
-              <option value="Driver's License">Driver's License</option>
-            </select>
-          </div>
-          <div>
-            <label className="block font-medium mb-1" style={{ color: COLORS.textWhite }}>Certificate Number</label>
-            <input
-              type="text"
-              required
-              value={certificateNumber}
-              onChange={e => setCertificateNumber(e.target.value)}
-              className="w-full p-2 rounded-lg"
-              style={{
-                border: `1px solid ${COLORS.purple}`,
-                background: COLORS.background,
-                color: COLORS.textWhite,
-              }}
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1" style={{ color: COLORS.textWhite }}>ID Phone</label>
-            <input
-              type="text"
-              required
-              value={idPhone}
-              onChange={e => setIdPhone(e.target.value)}
-              className="w-full p-2 rounded-lg"
-              style={{
-                border: `1px solid ${COLORS.purple}`,
-                background: COLORS.background,
-                color: COLORS.textWhite,
-              }}
-            />
-          </div>
-          {/* Image Uploaders */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block font-medium mb-1" style={{ color: COLORS.neonGreen }}>Photo of the ID (Front)</label>
-              <div className="flex flex-col items-center">
-                <label style={{ cursor: "pointer" }}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => handleImageChange(e, setIdFront)}
-                    className="hidden"
-                  />
-                  <canvas
-                    ref={idFrontRef}
-                    width={200}
-                    height={120}
-                    style={{
-                      border: `1px solid ${COLORS.purple}`,
-                      background: COLORS.background,
-                      borderRadius: 8,
-                      display: "block",
-                    }}
-                  />
-                </label>
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold mb-2 text-center" style={{ color: COLORS.neonGreen }}>KYC Verification</h1>
+        <p className="mb-8 text-center" style={{ color: COLORS.textGray }}>
+          Complete your Know Your Customer verification to access all platform features
+        </p>
+        
+        {kycData ? (
+          <div className="rounded-xl shadow-lg p-8 space-y-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
+            <div className="flex items-center justify-center mb-6">
+              <FaCheckCircle size={32} className="mr-3" style={{ color: COLORS.neonGreen }} />
+              <h2 className="text-2xl font-bold" style={{ color: COLORS.neonGreen }}>KYC Verified Successfully!</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex justify-between border-b pb-2" style={{ borderColor: COLORS.purple }}>
+                  <span className="font-medium" style={{ color: COLORS.neonGreen }}>Country:</span>
+                  <span>{kycData.country}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2" style={{ borderColor: COLORS.purple }}>
+                  <span className="font-medium" style={{ color: COLORS.neonGreen }}>First Name:</span>
+                  <span>{kycData.firstName}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2" style={{ borderColor: COLORS.purple }}>
+                  <span className="font-medium" style={{ color: COLORS.neonGreen }}>Last Name:</span>
+                  <span>{kycData.lastName}</span>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex justify-between border-b pb-2" style={{ borderColor: COLORS.purple }}>
+                  <span className="font-medium" style={{ color: COLORS.neonGreen }}>Certificate Type:</span>
+                  <span>{kycData.certificateType}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2" style={{ borderColor: COLORS.purple }}>
+                  <span className="font-medium" style={{ color: COLORS.neonGreen }}>Certificate Number:</span>
+                  <span>{kycData.certificateNumber}</span>
+                </div>
+                <div className="flex justify-between border-b pb-2" style={{ borderColor: COLORS.purple }}>
+                  <span className="font-medium" style={{ color: COLORS.neonGreen }}>ID Phone:</span>
+                  <span>{kycData.idPhone}</span>
+                </div>
               </div>
             </div>
-            <div>
-              <label className="block font-medium mb-1" style={{ color: COLORS.neonGreen }}>Photo of the ID (Back)</label>
-              <div className="flex flex-col items-center">
-                <label style={{ cursor: "pointer" }}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => handleImageChange(e, setIdBack)}
-                    className="hidden"
-                  />
-                  <canvas
-                    ref={idBackRef}
-                    width={200}
-                    height={120}
-                    style={{
-                      border: `1px solid ${COLORS.purple}`,
-                      background: COLORS.background,
-                      borderRadius: 8,
-                      display: "block",
-                    }}
-                  />
-                </label>
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block font-medium mb-1" style={{ color: COLORS.neonGreen }}>Photo of your hand-held ID</label>
-              <div className="flex flex-col items-center">
-                <label style={{ cursor: "pointer" }}>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => handleImageChange(e, setHandHeld)}
-                    className="hidden"
-                  />
-                  <canvas
-                    ref={handHeldRef}
-                    width={200}
-                    height={120}
-                    style={{
-                      border: `1px solid ${COLORS.purple}`,
-                      background: COLORS.background,
-                      borderRadius: 8,
-                      display: "block",
-                    }}
-                  />
-                </label>
-              </div>
+            
+            <div className="mt-8 p-4 rounded-lg text-center" style={{ background: COLORS.background }}>
+              <span className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>Your KYC status: Verified</span>
             </div>
           </div>
-          <button
-            type="submit"
-            className="w-full py-2 rounded-lg font-bold transition"
-            style={{
-              background: COLORS.purple,
-              color: COLORS.neonGreen,
-              border: `1px solid ${COLORS.neonGreen}`,
-            }}
-            onMouseOver={e => {
-              (e.currentTarget as HTMLElement).style.background = COLORS.neonGreen;
-              (e.currentTarget as HTMLElement).style.color = COLORS.black;
-            }}
-            onMouseOut={e => {
-              (e.currentTarget as HTMLElement).style.background = COLORS.purple;
-              (e.currentTarget as HTMLElement).style.color = COLORS.neonGreen;
-            }}
+        ) : (
+          <form
+            className="rounded-xl shadow-lg p-8 space-y-6"
+            style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}
+            onSubmit={handleSubmit}
           >
-            Submit KYC
-          </button>
-        </form>
-      )}
-      {/* Status */}
-      {status === "pending" && (
-        <div className="mt-6 max-w-md mx-auto p-4 rounded-xl shadow text-center flex flex-col items-center"
-          style={{ background: COLORS.navy, color: COLORS.neonGreen, border: `1px solid ${COLORS.purple}` }}>
-          <span className="font-bold mb-2">KYC Status: Pending...</span>
-          <div className="w-8 h-8 border-4" style={{
-            borderColor: COLORS.purple,
-            borderTopColor: "transparent",
-            borderRadius: "9999px",
-            animation: "spin 1s linear infinite"
-          }}></div>
-        </div>
-      )}
-      {status === "rejected" && (
-        <div className="mt-6 max-w-md mx-auto p-4 rounded-xl shadow text-center"
-          style={{ background: COLORS.navy, color: "#ff1744", border: `1px solid ${COLORS.purple}` }}>
-          <span className="font-bold">KYC Status: Rejected</span>
-        </div>
-      )}
+            {/* Form fields with labels and inputs side by side */}
+            <div className="space-y-6">
+              <div className="flex flex-row md:flex-row md:items-center gap-4">
+                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Country</label>
+                <select
+                  required
+                  value={country}
+                  onChange={e => setCountry(e.target.value)}
+                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  style={{
+                    border: `1px solid ${COLORS.purple}`,
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                  }}
+                >
+                  <option value="">Select Country</option>
+                  <option value="United States">United States</option>
+                  <option value="Canada">Canada</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Germany">Germany</option>
+                  <option value="France">France</option>
+                  <option value="India">India</option>
+                  <option value="Japan">Japan</option>
+                  <option value="China">China</option>
+                  <option value="Brazil">Brazil</option>
+                </select>
+              </div>
+              
+              <div className="flex flex-row md:flex-row md:items-center gap-4">
+                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Certificate Type</label>
+                <select
+                  required
+                  value={certificateType}
+                  onChange={e => setCertificateType(e.target.value)}
+                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  style={{
+                    border: `1px solid ${COLORS.purple}`,
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                  }}
+                >
+                  <option value="">Select Certificate Type</option>
+                  <option value="Passport">Passport</option>
+                  <option value="National ID">National ID</option>
+                  <option value="Driver's License">Driver's License</option>
+                </select>
+              </div>
+              
+              <div className="flex flex-row md:flex-row md:items-center gap-4">
+                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>First Name</label>
+                <input
+                  type="text"
+                  required
+                  value={firstName}
+                  onChange={e => setFirstName(e.target.value)}
+                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  style={{
+                    border: `1px solid ${COLORS.purple}`,
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                  }}
+                />
+              </div>
+              
+              <div className="flex flex-row md:flex-row md:items-center gap-4">
+                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Last Name</label>
+                <input
+                  type="text"
+                  required
+                  value={lastName}
+                  onChange={e => setLastName(e.target.value)}
+                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  style={{
+                    border: `1px solid ${COLORS.purple}`,
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                  }}
+                />
+              </div>
+              
+              <div className="flex flex-row md:flex-row md:items-center gap-4">
+                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Certificate Number</label>
+                <input
+                  type="text"
+                  required
+                  value={certificateNumber}
+                  onChange={e => setCertificateNumber(e.target.value)}
+                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  style={{
+                    border: `1px solid ${COLORS.purple}`,
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                  }}
+                />
+              </div>
+              
+              <div className="flex flex-row md:flex-row md:items-center gap-4">
+                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>ID Phone</label>
+                <input
+                  type="text"
+                  required
+                  value={idPhone}
+                  onChange={e => setIdPhone(e.target.value)}
+                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                  style={{
+                    border: `1px solid ${COLORS.purple}`,
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Image Uploaders */}
+            <div className="pt-4">
+              <h3 className="text-xl font-bold mb-4 text-center" style={{ color: COLORS.neonGreen }}>Upload Required Documents</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center">
+                  <label className="block font-medium mb-3 text-lg" style={{ color: COLORS.neonGreen }}>ID Front</label>
+                  <div className="flex flex-col items-center">
+                    <label style={{ cursor: "pointer" }}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handleImageChange(e, setIdFront)}
+                        className="hidden"
+                      />
+                      <canvas
+                        ref={idFrontRef}
+                        width={200}
+                        height={120}
+                        className="transition-all hover:opacity-80"
+                        style={{
+                          border: `2px dashed ${COLORS.purple}`,
+                          background: COLORS.background,
+                          borderRadius: 12,
+                          display: "block",
+                        }}
+                      />
+                    </label>
+                    <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Click to upload front of ID</p>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <label className="block font-medium mb-3 text-lg" style={{ color: COLORS.neonGreen }}>ID Back</label>
+                  <div className="flex flex-col items-center">
+                    <label style={{ cursor: "pointer" }}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handleImageChange(e, setIdBack)}
+                        className="hidden"
+                      />
+                      <canvas
+                        ref={idBackRef}
+                        width={200}
+                        height={120}
+                        className="transition-all hover:opacity-80"
+                        style={{
+                          border: `2px dashed ${COLORS.purple}`,
+                          background: COLORS.background,
+                          borderRadius: 12,
+                          display: "block",
+                        }}
+                      />
+                    </label>
+                    <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Click to upload back of ID</p>
+                  </div>
+                </div>
+                
+                <div className="text-center">
+                  <label className="block font-medium mb-3 text-lg" style={{ color: COLORS.neonGreen }}>Hand-held ID</label>
+                  <div className="flex flex-col items-center">
+                    <label style={{ cursor: "pointer" }}>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={e => handleImageChange(e, setHandHeld)}
+                        className="hidden"
+                      />
+                      <canvas
+                        ref={handHeldRef}
+                        width={200}
+                        height={120}
+                        className="transition-all hover:opacity-80"
+                        style={{
+                          border: `2px dashed ${COLORS.purple}`,
+                          background: COLORS.background,
+                          borderRadius: 12,
+                          display: "block",
+                        }}
+                      />
+                    </label>
+                    <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Click to upload hand-held ID</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <button
+              type="submit"
+              className="w-full py-3 rounded-lg font-bold text-lg transition-all transform hover:scale-105 mt-6"
+              style={{
+                background: COLORS.purple,
+                color: COLORS.neonGreen,
+                border: `2px solid ${COLORS.neonGreen}`,
+              }}
+              onMouseOver={e => {
+                (e.currentTarget as HTMLElement).style.background = COLORS.neonGreen;
+                (e.currentTarget as HTMLElement).style.color = COLORS.black;
+              }}
+              onMouseOut={e => {
+                (e.currentTarget as HTMLElement).style.background = COLORS.purple;
+                (e.currentTarget as HTMLElement).style.color = COLORS.neonGreen;
+              }}
+            >
+              Submit Verification
+            </button>
+          </form>
+        )}
+        
+        {/* Status Indicators */}
+        {status === "pending" && (
+          <div className="mt-8 p-6 rounded-xl shadow-lg text-center flex flex-col items-center"
+            style={{ background: COLORS.navy, color: COLORS.neonGreen, border: `1px solid ${COLORS.purple}` }}>
+            <FaClock size={40} className="mb-4 animate-pulse" />
+            <span className="font-bold text-xl mb-2">KYC Verification In Progress</span>
+            <p style={{ color: COLORS.textGray }}>Please wait while we verify your information...</p>
+            <div className="w-12 h-12 border-4 mt-4" style={{
+              borderColor: COLORS.purple,
+              borderTopColor: "transparent",
+              borderRadius: "9999px",
+              animation: "spin 1s linear infinite"
+            }}></div>
+          </div>
+        )}
+        
+        {status === "rejected" && (
+          <div className="mt-8 p-6 rounded-xl shadow-lg text-center flex flex-col items-center"
+            style={{ background: COLORS.navy, color: "#ff1744", border: `1px solid ${COLORS.purple}` }}>
+            <FaTimesCircle size={40} className="mb-4" />
+            <span className="font-bold text-xl">KYC Verification Failed</span>
+            <p className="mt-2" style={{ color: COLORS.textGray }}>Please check your information and try again</p>
+          </div>
+        )}
+      </div>
+      
+      <style jsx>{`
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

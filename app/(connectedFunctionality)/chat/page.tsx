@@ -21,6 +21,16 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Add welcome message on component mount
+  useEffect(() => {
+    const welcomeMessage = {
+      who: "service",
+      message: "Welcome to our customer support! How may I assist you today? Please let me know if you have any questions or concerns.",
+      createdAt: new Date().toLocaleString()
+    };
+    setMessages([welcomeMessage]);
+  }, []);
+
   // Fetch chats on mount
   useEffect(() => {
     async function fetchChats() {
@@ -30,11 +40,14 @@ export default function ChatPage() {
         const res = await fetch(`/api/chat/get?address=${encodeURIComponent(address)}`);
         const data = await res.json();
         if (data.chats) {
-          setMessages(data.chats.map((c: any) => ({
-            who: c.who,
-            message: c.message,
-            createdAt: new Date(c.createdAt).toLocaleString(), // Use createdAt
-          })));
+          setMessages(prev => [
+            ...prev,
+            ...data.chats.map((c: any) => ({
+              who: c.who,
+              message: c.message,
+              createdAt: new Date(c.createdAt).toLocaleString(),
+            }))
+          ]);
         }
       } catch (err) {
         // handle error
@@ -61,7 +74,7 @@ export default function ChatPage() {
           {
             who: data.chat.who || "user",
             message: data.chat.message,
-            createdAt: new Date(data.chat.createdAt).toLocaleString(), // Use createdAt
+            createdAt: new Date(data.chat.createdAt).toLocaleString(),
           },
         ]);
       }

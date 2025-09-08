@@ -16,7 +16,7 @@ export default function SettingPage() {
     <div className="min-h-screen p-3" style={{ background: "#0a1026" }}>
       <h1
         className="text-3xl font-bold mb-8"
-        style={{ color: "#39FF14" }}
+        style={{ color: "#ffffff" }}
       >
         Settings
       </h1>
@@ -42,7 +42,7 @@ export default function SettingPage() {
           >
             <span
               className="text-2xl"
-              style={{ color: "#39FF14" }}
+              style={{ color: "#ffffff" }}
             >
               {item.icon}
             </span>
