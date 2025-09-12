@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { FaPlus, FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
+import CustomSelect from "@/components/CustomSelect";
 
 // Color theme constants
 const COLORS = {
@@ -158,216 +159,241 @@ export default function KYCPage() {
             </div>
           </div>
         ) : (
-          <form
-            className="rounded-xl shadow-lg p-8 space-y-6"
-            style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}
-            onSubmit={handleSubmit}
-          >
-            {/* Form fields with labels and inputs side by side */}
-            <div className="space-y-6">
-              <div className="flex flex-row md:flex-row md:items-center gap-4">
-                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Country</label>
-                <select
-                  required
-                  value={country}
-                  onChange={e => setCountry(e.target.value)}
-                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  style={{
-                    border: `1px solid ${COLORS.purple}`,
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                  }}
-                >
-                  <option value="">Select Country</option>
-                  <option value="United States">United States</option>
-                  <option value="Canada">Canada</option>
-                  <option value="United Kingdom">United Kingdom</option>
-                  <option value="Australia">Australia</option>
-                  <option value="Germany">Germany</option>
-                  <option value="France">France</option>
-                  <option value="India">India</option>
-                  <option value="Japan">Japan</option>
-                  <option value="China">China</option>
-                  <option value="Brazil">Brazil</option>
-                </select>
-              </div>
+          <>
+            {/* Personal Information Card */}
+            <div className="rounded-xl shadow-lg p-8 mb-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
+              <h2 className="text-xl font-bold mb-6 text-center" style={{ color: COLORS.neonGreen }}>Personal Information</h2>
               
-              <div className="flex flex-row md:flex-row md:items-center gap-4">
-                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Certificate Type</label>
-                <select
-                  required
-                  value={certificateType}
-                  onChange={e => setCertificateType(e.target.value)}
-                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  style={{
-                    border: `1px solid ${COLORS.purple}`,
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                  }}
-                >
-                  <option value="">Select Certificate Type</option>
-                  <option value="Passport">Passport</option>
-                  <option value="National ID">National ID</option>
-                  <option value="Driver's License">Driver's License</option>
-                </select>
-              </div>
+              <form onSubmit={handleSubmit} className="">
+                <div className="">
+                  {/* Country Select */}
+                  <div >
+                    <CustomSelect
+                      value={country}
+                      onChange={e => setCountry(typeof e === "string" ? e : e.target.value)}
+                      options={[
+                        { value: "United States", label: "United States" },
+                        { value: "Canada", label: "Canada" },
+                        { value: "United Kingdom", label: "United Kingdom" },
+                        { value: "Australia", label: "Australia" },
+                        { value: "Germany", label: "Germany" },
+                        { value: "France", label: "France" },
+                        { value: "India", label: "India" },
+                        { value: "Japan", label: "Japan" },
+                        { value: "China", label: "China" },
+                        { value: "Brazil", label: "Brazil" },
+                      ]}
+                      placeholder="Select your country"
+                      required
+                    />
+                  </div>
+
+                  {/* Certificate Type Select */}
+                  <div >
+                    <CustomSelect
+                      value={certificateType}
+                      onChange={e => setCertificateType(typeof e === "string" ? e : e.target.value)}
+                      options={[
+                        { value: "Passport", label: "Passport" },
+                        { value: "National ID", label: "National ID" },
+                        { value: "Driver's License", label: "Driver's License" },
+                      ]}
+                      placeholder="Select certificate type"
+                      required
+                    />
+                  </div>
+
+                  {/* First and Last Name */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4 pl-2">
+                    <div>
+                      <input
+                        type="text"
+                        required
+                        value={firstName}
+                        onChange={e => setFirstName(e.target.value)}
+                        placeholder="First name"
+                        className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
+                        style={{
+                          background: "transparent",
+                          color: COLORS.textWhite,
+                          border: "none",
+                          borderBottom: `2.5px solid ${COLORS.purple}40`,
+                          borderRadius: 0,
+                          fontSize: "1.13rem",
+                          transition: "border-color 0.3s",
+                          minHeight: 40,
+                        }}
+                        onFocus={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}`)}
+                        onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        required
+                        value={lastName}
+                        onChange={e => setLastName(e.target.value)}
+                        placeholder="Last name"
+                        className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
+                        style={{
+                          background: "transparent",
+                          color: COLORS.textWhite,
+                          border: "none",
+                          borderBottom: `2.5px solid ${COLORS.purple}40`,
+                          borderRadius: 0,
+                          fontSize: "1.13rem",
+                          transition: "border-color 0.3s",
+                          minHeight: 40,
+                        }}
+                        onFocus={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}`)}
+                        onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Certificate Number */}
+                  <div className="pb-4 pl-2">
+                    <input
+                      type="text"
+                      required
+                      value={certificateNumber}
+                      onChange={e => setCertificateNumber(e.target.value)}
+                      placeholder="Certificate number"
+                      className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
+                      style={{
+                        background: "transparent",
+                        color: COLORS.textWhite,
+                        border: "none",
+                        borderBottom: `2.5px solid ${COLORS.purple}40`,
+                        borderRadius: 0,
+                        fontSize: "1.13rem",
+                        transition: "border-color 0.3s",
+                        minHeight: 40,
+                      }}
+                      onFocus={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}`)}
+                      onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
+                    />
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="pl-2"> 
+                    <input
+                      type="text"
+                      required
+                      value={idPhone}
+                      onChange={e => setIdPhone(e.target.value)}
+                      placeholder="Phone number"
+                      className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
+                      style={{
+                        background: "transparent",
+                        color: COLORS.textWhite,
+                        border: "none",
+                        borderBottom: `2.5px solid ${COLORS.purple}40`,
+                        borderRadius: 0,
+                        fontSize: "1.13rem",
+                        transition: "border-color 0.3s",
+                        minHeight: 40,
+                      }}
+                      onFocus={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}`)}
+                      onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
+                    />
+                  </div>
+                </div>
+              </form>
+            </div>
+            
+            {/* Photo Upload Card */}
+            <div className="rounded-xl shadow-lg p-8 mb-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
+              <h2 className="text-xl font-bold mb-6 text-center" style={{ color: COLORS.neonGreen }}>Document Upload</h2>
               
-              <div className="flex flex-row md:flex-row md:items-center gap-4">
-                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>First Name</label>
-                <input
-                  type="text"
-                  required
-                  value={firstName}
-                  onChange={e => setFirstName(e.target.value)}
-                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  style={{
-                    border: `1px solid ${COLORS.purple}`,
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                  }}
-                />
-              </div>
-              
-              <div className="flex flex-row md:flex-row md:items-center gap-4">
-                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Last Name</label>
-                <input
-                  type="text"
-                  required
-                  value={lastName}
-                  onChange={e => setLastName(e.target.value)}
-                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  style={{
-                    border: `1px solid ${COLORS.purple}`,
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                  }}
-                />
-              </div>
-              
-              <div className="flex flex-row md:flex-row md:items-center gap-4">
-                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>Certificate Number</label>
-                <input
-                  type="text"
-                  required
-                  value={certificateNumber}
-                  onChange={e => setCertificateNumber(e.target.value)}
-                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  style={{
-                    border: `1px solid ${COLORS.purple}`,
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                  }}
-                />
-              </div>
-              
-              <div className="flex flex-row md:flex-row md:items-center gap-4">
-                <label className="w-full md:w-1/3 font-medium text-lg" style={{ color: COLORS.neonGreen }}>ID Phone</label>
-                <input
-                  type="text"
-                  required
-                  value={idPhone}
-                  onChange={e => setIdPhone(e.target.value)}
-                  className="w-full md:w-2/3 p-3 rounded-lg transition-all focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                  style={{
-                    border: `1px solid ${COLORS.purple}`,
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                  }}
-                />
+              <div className="pt-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="text-center">
+                    <div className="flex flex-col items-center">
+                      <label style={{ cursor: "pointer" }}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handleImageChange(e, setIdFront)}
+                          className="hidden"
+                        />
+                        <canvas
+                          ref={idFrontRef}
+                          width={200}
+                          height={120}
+                          className="transition-all hover:opacity-80"
+                          style={{
+                            border: `2px dashed ${COLORS.purple}`,
+                            background: COLORS.background,
+                            borderRadius: 12,
+                            display: "block",
+                          }}
+                        />
+                      </label>
+                      <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>ID Front</p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="flex flex-col items-center">
+                      <label style={{ cursor: "pointer" }}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handleImageChange(e, setIdBack)}
+                          className="hidden"
+                        />
+                        <canvas
+                          ref={idBackRef}
+                          width={200}
+                          height={120}
+                          className="transition-all hover:opacity-80"
+                          style={{
+                            border: `2px dashed ${COLORS.purple}`,
+                            background: COLORS.background,
+                            borderRadius: 12,
+                            display: "block",
+                          }}
+                        />
+                      </label>
+                      <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>ID Back</p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <div className="flex flex-col items-center">
+                      <label style={{ cursor: "pointer" }}>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handleImageChange(e, setHandHeld)}
+                          className="hidden"
+                        />
+                        <canvas
+                          ref={handHeldRef}
+                          width={200}
+                          height={120}
+                          className="transition-all hover:opacity-80"
+                          style={{
+                            border: `2px dashed ${COLORS.purple}`,
+                            background: COLORS.background,
+                            borderRadius: 12,
+                            display: "block",
+                          }}
+                        />
+                      </label>
+                      <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Hand-held ID</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             
-            {/* Image Uploaders */}
-            <div className="pt-4">
-              <h3 className="text-xl font-bold mb-4 text-center" style={{ color: COLORS.neonGreen }}>Upload Required Documents</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="text-center">
-                  <label className="block font-medium mb-3 text-lg" style={{ color: COLORS.neonGreen }}>ID Front</label>
-                  <div className="flex flex-col items-center">
-                    <label style={{ cursor: "pointer" }}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={e => handleImageChange(e, setIdFront)}
-                        className="hidden"
-                      />
-                      <canvas
-                        ref={idFrontRef}
-                        width={200}
-                        height={120}
-                        className="transition-all hover:opacity-80"
-                        style={{
-                          border: `2px dashed ${COLORS.purple}`,
-                          background: COLORS.background,
-                          borderRadius: 12,
-                          display: "block",
-                        }}
-                      />
-                    </label>
-                    <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Click to upload front of ID</p>
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <label className="block font-medium mb-3 text-lg" style={{ color: COLORS.neonGreen }}>ID Back</label>
-                  <div className="flex flex-col items-center">
-                    <label style={{ cursor: "pointer" }}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={e => handleImageChange(e, setIdBack)}
-                        className="hidden"
-                      />
-                      <canvas
-                        ref={idBackRef}
-                        width={200}
-                        height={120}
-                        className="transition-all hover:opacity-80"
-                        style={{
-                          border: `2px dashed ${COLORS.purple}`,
-                          background: COLORS.background,
-                          borderRadius: 12,
-                          display: "block",
-                        }}
-                      />
-                    </label>
-                    <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Click to upload back of ID</p>
-                  </div>
-                </div>
-                
-                <div className="text-center">
-                  <label className="block font-medium mb-3 text-lg" style={{ color: COLORS.neonGreen }}>Hand-held ID</label>
-                  <div className="flex flex-col items-center">
-                    <label style={{ cursor: "pointer" }}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={e => handleImageChange(e, setHandHeld)}
-                        className="hidden"
-                      />
-                      <canvas
-                        ref={handHeldRef}
-                        width={200}
-                        height={120}
-                        className="transition-all hover:opacity-80"
-                        style={{
-                          border: `2px dashed ${COLORS.purple}`,
-                          background: COLORS.background,
-                          borderRadius: 12,
-                          display: "block",
-                        }}
-                      />
-                    </label>
-                    <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Click to upload hand-held ID</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
+            {/* Submit Button */}
             <button
               type="submit"
-              className="w-full py-3 rounded-lg font-bold text-lg transition-all transform hover:scale-105 mt-6"
+              onClick={handleSubmit}
+              className="w-full py-4 rounded-lg font-bold text-lg transition-all transform hover:scale-105"
               style={{
                 background: COLORS.purple,
                 color: COLORS.neonGreen,
@@ -384,7 +410,7 @@ export default function KYCPage() {
             >
               Submit Verification
             </button>
-          </form>
+          </>
         )}
         
         {/* Status Indicators */}
@@ -417,6 +443,16 @@ export default function KYCPage() {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        
+        /* Modern input styling */
+        input::placeholder, select:invalid {
+          color: #b0b8c1;
+          opacity: 0.7;
+        }
+        
+        input:focus::placeholder, select:focus:invalid {
+          opacity: 0.5;
         }
       `}</style>
     </div>

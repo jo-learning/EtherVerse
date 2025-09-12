@@ -102,7 +102,7 @@ export default function Google2FAPage() {
               {secret}
             </span>
           </div>
-          <p className="text-sm mb-4" style={{ color: "#b0b8c1" }}>
+          <p className="text-sm mb-4 items-center flex justify-center" style={{ color: "#b0b8c1" }}>
             Scan the QR code with Google Authenticator or enter the secret key manually.
           </p>
         </div>

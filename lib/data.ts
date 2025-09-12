@@ -15,12 +15,11 @@ export const coins: Coin[] = [
   { symbol: "ADA", name: "ADA Coin", priceUsd: "0", change24hPct: 0.0512, spark: [1,1,2,3,4,5,6,6,7,7], logo: "https://assets.coingecko.com/coins/images/975/large/cardano.png" },
   { symbol: "DOGE", name: "DOGE Coin", priceUsd: "0", change24hPct: 0.0271, spark: [2,2,3,3,4,3,4,4,5,5], logo: "https://assets.coingecko.com/coins/images/5/large/dogecoin.png" },
   { symbol: "EOS", name: "EOS Coin", priceUsd: "0", change24hPct: 0.0152, spark: [1,2,2,1,2,3,2,3,3,4], logo: "https://assets.coingecko.com/coins/images/7383/large/eos-eos-logo.png" },
-{ symbol: "XAU", name: "Gold", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "https://example.com/gold.png" },
-{ symbol: "XAG", name: "Silver", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://example.com/silver.png" },
-{ symbol: "XPT", name: "Platinum", priceUsd: "0", change24hPct: 0.0032, spark: [4,5,4,6,6,7,6,8,8,9], logo: "https://example.com/platinum.png" },
-{ symbol: "EUR", name: "Euro", priceUsd: "0", change24hPct: 0.0005, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://example.com/euro.png" },
-{ symbol: "GBP", name: "British Pound", priceUsd: "0", change24hPct: 0.0007, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://example.com/pound.png" },
-{ symbol: "JPY", name: "Japanese Yen", priceUsd: "0", change24hPct: 0.0003, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://example.com/yen.png" },
+{ symbol: "XAU", name: "Gold", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "https://assets.coingecko.com/coins/images/31894/standard/GOLD.png" },
+{ symbol: "XAG", name: "Silver", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://assets.coingecko.com/coins/images/66401/standard/200.jpg" },
+{ symbol: "XPT", name: "Platinum", priceUsd: "0", change24hPct: 0.0032, spark: [4,5,4,6,6,7,6,8,8,9], logo: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fplatinum-digital-inc&psig=AOvVaw1Tnr-OJXI9vfgd7Mh5LRNY&ust=1757686841589000&source=images&cd=vfe&opi=89978449&ved=2ahUKEwjBvOnv89CPAxUnYPEDHT2gEEAQjRx6BAgAEBo" },
+{ symbol: "GBP", name: "British Pound", priceUsd: "0", change24hPct: 0.0007, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-vector%2Fdigital-currency-symbol-uk-pound_24037023.htm&psig=AOvVaw1y6oSX4oh3ZvngkH52gUbp&ust=1757685955364000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCJjpxM730Y8DFQAAAAAdAAAAABAE" },
+{ symbol: "JPY", name: "Japanese Yen", priceUsd: "0", change24hPct: 0.0003, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fdigital-yen-currency-symbol-japanese-money-finance-concept-image382298124&psig=AOvVaw0XFApgt7RW_8HwcHiEZDyn&ust=1757685985137000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCMCixt330Y8DFQAAAAAdAAAAABAE" },
 ];
 
 export const walletsData: Wallet[] = [
@@ -218,6 +217,36 @@ export function subscribeMarketWithSpark(
   return () => ws.close();
 }
 
+// lib/data.ts
+export const NEWS = [
+  {
+    id: 1,
+    title: "Bitcoin Surges Past $60,000 Amid Institutional Demand",
+    source: "CoinDesk",
+    time: "2 hours ago",
+    image: "/images.jpeg",
+    url: "https://coindesk.com",
+    content: "Detailed content about Bitcoin surge..."
+  },
+  {
+    id: 2,
+    title: "Ethereum 2.0 Upgrade Scheduled for Next Month",
+    source: "CryptoNews",
+    time: "5 hours ago",
+    image: "/image1.jpg",
+    url: "https://cryptonews.com",
+    content: "Detailed content about Ethereum upgrade..."
+  },
+   {
+    id: 3,
+    title: "Binance announces new trading pairs",
+    url: "#",
+    time: "30m ago",
+    source: "Binance Blog",
+    image: "/image3.webp",
+  }
+  // Add more news items with unique IDs
+];
 
 
 

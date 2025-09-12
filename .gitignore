@@ -2,7 +2,7 @@
 
 # dependencies
 /node_modules
-/my-dapp-contracts/node_modules
+/my-dapp-contracts/node_modules/
 /.pnp
 .pnp.*
 .yarn/*

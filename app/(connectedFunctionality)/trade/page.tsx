@@ -1,11 +1,12 @@
 // app/page.tsx
 'use client';
 import CryptoCard from "@/components/CryptoCard";
-import { coins as staticCoins, fetchCoinPrices, subscribeMarketWithSpark } from "@/lib/data";
+import { coins as staticCoins, fetchCoinPrices, subscribeMarketWithSpark, NEWS } from "@/lib/data";
 import { useState, useEffect } from "react";
 import { Coin } from "@/types";
 import CryptoCarousel from "@/components/CryptoCarousel";
 import FinancialTags from "@/components/FinancialTags";
+import Link from "next/link";
 
 // Color palette
 const COLORS = {
@@ -19,30 +20,7 @@ const COLORS = {
   textGray: "#b0b8c1",
 };
 
-// Example news data
-const NEWS = [
-  {
-    title: "Bitcoin hits new all-time high",
-    url: "#",
-    time: "2m ago",
-    source: "CryptoNews",
-    image: "/images.jpeg",
-  },
-  {
-    title: "Ethereum 2.0 upgrade launches successfully",
-    url: "#",
-    time: "10m ago",
-    source: "CoinDesk",
-    image: "/image1.jpg",
-  },
-  {
-    title: "Binance announces new trading pairs",
-    url: "#",
-    time: "30m ago",
-    source: "Binance Blog",
-    image: "/image3.webp",
-  }
-];
+
 
 export default function Page() {
   const [coins, setCoins] = useState<Coin[]>([]);
@@ -143,74 +121,75 @@ export default function Page() {
             </div>
 
             {/* Latest News List */}
-            <div
-              className="rounded-2xl shadow-lg p-4 mt-6 border"
+           <div
+  className="rounded-2xl shadow-lg p-4 mt-6 border"
+  style={{
+    background: COLORS.navy || "#172042",
+    borderColor: COLORS.purple,
+    color: COLORS.textWhite,
+    boxShadow: "0 4px 32px 0 #4b0082aa"
+  }}
+>
+  <div className="flex items-center justify-between mb-4">
+    <div className="font-semibold text-xl tracking-wide" style={{ color: COLORS.neonGreen, letterSpacing: 1 }}>Latest News</div>
+  </div>
+  <ul className="divide-y divide-[#23234a]">
+    {NEWS.map((news, idx) => (
+      <li
+        key={idx}
+        className="flex items-center gap-4 py-4 hover:bg-[#0a1026] rounded-xl transition group"
+        style={{
+          paddingLeft: 4,
+          paddingRight: 4,
+          cursor: "pointer",
+          boxShadow: "0 2px 8px 0 #0002"
+        }}
+      >
+        <Link 
+          href={`/news/${news.id}`}
+          className="flex items-center gap-4 w-full"
+        >
+          <div className="flex-shrink-0">
+            <img
+              src={news.image}
+              alt={news.source}
+              className="rounded-lg shadow"
               style={{
-                background: COLORS.navy || "#172042",
-                borderColor: COLORS.purple,
+                width: 48,
+                height: 48,
+                objectFit: "cover",
+                border: `2px solid ${COLORS.textGray}`,
+                background: COLORS.background
+              }}
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="font-semibold text-lg group-hover:underline"
+              style={{
                 color: COLORS.textWhite,
-                boxShadow: "0 4px 32px 0 #4b0082aa"
+                textShadow: "0 1px 8px #39FF1440"
               }}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="font-semibold text-xl tracking-wide" style={{ color: COLORS.neonGreen, letterSpacing: 1 }}>Latest News</div>
-              </div>
-              <ul className="divide-y divide-[#23234a]">
-                {NEWS.map((news, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center gap-4 py-4 hover:bg-[#0a1026] rounded-xl transition"
-                    style={{
-                      paddingLeft: 4,
-                      paddingRight: 4,
-                      cursor: "pointer",
-                      boxShadow: "0 2px 8px 0 #0002"
-                    }}
-                  >
-                    <div className="flex-shrink-0">
-                      <img
-                        src={news.image}
-                        alt={news.source}
-                        className="rounded-lg shadow"
-                        style={{
-                          width: 48,
-                          height: 48,
-                          objectFit: "cover",
-                          border: `2px solid ${COLORS.textGray}`,
-                          background: COLORS.background
-                        }}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <a
-                        href={news.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-semibold text-lg hover:underline"
-                        style={{
-                          color: COLORS.textWhite,
-                          textShadow: "0 1px 8px #39FF1440"
-                        }}
-                      >
-                        {news.title}
-                      </a>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                          background: COLORS.background,
-                          color: COLORS.purple,
-                          fontWeight: 600,
-                          letterSpacing: 0.5
-                        }}>
-                          {news.source}
-                        </span>
-                        <span className="text-xs" style={{ color: COLORS.textGray || "#b0b8c1" }}>{news.time}</span>
-                      </div>
-                    </div>
-                    <span className="ml-2 text-lg" style={{ color: COLORS.textGray }}>→</span>
-                  </li>
-                ))}
-              </ul>
+              {news.title}
             </div>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{
+                background: COLORS.background,
+                color: COLORS.purple,
+                fontWeight: 600,
+                letterSpacing: 0.5
+              }}>
+                {news.source}
+              </span>
+              <span className="text-xs" style={{ color: COLORS.textGray || "#b0b8c1" }}>{news.time}</span>
+            </div>
+          </div>
+          <span className="ml-2 text-lg transition-transform group-hover:translate-x-1" style={{ color: COLORS.textGray }}>→</span>
+        </Link>
+      </li>
+    ))}
+  </ul>
+</div>
           </div>
         </div>
       </section>

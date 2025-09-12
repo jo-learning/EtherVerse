@@ -87,7 +87,7 @@ export default function ChatPage() {
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-64px)] max-w-xl mx-auto mt-8 rounded-xl shadow-lg overflow-hidden"
+      className="flex flex-col h-[calc(100vh-64px)] max-w-xl mx-auto  rounded-xl shadow-lg overflow-hidden"
       style={{ background: COLORS.background }}
     >
       {/* Header */}
@@ -174,7 +174,7 @@ export default function ChatPage() {
         />
         <button
           onClick={handleSend}
-          className="ml-3 px-4 py-2 rounded-lg flex items-center font-semibold transition"
+          className="ml-3 px-4 py-2  rounded-lg flex items-center font-semibold transition"
           style={{
             background: COLORS.purple,
             color: COLORS.neonGreen,

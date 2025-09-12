@@ -14,7 +14,7 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({
   height = 500,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark')
 
   useEffect(() => {
     // Detect Tailwind's dark mode class on the html element

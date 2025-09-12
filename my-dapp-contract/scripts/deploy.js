@@ -1,24 +1,31 @@
-// scripts/deploy.js
-import dotenv from "dotenv";
+// scripts/deploy-simple.js
 import hardhat from "hardhat";
-
-dotenv.config();
-
 const { ethers } = hardhat;
 
 async function main() {
-  const TokenSpender = await ethers.getContractFactory("TokenSpender");
+  const [deployer] = await ethers.getSigners();
+  console.log("Deploying contracts with the account:", deployer.address);
 
-  // deploy the contract
-  const tokenSpender = await TokenSpender.deploy();
+  const balance = await deployer.getBalance();
+  console.log("Account balance:", ethers.utils.formatEther(balance), "ETH");
 
-  // wait until the deployment transaction is mined
-  await tokenSpender.deploymentTransaction().wait();
-
-  console.log("TokenSpender deployed to:", tokenSpender.target); // .target replaces .address in ethers v6
+  console.log("Deploying CustomerSign contract...");
+  const CustomerSign = await ethers.getContractFactory("CustomerSign");
+  const customerSign = await CustomerSign.deploy();
+  
+  await customerSign.deployed();
+  
+  console.log("✅ Contract deployed to:", customerSign.address);
+  console.log("📋 Copy this address for your frontend:", customerSign.address);
+  
+  // Get network info
+  const network = await ethers.provider.getNetwork();
+  console.log("🌐 Network:", network.name, "(Chain ID:", network.chainId + ")");
 }
 
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("❌ Deployment error:", error);
+    process.exit(1);
+  });
