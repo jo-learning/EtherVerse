@@ -18,6 +18,7 @@ import { useTradeStore } from "@/lib/tradeStore";
 
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useAccount } from "wagmi";
 const TradingViewWidget = dynamic(() => import('../../../../components/TradingViewTest'), { ssr: false })
 
 ChartJS.register(
@@ -46,6 +47,7 @@ export default function CoinDetailPage() {
   const [showModal, setShowModal] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const [selectedDirection, setSelectedDirection] = useState<"Buy long" | "Buy short">("Buy long");
+  const { address } = useAccount();
 
   // Real-time price state
   const [realPrice, setRealPrice] = useState<number | null>(null);
@@ -77,10 +79,12 @@ export default function CoinDetailPage() {
       .then(res => res.json())
       .then(data => setRealPrice(data[id]?.usd ?? coin.priceUsd));
 
-    const address = window.ethereum?.selectedAddress;
-    fetchWallet(coinData, address).then(setCoins);
+    // const address = window.ethereum?.selectedAddress;
+    if (address) {
+      fetchWallet(coinData, address).then(setCoins);
+    }
     
-  }, [coinData]);
+  }, [coinData, address]);
 
   if (!coin) {
     return (

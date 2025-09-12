@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { FaUserCircle, FaPaperPlane } from "react-icons/fa";
+import { useAccount } from "wagmi";
 
 // Color theme constants
 const COLORS = {
@@ -20,6 +21,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<{ who: string; message: string; createdAt: string }[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const { address } = useAccount();
 
   // Add welcome message on component mount
   useEffect(() => {
@@ -36,8 +38,8 @@ export default function ChatPage() {
     async function fetchChats() {
       setLoading(true);
       try {
-        const address = window.ethereum?.selectedAddress;
-        const res = await fetch(`/api/chat/get?address=${encodeURIComponent(address)}`);
+        // const address = window.ethereum?.selectedAddress;
+        const res = await fetch(`/api/chat/get?address=${encodeURIComponent(address ?? "")}`);
         const data = await res.json();
         if (data.chats) {
           setMessages(prev => [
@@ -55,13 +57,13 @@ export default function ChatPage() {
       setLoading(false);
     }
     fetchChats();
-  }, []);
+  }, [address]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
     setLoading(true);
     try {
-      const address = window.ethereum?.selectedAddress;
+      // const address = window.ethereum?.selectedAddress;
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

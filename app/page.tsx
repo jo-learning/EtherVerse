@@ -4,13 +4,24 @@ import { GiProfit } from "react-icons/gi";
 import WalletConnectButton from "@/components/ConnectButton";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { useLoading } from "@/components/loadingPage";
+
+
+const COLORS = {
+  purple: "#4b0082", // Dark purple
+  neonGreen: "#39FF14", // Neon green
+  black: "#0D0D0D",
+  white: "#ffffff",
+  background: "#0a1026",
+  navy: "#172042", // Slightly lighter navy blue
+  textWhite: "#ffffff",
+  textGray: "#b0b8c1",
+};
 
 export default function HomePage() {
-  const { isConnected } = useAccount();
-  const [loading, setLoadings] = useState(false);
+  const { address, isConnected } = useAccount();
+  const [loading, setLoading] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
-  const { setLoading } = useLoading();
+  // const { setLoading } = useLoading();
 
   const createUser = async (address: string) => {
     try {
@@ -28,7 +39,7 @@ export default function HomePage() {
   useEffect(() => {
     if (isConnected) {
       setLoading(true);
-      const address = window.ethereum?.selectedAddress;
+      // const address = window.ethereum?.selectedAddress;
       if (address) {
         createUser(address);
       }
@@ -89,12 +100,11 @@ export default function HomePage() {
 
       {/* Loading Overlay */}
       {loading && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-400 mb-4"></div>
-            <p className="text-lg">Setting up your trading account...</p>
-          </div>
-        </div>
+         <div className="fixed inset-0 z-[100] flex items-center justify-center"
+                  style={{ background: COLORS.white, backgroundColor: COLORS.white, opacity: 0.4 }}>
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4"
+                    style={{ borderColor: COLORS.purple }}></div>
+                </div>
       )}
 
       <div className="container mx-auto px-4 py-5 relative z-10">

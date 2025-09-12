@@ -42,7 +42,7 @@ export async function POST(req: Request) {
       
 
       const deriveWallet =  deriveCoinWallet(mnemonic, coin.symbol)
-      console.log(deriveWallet);
+      // console.log(deriveWallet);
       const wallet = await prisma.wallet.create({
         data: {
           userId: user.id,

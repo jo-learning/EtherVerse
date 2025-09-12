@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useTradeStore } from "@/lib/tradeStore";
+import { useAccount } from "wagmi";
 
 const COLORS = {
   purple: "#4b0082", // Dark purple
@@ -17,11 +18,12 @@ const COLORS = {
 
 export default function HistoryPage() {
   const [tab, setTab] = useState<"wait" | "finished">("finished");
+  const { address } = useAccount();
   const trades = useTradeStore((state) => state.trades);
   const updateTrade = useTradeStore((state) => state.updateTrade);
   const addBalance = async (addBalance: number, network: string) => {
     try {
-      const address = window.ethereum?.selectedAddress;
+      // const address = window.ethereum?.selectedAddress;
       await fetch(`/api/updateBalance`, {
         method: "POST",
         headers: {
