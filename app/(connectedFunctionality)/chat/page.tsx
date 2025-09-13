@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FaUserCircle, FaPaperPlane } from "react-icons/fa";
 import { useAccount } from "wagmi";
 
@@ -23,6 +23,10 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const { address } = useAccount();
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const inputBarRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<HTMLDivElement>(null);
+
   // Add welcome message on component mount
   useEffect(() => {
     const welcomeMessage = {
@@ -31,6 +35,30 @@ export default function ChatPage() {
       createdAt: new Date().toLocaleString()
     };
     setMessages([welcomeMessage]);
+  }, []);
+
+  // Keep input visible when keyboard opens (mobile)
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) return;
+    const vv = window.visualViewport;
+    const handler = () => {
+      const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      if (messagesRef.current) {
+        // add bottom padding so content is not hidden behind the input bar
+        messagesRef.current.style.paddingBottom = `${kb + 96}px`;
+      }
+      if (inputBarRef.current) {
+        // lift the input bar above the keyboard
+        inputBarRef.current.style.transform = `translateY(-${kb}px)`;
+      }
+    };
+    vv.addEventListener("resize", handler);
+    vv.addEventListener("scroll", handler);
+    handler();
+    return () => {
+      vv.removeEventListener("resize", handler);
+      vv.removeEventListener("scroll", handler);
+    };
   }, []);
 
   // Fetch chats on mount
@@ -89,8 +117,8 @@ export default function ChatPage() {
 
   return (
     <div
-      className="flex flex-col h-[calc(100vh-64px)] max-w-xl mx-auto  rounded-xl shadow-lg overflow-hidden"
-      style={{ background: COLORS.background }}
+      className="flex flex-col max-w-xl mx-auto rounded-xl shadow-lg"
+      style={{ background: COLORS.background, minHeight: "100dvh" }}
     >
       {/* Header */}
       <div
@@ -106,7 +134,11 @@ export default function ChatPage() {
         </span>
       </div>
       {/* Chat Panel */}
-      <div className="flex-1 p-4 overflow-y-auto space-y-2">
+      <div
+        ref={messagesRef}
+        className="flex-1 p-4 overflow-y-auto space-y-2"
+        style={{ scrollBehavior: "smooth" }}
+      >
         {loading && messages.length === 0 ? (
           <div className="text-center" style={{ color: COLORS.textGray }}>Loading...</div>
         ) : (
@@ -153,15 +185,20 @@ export default function ChatPage() {
           ))
         )}
       </div>
-      {/* Input Box */}
+      {/* Sticky Input Box */}
       <div
-        className="p-4 border-t flex items-center"
+        ref={inputBarRef}
+        className="p-4 border-t flex items-center sticky bottom-0"
         style={{
           background: COLORS.navy,
           borderColor: COLORS.purple,
+          paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)",
+          zIndex: 10,
+          transition: "transform 0.2s ease",
         }}
       >
         <input
+          ref={inputRef}
           type="text"
           className="flex-1 p-2 rounded-lg focus:outline-none"
           style={{
@@ -172,6 +209,7 @@ export default function ChatPage() {
           placeholder="Type your message..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
+          onFocus={() => setTimeout(() => inputRef.current?.scrollIntoView({ block: "end", inline: "nearest", behavior: "smooth" }), 50)}
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
         />
         <button

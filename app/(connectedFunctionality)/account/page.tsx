@@ -471,7 +471,7 @@ export default function WalletPage() {
           <div
             className="mt-6 rounded-2xl shadow-lg overflow-hidden border"
             style={{
-              background: COLORS.navy,
+              background: COLORS.background,
               borderColor: COLORS.purple,
             }}
           >
@@ -479,7 +479,7 @@ export default function WalletPage() {
               className="p-4 border-b"
               style={{
                 borderColor: COLORS.purple + "55",
-                background: COLORS.navy,
+                background: COLORS.background,
               }}
             >
               <div className="relative">
@@ -506,7 +506,7 @@ export default function WalletPage() {
                 <div className="flex justify-center items-center py-8">
                   <svg
                     className="animate-spin h-8 w-8"
-                    style={{ color: COLORS.neonGreen }}
+                    style={{ color: COLORS.purple }}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -518,81 +518,96 @@ export default function WalletPage() {
                       r="10"
                       stroke="currentColor"
                       strokeWidth="4"
-                    ></circle>
+                    />
                     <path
                       className="opacity-75"
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    ></path>
+                    />
                   </svg>
                   <span className="ml-3" style={{ color: COLORS.neonGreen }}>
                     Loading wallets...
                   </span>
                 </div>
               )}
-              {filteredWallets.map((wallet: Wallet, idx: number) => (
-                <button
-                  key={idx}
-                  className={`flex justify-between items-center w-full p-4 transition-all ${
-                    activeWallet === wallet.name ? "" : "hover:bg-[#23232a]"
-                  }`}
-                  style={{
-                    background:
-                      activeWallet === wallet.name ? COLORS.navy : undefined,
-                    color: COLORS.white,
-                  }}
-                  onClick={() => {
-                    setLoading(true);
-                    setActiveWallet(wallet.name);
-                    window.location.href = `/wallets/${wallet.name
-                      .split(" ")[0]
-                      .toLowerCase()}`;
-                  }}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div
-                      className="w-10 h-10 rounded-full shadow-sm flex items-center justify-center overflow-hidden"
-                      style={{ background: COLORS.white }}
+
+              {filteredWallets.length > 0 && (
+                <div className="grid gap-3 p-3">
+                  {filteredWallets.map((wallet: Wallet, idx: number) => (
+                    <button
+                      key={idx}
+                      className="rounded-xl border shadow p-4 flex items-center justify-between transition hover:-translate-y-0.5 hover:shadow-lg"
+                      style={{
+                        background: COLORS.navy,
+                        borderColor: COLORS.purple,
+                        color: COLORS.white,
+                      }}
+                      onClick={() => {
+                        setLoading(true);
+                        setActiveWallet(wallet.name);
+                        window.location.href = `/wallets/${wallet.name
+                          .split(" ")[0]
+                          .toLowerCase()}`;
+                      }}
                     >
-                      {wallet.logo ? (
-                        <img
-                          src={wallet.logo}
-                          alt={wallet.name}
-                          className="w-7 h-7 object-contain"
-                        />
-                      ) : (
-                        <span className="text-lg">{wallet.name.charAt(0)}</span>
-                      )}
-                    </div>
-                    <div className="text-left">
-                      <h3
-                        className="font-semibold"
-                        style={{ color: COLORS.white }}
-                      >
-                        {wallet.name}
-                      </h3>
-                      <p
-                        className="text-xs"
-                        style={{
-                          color: wallet.change.startsWith("+")
-                            ? "#39FF14"
-                            : "#ff1744",
-                        }}
-                      >
-                        {wallet.change}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium" style={{ color: COLORS.white }}>
-                      {wallet.priceUsd}
-                    </p>
-                    <p className="font-medium" style={{ color: COLORS.white }}>
-                      {wallet.balance}
-                    </p>
-                  </div>
-                </button>
-              ))}
+                      {/* Left: logo + name */}
+                      <div className="flex items-center gap-4">
+                        <div
+                          className="w-12 h-12 rounded-xl overflow-hidden flex items-center justify-center"
+                          // style={{ background: COLORS.white }}
+                        >
+                          {wallet.logo ? (
+                            <img
+                              src={wallet.logo}
+                              alt={wallet.name}
+                              className="w-8 h-8 object-contain"
+                            />
+                          ) : (
+                            <span className="text-lg">{wallet.name.charAt(0)}</span>
+                          )}
+                        </div>
+                        <div className="text-left">
+                          <div className="font-semibold" style={{ color: COLORS.white }}>
+                            {wallet.name}
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span
+                              className="text-xs px-2 py-0.5 rounded-full"
+                              style={{
+                                background: COLORS.background,
+                                color: COLORS.textGray,
+                                border: `1px solid ${COLORS.purple}66`,
+                              }}
+                            >
+                              {wallet.symbol}
+                            </span>
+                            <span
+                              className="text-xs font-medium"
+                              style={{
+                                color: wallet.change.startsWith("-")
+                                  ? "#ff1744"
+                                  : COLORS.neonGreen,
+                              }}
+                            >
+                              {wallet.change}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right: value + balance */}
+                      <div className="text-right">
+                        <div className="font-semibold" style={{ color: COLORS.white }}>
+                          {wallet.priceUsd}
+                        </div>
+                        <div className="text-sm" style={{ color: COLORS.textGray }}>
+                          {wallet.balance}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
