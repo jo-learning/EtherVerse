@@ -419,70 +419,6 @@ export default function CoinDetailPage() {
       {/* Scrollable content section */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="flex flex-col md:flex-row gap-4 pb-2">
-          {/* Left Column - Number Keys */}
-          <div className="w-full md:w-2/3">
-            {/* Amount Display */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-                USDT Amount
-              </label>
-              <div className="flex gap-2">
-                <div className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
-                  style={{
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                    border: `1px solid ${COLORS.purple}`,
-                    minHeight: '50px'
-                  }}
-                >
-                  {inputValue || "0"} USDT
-                </div>
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded-lg"
-                  style={{
-                    background: COLORS.purple,
-                    color: COLORS.neonGreen,
-                  }}
-                  onClick={() => {
-                    if (accountType == "Demo Account"){
-                      setInputValue("100");
-                    } else {
-                      setInputValue(coinWallet?.balance?.toString() || "");
-                    }
-                  }}
-                >
-                  Max
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <p className="text-xs" style={{ color: COLORS.textGray }}>
-                Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
-              </p>
-              <p className="text-xs" style={{ color: COLORS.neonGreen }}>
-                Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-2 mb-4 mt-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => handleNumberInput(item.toString())}
-                  className="p-3 rounded-lg text-lg font-medium h-14"
-                  style={{
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                    border: `1px solid ${COLORS.purple}`,
-                  }}
-                >
-                  {item === "backspace" ? "⌫" : item}
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* Right Column - Account Type and Done Button */}
           <div className="w-full md:w-1/3 flex flex-col justify-between">
             {/* Account Type Buttons */}
@@ -576,7 +512,76 @@ export default function CoinDetailPage() {
               </select>
             </div>
 
-            {/* Done Button */}
+            
+          </div>
+          {/* Left Column - Number Keys */}
+          <div className="w-full md:w-2/3">
+            {/* Amount Display */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                USDT Amount
+              </label>
+              <div className="flex gap-2">
+                <div className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
+                  style={{
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                    border: `1px solid ${COLORS.purple}`,
+                    minHeight: '50px'
+                  }}
+                >
+                  {inputValue || "0"} USDT
+                </div>
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded-lg"
+                  style={{
+                    background: COLORS.purple,
+                    color: COLORS.neonGreen,
+                  }}
+                  onClick={() => {
+                    if (accountType == "Demo Account"){
+                      setInputValue("100");
+                    } else {
+                      setInputValue(coinWallet?.balance?.toString() || "");
+                    }
+                  }}
+                >
+                  Max
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <p className="text-xs" style={{ color: COLORS.textGray }}>
+                Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
+              </p>
+              <p className="text-xs" style={{ color: COLORS.neonGreen }}>
+                Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-4 mt-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => handleNumberInput(item.toString())}
+                  className="p-3 rounded-lg text-lg font-medium h-14"
+                  style={{
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                    border: `1px solid ${COLORS.purple}`,
+                  }}
+                >
+                  {item === "backspace" ? "⌫" : item}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          
+
+
+          {/* Done Button */}
             <button
               onClick={() => {
                 setAmount(inputValue);
@@ -593,7 +598,6 @@ export default function CoinDetailPage() {
             >
               DONE
             </button>
-          </div>
         </div>
       </div>
     </div>
