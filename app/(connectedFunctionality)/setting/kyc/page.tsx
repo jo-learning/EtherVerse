@@ -162,7 +162,7 @@ export default function KYCPage() {
           <>
             {/* Personal Information Card */}
             <div className="rounded-xl shadow-lg p-8 mb-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
-              <h2 className="text-xl font-bold mb-6 text-center" style={{ color: COLORS.neonGreen }}>Personal Information</h2>
+              <h2 className="text-lg font-bold mb-6 text-center" style={{ color: COLORS.neonGreen }}>Personal Information</h2>
               
               <form onSubmit={handleSubmit} className="">
                 <div className="">
@@ -219,7 +219,7 @@ export default function KYCPage() {
                           border: "none",
                           borderBottom: `2.5px solid ${COLORS.purple}40`,
                           borderRadius: 0,
-                          fontSize: "1.13rem",
+                          fontSize: "0.95rem",
                           transition: "border-color 0.3s",
                           minHeight: 40,
                         }}
@@ -241,7 +241,7 @@ export default function KYCPage() {
                           border: "none",
                           borderBottom: `2.5px solid ${COLORS.purple}40`,
                           borderRadius: 0,
-                          fontSize: "1.13rem",
+                          fontSize: "0.95rem",
                           transition: "border-color 0.3s",
                           minHeight: 40,
                         }}
@@ -266,7 +266,7 @@ export default function KYCPage() {
                         border: "none",
                         borderBottom: `2.5px solid ${COLORS.purple}40`,
                         borderRadius: 0,
-                        fontSize: "1.13rem",
+                        fontSize: "0.95rem",
                         transition: "border-color 0.3s",
                         minHeight: 40,
                       }}
@@ -290,7 +290,7 @@ export default function KYCPage() {
                         border: "none",
                         borderBottom: `2.5px solid ${COLORS.purple}40`,
                         borderRadius: 0,
-                        fontSize: "1.13rem",
+                        fontSize: "0.95rem",
                         transition: "border-color 0.3s",
                         minHeight: 40,
                       }}
@@ -304,7 +304,7 @@ export default function KYCPage() {
             
             {/* Photo Upload Card */}
             <div className="rounded-xl shadow-lg p-8 mb-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
-              <h2 className="text-xl font-bold mb-6 text-center" style={{ color: COLORS.neonGreen }}>Document Upload</h2>
+              <h2 className="text-lg font-bold mb-6 text-center" style={{ color: COLORS.neonGreen }}>Document Upload</h2>
               
               <div className="pt-4">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

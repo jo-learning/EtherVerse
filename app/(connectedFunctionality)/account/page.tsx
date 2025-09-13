@@ -159,7 +159,7 @@ export default function WalletPage() {
       balance: "0.00 AVAX",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/125/large/avalanche.png",
+      logo: "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png",
     },
     {
       name: "SHIB Wallet",
@@ -168,7 +168,7 @@ export default function WalletPage() {
       balance: "0.00 SHIB",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/11939/large/shiba-inu-logo.png",
+      logo: "https://assets.coingecko.com/coins/images/11939/standard/shiba.png",
     },
     {
       name: "WBTC Wallet",
@@ -177,7 +177,7 @@ export default function WalletPage() {
       balance: "0.00 WBTC",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/759/large/wrapped_bitcoin_wbtc.png",
+      logo: "https://assets.coingecko.com/coins/images/7598/standard/wrapped_bitcoin_wbtc.png",
     },
     {
       name: "DAI Wallet",
@@ -186,7 +186,7 @@ export default function WalletPage() {
       balance: "0.00 DAI",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/9956/large/Dai.png",
+      logo: "https://assets.coingecko.com/coins/images/9956/standard/Badge_Dai.png",
     },
     {
       name: "TUSD Wallet",
@@ -195,7 +195,7 @@ export default function WalletPage() {
       balance: "0.00 TUSD",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/331/large/trueusd.png",
+      logo: "https://assets.coingecko.com/coins/images/3449/standard/tusd.png?1696504140",
     },
     {
       name: "UNI-V3 Wallet",
@@ -204,7 +204,7 @@ export default function WalletPage() {
       balance: "0.00 UNI-V3",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/15104/large/uniswap-v3.png",
+      logo: "https://assets.coingecko.com/markets/images/1212/large/uniswap-v3.jpg",
     },
     {
       name: "BCH Wallet",
@@ -213,7 +213,7 @@ export default function WalletPage() {
       balance: "0.00 BCH",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/780/large/bitcoin-cash-logo.png",
+      logo: "https://assets.coingecko.com/coins/images/780/standard/bitcoin-cash-circle.png",
     },
     {
       name: "XLM Wallet",
@@ -222,7 +222,7 @@ export default function WalletPage() {
       balance: "0.00 XLM",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/3/large/stellar.png",
+      logo: "https://assets.coingecko.com/coins/images/100/standard/fmpFRHHQ_400x400.jpg",
     },
     {
       name: "VET Wallet",
@@ -231,7 +231,7 @@ export default function WalletPage() {
       balance: "0.00 VET",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/109/large/vechain.png",
+      logo: "https://assets.coingecko.com/coins/images/1167/standard/VET.png",
     },
     {
       name: "FIL Wallet",
@@ -240,7 +240,7 @@ export default function WalletPage() {
       balance: "0.00 FIL",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/128/large/filecoin.png",
+      logo: "https://assets.coingecko.com/coins/images/12817/standard/filecoin.png",
     },
     {
       name: "XTZ Wallet",
@@ -249,7 +249,7 @@ export default function WalletPage() {
       balance: "0.00 XTZ",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/444/large/tezos.png",
+      logo: "https://assets.coingecko.com/coins/images/32340/standard/CoinGecko_200_x_200.jpg",
     },
     {
       name: "EOS Wallet",
@@ -258,7 +258,7 @@ export default function WalletPage() {
       balance: "0.00 EOS",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/38/large/eos-eos.png",
+      logo: "https://assets.coingecko.com/coins/images/738/standard/CG_EOS_Icon.png",
     },
     {
       name: "TRX Wallet",
@@ -267,7 +267,7 @@ export default function WalletPage() {
       balance: "0.00 TRX",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/109/large/tron.png",
+      logo: "https://assets.coingecko.com/coins/images/1094/standard/tron-logo.png",
     },
     {
       name: "ATOM Wallet",
@@ -276,7 +276,7 @@ export default function WalletPage() {
       balance: "0.00 ATOM",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/1481/large/cosmos-hub-logo.png",
+      logo: "https://assets.coingecko.com/coins/images/1481/standard/cosmos_hub.png",
     },
     {
       name: "ALGO Wallet",
@@ -285,7 +285,7 @@ export default function WalletPage() {
       balance: "0.00 ALGO",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/323/large/algorand.png",
+      logo: "https://assets.coingecko.com/coins/images/4380/standard/download.png",
     },
     {
       name: "HBAR Wallet",
@@ -294,7 +294,7 @@ export default function WalletPage() {
       balance: "0.00 HBAR",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/4444/large/hbar-logo.png",
+      logo: "https://assets.coingecko.com/coins/images/3688/standard/hbar.png",
     },
     {
       name: "ZEC Wallet",
@@ -303,7 +303,7 @@ export default function WalletPage() {
       balance: "0.00 ZEC",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/3/large/zcash-coin.png",
+      logo: "https://assets.coingecko.com/coins/images/486/standard/circle-zcash-color.png",
     },
     {
       name: "DASH Wallet",
@@ -312,7 +312,7 @@ export default function WalletPage() {
       balance: "0.00 DASH",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/19/large/dash-logo.png",
+      logo: "https://assets.coingecko.com/coins/images/19/standard/dash-logo.png",
     },
     {
       name: "XEM Wallet",
@@ -321,7 +321,7 @@ export default function WalletPage() {
       balance: "0.00 XEM",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/4/large/nem.png",
+      logo: "https://assets.coingecko.com/coins/images/242/standard/NEM_WC_Logo_200px.png",
     },
     {
       name: "BAT Wallet",
@@ -330,7 +330,7 @@ export default function WalletPage() {
       balance: "0.00 BAT",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/677/large/basic-attention-token.png",
+      logo: "https://assets.coingecko.com/coins/images/677/standard/basic-attention-token.png",
     },
     {
       name: "ENJ Wallet",
@@ -339,7 +339,7 @@ export default function WalletPage() {
       balance: "0.00 ENJ",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/108/large/enjincoin.png",
+      logo: "https://assets.coingecko.com/coins/images/1102/standard/Symbol_Only_-_Purple.png",
     },
     {
       name: "PAX Wallet",
@@ -348,7 +348,7 @@ export default function WalletPage() {
       balance: "0.00 PAX",
       priceUsd: "$0.00",
       change: "0.0%",
-      logo: "https://assets.coingecko.com/coins/images/344/large/paxos-standard.png",
+      logo: "https://assets.coingecko.com/coins/images/9519/standard/paxgold.png",
     },
   ]);
   type Wallet = {

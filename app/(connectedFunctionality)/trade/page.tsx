@@ -37,11 +37,11 @@ export default function Page() {
     // 2. Start Binance WS updates
     const unsubscribe = subscribeMarketWithSpark(
       staticCoins.map(c => c.symbol),
-      (symbol, price, change, spark) => {
+      (symbol, price, change, spark, volume24h, trades24h) => {
         setCoins(prev =>
           prev.map(c =>
             c.symbol.toUpperCase() === symbol.toUpperCase()
-              ? { ...c, priceUsd: price, change, spark }
+              ? { ...c, priceUsd: price, change, spark, volume24h, trades24h }
               : c
           )
         );
@@ -58,6 +58,19 @@ export default function Page() {
 
   const handleFilterChange = (filter: string) => {
     setActiveFilter(filter);
+  };
+
+  // helper to get numeric change percentage from either live WS string (e.g. "1.23%")
+  // or static data.ts value change24hPct (e.g. 0.0123)
+  const getChangePct = (c: Coin): number => {
+    const live = (c as any).change as string | undefined;
+    if (typeof live === 'string') {
+      const n = parseFloat(live.replace('%', ''));
+      return isNaN(n) ? 0 : n;
+    }
+    const base = (c as any).change24hPct as number | undefined;
+    if (typeof base === 'number') return base * 100;
+    return 0;
   };
 
   const filterCoins = (coins: Coin[], filter: string): Coin[] => {
@@ -78,8 +91,9 @@ export default function Page() {
           ['XAU', 'XAG', 'XPT'].includes(coin.symbol)
         );
       case 'top':
-        // Show top 5 coins by market cap
-        return coins.slice(0, 5);
+        // Order all coins by profit rate (descending)
+        const c =  [...coins].sort((a, b) => getChangePct(b) - getChangePct(a));
+        return c.slice(0, 6); // Return top 20 coins
       default:
         return coins;
     }

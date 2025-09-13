@@ -51,11 +51,14 @@ export default function CoinDetailPage() {
 
   // Real-time price state
   const [realPrice, setRealPrice] = useState<number | null>(null);
+  const [volume24h, setVolume24h] = useState<number | null>(null);
+  const [trades24h, setTrades24h] = useState<number | null>(null);
   const staticCoins = getWallet(coin?.symbol ?? "");
   const [coinWallet, setCoins] = useState(staticCoins);
 
   useEffect(() => {
     if (!coin) return;
+
     // Map symbol to CoinGecko id
     const symbolToId: Record<string, string> = {
       BTC: "bitcoin",
@@ -73,18 +76,46 @@ export default function CoinDetailPage() {
       DOGE: "dogecoin",
       EOS: "eos",
     };
-    const id = symbolToId[coin.symbol];
-    if (!id) return;
-    fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`)
-      .then(res => res.json())
-      .then(data => setRealPrice(data[id]?.usd ?? coin.priceUsd));
 
-    // const address = window.ethereum?.selectedAddress;
-    if (address) {
-      fetchWallet(coinData, address).then(setCoins);
+    const id = symbolToId[coin.symbol as keyof typeof symbolToId];
+    if (id) {
+      fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${id}&vs_currencies=usd`)
+        .then(res => res.json())
+        .then(data => setRealPrice(data[id]?.usd ?? Number(coin.priceUsd)))
+        .catch(() => {});
     }
-    
-  }, [coinData, address]);
+
+    if (address) {
+      fetchWallet(coinData, address).then(setCoins).catch(() => {});
+    }
+  }, [coinData, address, coin?.symbol]);
+
+  // Live WS for price and 24h stats
+  useEffect(() => {
+    if (!coin) return;
+    const sym = coin.symbol.toUpperCase();
+    // Skip invalid USDT/USDT stream
+    if (sym === 'USDT') return;
+
+    const stream = `${sym.toLowerCase()}usdt@ticker`;
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${stream}`);
+
+    ws.onmessage = (event) => {
+      try {
+        const d = JSON.parse(event.data);
+        const price = parseFloat(d.c);
+        if (!Number.isNaN(price)) setRealPrice(price);
+        const vol = parseFloat(d.q || d.v || 0); // quote or base volume
+        const trades = Number(d.n || 0);
+        setVolume24h(Number.isFinite(vol) ? vol : 0);
+        setTrades24h(Number.isFinite(trades) ? trades : 0);
+      } catch {}
+    };
+
+    return () => {
+      try { ws.close(); } catch {}
+    };
+  }, [coin?.symbol]);
 
   if (!coin) {
     return (
@@ -244,6 +275,22 @@ export default function CoinDetailPage() {
         />
       </div>
 
+      {/* 24h Stats below chart */}
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="rounded-lg p-3 border" style={{ background: COLORS.navy, borderColor: COLORS.purple }}>
+          <div className="text-xs" style={{ color: COLORS.textGray }}>24h Volume</div>
+          <div className="text-lg font-bold" style={{ color: COLORS.textWhite }}>
+            {volume24h !== null ? `$ ${volume24h.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '--'}
+          </div>
+        </div>
+        <div className="rounded-lg p-3 border" style={{ background: COLORS.navy, borderColor: COLORS.purple }}>
+          <div className="text-xs" style={{ color: COLORS.textGray }}>24h Transactions</div>
+          <div className="text-lg font-bold" style={{ color: COLORS.textWhite }}>
+            {trades24h !== null ? trades24h.toLocaleString() : '--'}
+          </div>
+        </div>
+      </div>
+
       {/* Split Entrust Buttons */}
       <div className="relative w-full h-16 mt-6 mb-4">
         <button
@@ -372,7 +419,69 @@ export default function CoinDetailPage() {
       {/* Scrollable content section */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="flex flex-col md:flex-row gap-4 pb-2">
-          
+          {/* Left Column - Number Keys */}
+          <div className="w-full md:w-2/3">
+            {/* Amount Display */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                USDT Amount
+              </label>
+              <div className="flex gap-2">
+                <div className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
+                  style={{
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                    border: `1px solid ${COLORS.purple}`,
+                    minHeight: '50px'
+                  }}
+                >
+                  {inputValue || "0"} USDT
+                </div>
+                <button
+                  type="button"
+                  className="px-3 py-2 rounded-lg"
+                  style={{
+                    background: COLORS.purple,
+                    color: COLORS.neonGreen,
+                  }}
+                  onClick={() => {
+                    if (accountType == "Demo Account"){
+                      setInputValue("100");
+                    } else {
+                      setInputValue(coinWallet?.balance?.toString() || "");
+                    }
+                  }}
+                >
+                  Max
+                </button>
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center">
+              <p className="text-xs" style={{ color: COLORS.textGray }}>
+                Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
+              </p>
+              <p className="text-xs" style={{ color: COLORS.neonGreen }}>
+                Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 mb-4 mt-2">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
+                <button
+                  key={item}
+                  onClick={() => handleNumberInput(item.toString())}
+                  className="p-3 rounded-lg text-lg font-medium h-14"
+                  style={{
+                    background: COLORS.background,
+                    color: COLORS.textWhite,
+                    border: `1px solid ${COLORS.purple}`,
+                  }}
+                >
+                  {item === "backspace" ? "⌫" : item}
+                </button>
+              ))}
+            </div>
+          </div>
 
           {/* Right Column - Account Type and Done Button */}
           <div className="w-full md:w-1/3 flex flex-col justify-between">
@@ -446,18 +555,14 @@ export default function CoinDetailPage() {
                 }}
               >
                 {(() => {
-                  // Get the base percentage based on delivery time
                   let basePercentage = 20;
-                  
                   if (deliveryTime === "60S") basePercentage = 25;
                   else if (deliveryTime === "120S") basePercentage = 30;
                   else if (deliveryTime === "3600S") basePercentage = 35;
                   else if (deliveryTime === "10800S") basePercentage = 40;
                   else if (deliveryTime === "21600S") basePercentage = 45;
                   else if (deliveryTime === "43200S") basePercentage = 50;
-                  
-                  // Generate options with increasing percentages
-                  const options = [];
+                  const options = [] as React.ReactNode[];
                   for (let i = 0; i < 5; i++) {
                     const percentage = basePercentage + (i * 5);
                     options.push(
@@ -466,78 +571,10 @@ export default function CoinDetailPage() {
                       </option>
                     );
                   }
-                  
                   return options;
                 })()}
               </select>
             </div>
-
-            {/* Left Column - Number Keys */}
-          <div className="w-full md:w-2/3">
-            
-
-            {/* Amount Display */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-                USDT Amount
-              </label>
-              <div className="flex gap-2">
-                <div className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
-                  style={{
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                    border: `1px solid ${COLORS.purple}`,
-                    minHeight: '50px'
-                  }}
-                >
-                  {inputValue || "0"} USDT
-                </div>
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded-lg"
-                  style={{
-                    background: COLORS.purple,
-                    color: COLORS.neonGreen,
-                  }}
-                  onClick={() => {
-                    if (accountType == "Demo Account"){
-                      setInputValue("100");
-                    } else {
-
-                      setInputValue(coinWallet?.balance?.toString() || "");
-                    }
-                  }}
-                >
-                  Max
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <p className="text-xs" style={{ color: COLORS.textGray }}>
-                Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
-              </p>
-              <p className="text-xs" style={{ color: COLORS.neonGreen }}>
-                Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-2 mb-4 mt-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => handleNumberInput(item.toString())}
-                  className="p-3 rounded-lg text-lg font-medium h-14"
-                  style={{
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                    border: `1px solid ${COLORS.purple}`,
-                  }}
-                >
-                  {item === "backspace" ? "⌫" : item}
-                </button>
-              ))}
-            </div>
-          </div>
 
             {/* Done Button */}
             <button

@@ -1,87 +1,96 @@
-"use client"
+"use client";
 
-import { useConnectModal } from "@rainbow-me/rainbowkit"
-import { useState, useEffect } from "react"
+import { useEffect, useMemo, useState } from "react";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FaWallet, FaCheck, FaCopy } from "react-icons/fa";
 
 export default function WalletConnectButton() {
+  const { isConnected, address } = useAccount();
+  const { connect, connectors, status } = useConnect();
+  const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
-  const [connected, setConnected] = useState(false);
-  const [address, setAddress] = useState("");
+
   const [copied, setCopied] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  const [autoPref, setAutoPref] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem("autoConnect") === "1";
+  });
 
-  // Check if we're on a mobile device
+  // Persist preference
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
-  }, []);
-
-  // Simulate connection state (in a real app, you'd get this from your wallet connection)
-  const handleConnect = () => {
-    if (openConnectModal) {
-      openConnectModal();
-      // In a real app, you would set connected state based on actual connection
-      setTimeout(() => {
-        setConnected(true);
-        setAddress("0x742d35Cc...6634C893"); // Mock address
-      }, 1000);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("autoConnect", autoPref ? "1" : "0");
     }
-  };
+  }, [autoPref]);
 
-  const handleDisconnect = () => {
-    setConnected(false);
-    setAddress("");
-  };
+  // Optional quick connector (e.g., MetaMask) for auto-connect
+  const quickConnector = useMemo(
+    () =>
+      connectors.find((c) => c.id === "injected") ||
+      connectors.find((c) => /metamask/i.test(c.name)) ||
+      connectors[0],
+    [connectors]
+  );
+
+  // Auto-connect if user opted-in and not already connected
+  useEffect(() => {
+    if (!autoPref || isConnected || status === "pending") return;
+    if (quickConnector && quickConnector.ready) {
+      connect({ connector: quickConnector });
+    }
+    // If no ready connector, you could optionally open the modal:
+    // else openConnectModal?.();
+  }, [autoPref, isConnected, status, quickConnector, connect, openConnectModal]);
 
   const copyAddress = () => {
+    if (!address) return;
     navigator.clipboard.writeText(address);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), 1500);
   };
 
-  const shortenAddress = (addr: string) => {
-    if (isMobile) {
-      return addr.substring(0, 6) + "..." + addr.substring(addr.length - 4);
-    }
-    return addr;
-  };
+  const shorten = (addr?: string) =>
+    addr ? `${addr.slice(0, 6)}...${addr.slice(-4)}` : "";
 
   return (
-    <div className="flex flex-col items-center">
-      {!connected ? (
-        <button
-          onClick={handleConnect}
-          className="inline-flex items-center px-2 py-2 md:px-6 md:py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl md:rounded-2xl shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5 text-base md:text-lg w-full md:w-auto justify-center"
-        >
-          <FaWallet className="mr-1 md:mr-3 text-lg md:text-xl" />
-          Connect Wallet
-        </button>
+    <div className="flex flex-col items-center gap-2">
+      {!isConnected ? (
+        <div className="flex flex-col items-center gap-2">
+          <button
+            onClick={() => openConnectModal?.()}
+            className="inline-flex items-center px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:from-purple-700 hover:to-indigo-700 transition-all duration-300"
+          >
+            <FaWallet className="mr-2" />
+            Connect Wallet
+          </button>
+
+          <label className="flex items-center gap-2 text-sm opacity-80">
+            <input
+              type="checkbox"
+              checked={autoPref}
+              onChange={(e) => setAutoPref(e.target.checked)}
+            />
+            Auto-connect next time
+          </label>
+        </div>
       ) : (
-        <div className="flex flex-col md:flex-row items-center gap-3 bg-gray-800 rounded-xl md:rounded-2xl p-3 md:p-2 shadow-lg w-full md:w-auto">
-          <div className="flex items-center bg-gray-700 rounded-lg py-2 px-3 md:py-1 md:px-2">
+        <div className="flex flex-col md:flex-row items-center gap-3 bg-gray-800 rounded-xl p-2 shadow-lg">
+          <div className="flex items-center bg-gray-700 rounded-lg py-1 px-2">
             <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-            <span className="text-xs md:text-sm text-white">{shortenAddress(address)}</span>
+            <span className="text-sm text-white">{shorten(address)}</span>
           </div>
-          <div className="flex gap-2 w-full md:w-auto">
+          <div className="flex gap-2">
             <button
               onClick={copyAddress}
-              className="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 rounded-lg text-xs md:text-sm transition-colors flex-1 md:flex-none"
+              className="flex items-center justify-center bg-purple-600 hover:bg-purple-700 text-white py-2 px-3 rounded-lg text-xs transition-colors"
             >
               {copied ? <FaCheck className="mr-1" /> : <FaCopy className="mr-1" />}
               {copied ? "Copied!" : "Copy"}
             </button>
             <button
-              onClick={handleDisconnect}
-              className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 rounded-lg text-xs md:text-sm transition-colors flex-1 md:flex-none"
+              onClick={() => disconnect()}
+              className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-3 rounded-lg text-xs transition-colors"
             >
               Disconnect
             </button>

@@ -6,6 +6,8 @@ export type Coin = {
   spark: number[]; // tiny sparkline data
   logo: string; // URL to coin logo
   change?: string; // e.g., "+3.2%" or "-1.5%"
+  volume24h?: number; // 24h trading volume in USD
+  trades24h?: number; // number of trades in last 24h
   
 };
 

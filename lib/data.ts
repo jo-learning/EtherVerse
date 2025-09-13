@@ -17,10 +17,16 @@ export const coins: Coin[] = [
   { symbol: "EOS", name: "EOS Coin", priceUsd: "0", change24hPct: 0.0152, spark: [1,2,2,1,2,3,2,3,3,4], logo: "https://assets.coingecko.com/coins/images/738/standard/CG_EOS_Icon.png" },
 { symbol: "XAU", name: "Gold", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "https://assets.coingecko.com/coins/images/31894/standard/GOLD.png" },
 { symbol: "XAG", name: "Silver", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://assets.coingecko.com/coins/images/66401/standard/200.jpg" },
-{ symbol: "XPT", name: "Platinum", priceUsd: "0", change24hPct: 0.0032, spark: [4,5,4,6,6,7,6,8,8,9], logo: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fpngtree.com%2Fso%2Fplatinum-coin&psig=AOvVaw2mSX0Bh6CqDHzQZFX51gxW&ust=1757689337265000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCPDLh5uE0o8DFQAAAAAdAAAAABAE" },
+{ symbol: "XPT", name: "Platinum", priceUsd: "0", change24hPct: 0.0032, spark: [4,5,4,6,6,7,6,8,8,9], logo: "platinum.webp" },
 { symbol: "GBP", name: "British Pound", priceUsd: "0", change24hPct: 0.0007, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-vector%2Fdigital-currency-symbol-uk-pound_24037023.htm&psig=AOvVaw1y6oSX4oh3ZvngkH52gUbp&ust=1757685955364000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCJjpxM730Y8DFQAAAAAdAAAAABAE" },
-{ symbol: "JPY", name: "Japanese Yen", priceUsd: "0", change24hPct: 0.0003, spark: [1,1,1,1,1,1,1,1,1,1], logo: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.dreamstime.com%2Fdigital-yen-currency-symbol-japanese-money-finance-concept-image382298124&psig=AOvVaw0XFApgt7RW_8HwcHiEZDyn&ust=1757685985137000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCMCixt330Y8DFQAAAAAdAAAAABAE" },
+{ symbol: "JPY", name: "Japanese Yen", priceUsd: "0", change24hPct: 0.0003, spark: [1,1,1,1,1,1,1,1,1,1], logo: "yen.png" },
 ];
+
+// Ensure defaults for new metrics
+(coins as any[]).forEach((c) => {
+  if (typeof (c as any).volume24h === "undefined") (c as any).volume24h = 0;
+  if (typeof (c as any).trades24h === "undefined") (c as any).trades24h = 0;
+});
 
 export const walletsData: Wallet[] = [
    { name: "USDT Wallet",network: "", symbol: "USDT", balance: "0.00", change: "0.0%", logo: "https://assets.coingecko.com/coins/images/325/large/Tether.png", priceUsd: "$0.00", address: "" },
@@ -181,7 +187,14 @@ async function fetchInitialSpark(symbol: string) {
 
 export function subscribeMarketWithSpark(
   symbols: string[],
-  onUpdate: (symbol: string, price: string, change: string, spark: number[]) => void
+  onUpdate: (
+    symbol: string,
+    price: string,
+    change: string,
+    spark: number[],
+    volume24h: number,
+    trades24h: number
+  ) => void
 ) {
   // fetch initial spark for all symbols
   // await Promise.all(symbols.map(s => fetchInitialSpark(s)));
@@ -210,8 +223,10 @@ export function subscribeMarketWithSpark(
 
     const price = `$${priceNum.toFixed(2)}`;
     const change = `${parseFloat(d.P).toFixed(2)}%`;
+    const volume24h = parseFloat(d.q || d.v || 0); // quote or base volume
+    const trades24h = Number(d.n || 0); // trade count 24h
 
-    onUpdate(sym, price, change, normalized);
+    onUpdate(sym, price, change, normalized, volume24h, trades24h);
   };
 
   return () => ws.close();

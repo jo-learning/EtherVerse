@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { FaChevronDown } from "react-icons/fa";
 
 const COLORS = {
   purple: "#4b0082",
@@ -80,7 +81,7 @@ export default function CustomSelect({
           style={{
             background: "rgba(26, 32, 60, 0.25)",
             color: value ? COLORS.textWhite : COLORS.textGray,
-            fontSize: "1.13rem",
+            fontSize: "0.95rem",
             transition: "background 0.3s",
             borderRadius: "1rem 1rem 0 0",
             minHeight: 48,
@@ -102,17 +103,23 @@ export default function CustomSelect({
             position: "absolute",
             right: 22,
             top: "50%",
-            transform: "translateY(-60%)",
+            transform: "translateY(-50%)",
             pointerEvents: "none",
-            fontSize: 22,
-            background: "linear-gradient(90deg, #4b0082 0%, #ffffff 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            fontWeight: 700,
-            textShadow: "0 2px 8px #0002",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
+          aria-hidden
         >
-          
+          <FaChevronDown
+            size={18}
+            style={{
+              color: value ? COLORS.textWhite : COLORS.textGray,
+              transition: "transform 0.2s ease",
+              transform: open ? "rotate(180deg)" : "rotate(0deg)",
+              filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.25))",
+            }}
+          />
         </span>
       </div>
 
@@ -167,10 +174,10 @@ export default function CustomSelect({
                   style={{
                     background:
                       opt.value === value
-                        ? `linear-gradient(90deg, ${COLORS.purple} 0%, ${COLORS.background} 100%)`
+                        ? `linear-gradient(90deg, ${COLORS.purple} 0%, ${COLORS.navy} 100%)`
                         : "rgba(255,255,255,0.01)",
                     color: opt.value === value ? COLORS.neonGreen : COLORS.textWhite,
-                    fontSize: "1.13rem",
+                    fontSize: "0.95rem",
                     boxShadow:
                       opt.value === value
                         ? "0 2px 12px 0 rgba(75,0,130,0.12)"
