@@ -18,7 +18,7 @@ const COLORS = {
   textGray: "#b0b8c1",
 };
 
-export default function NewsDetailPage({ params }: { params: { id: string } }) {
+export default async function NewsDetailPage({ params }: { params: { id: string } }) {
   const newsItem = NEWS.find(item => item.id === parseInt(params.id));
 
   if (!newsItem) {
