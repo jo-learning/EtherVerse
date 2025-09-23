@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { coins } from "@/lib/data";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
+// Per-user consolidated balances now live in userWallet table.
 
 export async function POST(req: Request) {
   try {
@@ -15,27 +14,35 @@ export async function POST(req: Request) {
     if (!oldUser){
         return NextResponse.json({error: "the User doesn't exists"})
     }
-    const trimmedNetwork = network.split("/")[0];
-    
-    const wallet = await prisma.wallet.findFirst({
-        where: { userId: oldUser.id, symbol: trimmedNetwork }
-    });
-
-    if (!wallet) {
-        console.error("Wallet not found for user:", oldUser.id, "and network:", network);
-        return NextResponse.json({ error: "Wallet not found for this user and network" }, { status: 404 });
+    const symbol = network.split("/")[0].toUpperCase();
+    const allowed = symbol.match(/^[A-Z0-9]{2,10}$/);
+    if (!allowed) {
+      return NextResponse.json({ error: "Invalid symbol" }, { status: 400 });
     }
 
-    const updatedUser = await prisma.wallet.update({
-        where: { id: wallet.id },
-        data: {
-            balance: {
-                increment: addBalance
-            }
+    const uw = await prisma.userWallet.findUnique({ where: { userId: oldUser.id } });
+    if (!uw) {
+      return NextResponse.json({ error: "User wallet not initialized" }, { status: 404 });
+    }
 
-        }
-    })
-    return NextResponse.json({ updatedUser }, { status:  200 });
+    if (!(symbol in uw)) {
+      return NextResponse.json({ error: "Symbol not supported in userWallet" }, { status: 400 });
+    }
+
+    const current = parseFloat((uw as any)["USDT"] || "0");
+    const inc = Number(addBalance);
+    if (isNaN(inc)) {
+      return NextResponse.json({ error: "addBalance must be numeric" }, { status: 400 });
+    }
+    const data: Record<string, any> = {};
+    data[symbol] = (current + inc).toString();
+
+    const updated = await prisma.userWallet.update({
+      where: { userId: oldUser.id },
+      data,
+    });
+
+    return NextResponse.json({ updated }, { status: 200 });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
   }

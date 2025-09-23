@@ -24,6 +24,7 @@ const menuItems = [
 //   { icon: <FaChartLine size={16} />, label: "Activities", route: "" },
 //   { icon: <FaChartLine size={16} />, label: "Statistics", route: "" },
   { icon: <FaComments size={16} />, label: "Chat", route: "/adminChat" },
+  { icon: <FaCogs size={16} />, label: "Wallet", route: "/wallet" },
   { icon: <FaCogs size={16} />, label: "Settings", route: "" },
 ];
 
@@ -36,6 +37,10 @@ export default function RootLayout({
   const [loading, setLoading] = useState(false);
   const pathname = usePathname();
 
+  // NEW: routes without sidebar/header
+  const HIDE_SIDEBAR_ROUTES = ["/login", "/auth/login"];
+  const hideChrome = HIDE_SIDEBAR_ROUTES.some(r => pathname === r);
+
   // Show loading spinner when navigating
   const handleNav = (route: string) => {
     if (pathname !== route) {
@@ -45,6 +50,21 @@ export default function RootLayout({
       setDrawerOpen(false);
     }
   };
+
+  if (hideChrome) {
+    return (
+      <html lang="en">
+        <body>
+          {loading && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-black bg-opacity-40">
+              <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-purple-500"></div>
+            </div>
+          )}
+          {children}
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html lang="en">

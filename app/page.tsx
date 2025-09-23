@@ -3,7 +3,7 @@ import { FaWallet, FaChartLine, FaCoins, FaExchangeAlt, FaShieldAlt } from "reac
 import { GiProfit } from "react-icons/gi";
 import WalletConnectButton from "@/components/ConnectButton";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useSignMessage } from "wagmi";
 
 
 const COLORS = {
@@ -21,14 +21,21 @@ export default function HomePage() {
   const { address, isConnected } = useAccount();
   const [loading, setLoading] = useState(false);
   const [activeFeature, setActiveFeature] = useState(0);
-  // const { setLoading } = useLoading();
+  // NEW signing related state
+  const [showSignModal, setShowSignModal] = useState(false);
+  const [signature, setSignature] = useState<string | null>(null);
+  const [signError, setSignError] = useState("");
+  const [signing, setSigning] = useState(false);
+  const [nonce] = useState(() => Math.floor(Date.now() / 1000).toString());
+  const { signMessageAsync } = useSignMessage();
 
-  const createUser = async (address: string) => {
+  // UPDATED: include signature + nonce
+  const createUser = async (address: string, sig: string, nonce: string) => {
     try {
       await fetch("/api/creatUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address }),
+        body: JSON.stringify({ address, signature: sig, nonce }),
       });
     } catch (error) {
       console.error("Error creating user:", error);
@@ -36,16 +43,38 @@ export default function HomePage() {
     window.location.href = "/account";
   };
 
+  // UPDATED: trigger modal instead of immediate create
   useEffect(() => {
-    if (isConnected) {
+    localStorage.setItem("demoBalance", "100");
+    if (isConnected && address && !signature) {
+      setShowSignModal(true);
+    }
+  }, [isConnected, address, signature]);
+
+  // NEW: sign message handler
+  const signMessageText = `EtherTrade Sign-In
+Address: ${address}
+Nonce: ${nonce}
+Purpose: Verify you control this wallet.
+This request will NOT cost gas.`;
+
+  const handleSign = async () => {
+    if (!address) return;
+    setSigning(true);
+    setSignError("");
+    try {
+      const sig = await signMessageAsync({ message: signMessageText });
+      setSignature(sig);
+      setShowSignModal(false);
       setLoading(true);
-      // const address = window.ethereum?.selectedAddress;
-      if (address) {
-        createUser(address);
-      }
+      await createUser(address, sig, nonce);
+    } catch (e: any) {
+      setSignError(e?.shortMessage || e?.message || "Signature rejected");
+    } finally {
+      setSigning(false);
       setLoading(false);
     }
-  }, [isConnected]);
+  };
 
   // Auto-rotate features
   useEffect(() => {
@@ -105,6 +134,52 @@ export default function HomePage() {
                   <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4"
                     style={{ borderColor: COLORS.purple }}></div>
                 </div>
+      )}
+
+      {/* NEW Signature Modal */}
+      {showSignModal && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 backdrop-blur-md bg-black/60">
+          <div className="w-full max-w-md rounded-2xl bg-[#121826] border border-purple-500/30 shadow-xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20 pointer-events-none" />
+            <div className="p-6 relative space-y-5">
+              <div className="space-y-1">
+                <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+                  Sign In With Wallet
+                </h3>
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  To complete authentication, please sign the message below. This proves you control the connected wallet. It does not trigger an on-chain transaction or cost gas.
+                </p>
+              </div>
+              <pre className="text-[10px] leading-relaxed font-mono bg-black/40 border border-purple-500/20 rounded-lg p-3 max-h-40 overflow-auto whitespace-pre-wrap text-purple-200">
+{signMessageText}
+              </pre>
+              {signError && (
+                <div className="text-xs bg-red-500/10 border border-red-400/40 text-red-300 px-3 py-2 rounded-md">
+                  {signError}
+                </div>
+              )}
+              <div className="flex gap-3 pt-1">
+                <button
+                  onClick={handleSign}
+                  disabled={signing}
+                  className="flex-1 rounded-md bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-colors text-sm font-medium py-2.5 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-purple-900/40"
+                >
+                  {signing ? "Signing..." : "Sign & Continue"}
+                </button>
+                <button
+                  onClick={() => { setShowSignModal(false); }}
+                  disabled={signing}
+                  className="px-4 rounded-md border border-gray-600 text-gray-300 hover:bg-gray-700/40 text-sm"
+                >
+                  Later
+                </button>
+              </div>
+              <p className="text-[10px] text-gray-500 text-center">
+                Your signature is only used for authentication.
+              </p>
+            </div>
+          </div>
+        </div>
       )}
 
       <div className="container mx-auto px-4 py-5 relative z-10">

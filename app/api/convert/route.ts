@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma"; // Adjust path if needed
+import { prisma } from "@/lib/prisma"; // Using consolidated userWallet balances
 
 export async function POST(req: NextRequest) {
   const { from, to, amount, email } = await req.json();
@@ -14,38 +14,44 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
-  // Find wallets
-  const fromWallet = await prisma.wallet.findFirst({
-    where: { userId: user.id, symbol: from }
-  });
-  const toWallet = await prisma.wallet.findFirst({
-    where: { userId: user.id, symbol: to }
-  });
-
-  if (!fromWallet || !toWallet) {
-    return NextResponse.json({ error: "Wallet not found" }, { status: 404 });
+  // Fetch consolidated balances row
+  const uw = await prisma.userWallet.findUnique({ where: { userId: user.id } });
+  if (!uw) {
+    return NextResponse.json({ error: "User wallet not initialized" }, { status: 404 });
   }
 
-  if (fromWallet.balance < Number(amount)) {
+  const fromKey = from.toUpperCase();
+  const toKey = to.toUpperCase();
+  if (!(fromKey in uw) || !(toKey in uw)) {
+    return NextResponse.json({ error: "Unsupported asset symbol" }, { status: 400 });
+  }
+
+  const fromBalance = parseFloat((uw as any)[fromKey] || "0");
+  const amt = Number(amount);
+  if (isNaN(amt) || amt <= 0) {
+    return NextResponse.json({ error: "Invalid amount" }, { status: 400 });
+  }
+  if (fromBalance < amt) {
     return NextResponse.json({ error: "Insufficient balance" }, { status: 400 });
   }
 
-  // Simple conversion: 1:1 ratio (replace with actual conversion logic if needed)
-  const convertedAmount = Number(amount);
+  // Simple 1:1 conversion (placeholder)
+  const convertedAmount = amt;
 
-  // Update balances
-  await prisma.wallet.update({
-    where: { id: fromWallet.id },
-    data: { balance: { decrement: convertedAmount } }
-  });
-  await prisma.wallet.update({
-    where: { id: toWallet.id },
-    data: { balance: { increment: convertedAmount } }
+  const data: Record<string, any> = {};
+  data[fromKey] = (fromBalance - convertedAmount).toString();
+  const toBalance = parseFloat((uw as any)[toKey] || "0");
+  data[toKey] = (toBalance + convertedAmount).toString();
+
+  const updated = await prisma.userWallet.update({
+    where: { userId: user.id },
+    data,
   });
 
   return NextResponse.json({
     success: true,
-    from: { symbol: fromWallet.symbol, balance: fromWallet.balance - convertedAmount },
-    to: { symbol: toWallet.symbol, balance: toWallet.balance + convertedAmount }
+    from: { symbol: fromKey, balance: data[fromKey] },
+    to: { symbol: toKey, balance: data[toKey] },
+    wallet: updated,
   });
 }

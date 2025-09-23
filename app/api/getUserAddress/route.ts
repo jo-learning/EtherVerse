@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { walletsData } from "@/lib/data";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -21,17 +22,28 @@ export async function GET(req: Request) {
   }
 
   try {
+
+    const user1 = await prisma.user.findUnique({ where: { email: userId } });
+    if (!user1) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
     
-    const wallets = await prisma.wallet.findMany({
-      where: { userId: user.id },
-      select: {
-        coinId: true,
-        address: true,
-        network: true,
-        symbol: true,
-        balance: true
-      },
-    });
+    const uw = await prisma.userWallet.findUnique({ where: { userId: user1.id } });
+    if (!uw) {
+      return NextResponse.json({ error: "userWallet not initialized" }, { status: 404 });
+    }
+
+    const addresses = await prisma.wallet.findMany();
+    console.log("addresses:", addresses, walletsData);
+
+    const wallets = walletsData.map(w => ({
+      symbol: w.symbol,
+      name: w.name,
+      logo: w.logo,
+      balance: (uw as any)[w.symbol] ?? "0",
+      address: addresses.find(a => a.coinId == w.symbol)?.address || "",
+      network: w.network,
+    }));
 
     return NextResponse.json({ userId, wallets });
   } catch (error) {

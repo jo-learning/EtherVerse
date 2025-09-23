@@ -23,43 +23,81 @@ model User {
   status       String   @default("active")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  wallets      Wallet[]
+  // wallets      Wallet[]
   transactions Transaction[]
   kyc          KYC?
   notifications Notification[]
   settings     Settings?
 
   chat chat[]
+
+  userWallet userWallet[]
+}
+
+model userWallet {
+  id       String   @id @default(uuid())
+  userId   String   @unique
+  user     User     @relation(fields: [userId], references: [id])
+  BTC      String   @default("0")
+  ETH      String   @default("0")
+  USDT     String   @default("0")
+  USDC     String   @default("0")
+  BNB      String   @default("0")
+  DAI      String   @default("0")
+  MATIC    String   @default("0")
+  XRP      String   @default("0")
+  SOL      String   @default("0")
+  ADA      String   @default("0")
+  DOGE     String   @default("0")
+  DOT      String   @default("0")
+  SHIB     String   @default("0")
+  TRX      String   @default("0")
+  LTC      String   @default("0")
+  AVAX     String   @default("0")
+  WBTC     String   @default("0")
+  LINK     String   @default("0")
+  UNI      String   @default("0")
+  BCH      String   @default("0")
+  XLM      String   @default("0")
+  VET      String   @default("0")
+  THETA    String   @default("0")
+  FIL      String   @default("0")
+  ICP      String   @default("0")
+  AAVE     String   @default("0")
+  EOS      String   @default("0")
+  XMR      String   @default("0")
+  ZEC      String   @default("0")
+  ALGO     String   @default("0")
+  ATOM     String   @default("0")
+  MKR      String   @default("0")
+  NEO      String   @default("0")
+  KSM      String   @default("0")
+  FTM      String   @default("0")
+  EGLD     String   @default("0")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Wallet {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  coin      Coin     @relation(fields: [coinId], references: [id])
+  // user      User     @relation(fields: [userId], references: [id])
+  // userId    String
   coinId    String
   balance   Float    @default(0)
   profits   Float    @default(0)
   frozen    Float    @default(0)
+  symbol    String   @unique
+  name      String
+  logo      String?
   address   String
   actualBalance String
-  privateKey String
+  privateKey String?
   publicKey String
   network   String
-  symbol String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   Transaction Transaction[]
-}
-
-model Coin {
-  id        String   @id @default(uuid())
-  symbol    String   @unique
-  name      String
-  logo      String?
-  wallets   Wallet[]
-  createdAt DateTime @default(now())
 }
 
 model Transaction {
@@ -118,4 +156,25 @@ model chat {
   message   String
   who  String @default("user")
   createdAt DateTime @default(now())
+}
+
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+}
+
+model Admin {
+  id                String     @id @default(uuid())
+  adminId           Int        @unique
+  email             String     @unique
+  hashedPassword    String
+  name              String?
+  role              AdminRole  @default(ADMIN)
+  status            String     @default("active")
+  lastLoginAt       DateTime?
+  twoFactorSecret   String?
+  resetToken        String?
+  resetTokenExpires DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 }

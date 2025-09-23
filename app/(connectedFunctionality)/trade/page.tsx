@@ -77,22 +77,30 @@ export default function Page() {
     switch (filter) {
       case 'digital':
         // Show all cryptocurrencies
-        return coins.filter(coin => 
+        return coins.filter(coin =>
           ['BTC', 'ETH', 'USDT', 'BNB', 'XRP', 'SOL', 'AAVE', 'DOT', 'LINK', 'UNI', 'LTC', 'ADA', 'DOGE', 'EOS'].includes(coin.symbol)
         );
       case 'forex':
         // Filter for forex-related coins
-        return coins.filter(coin => 
-          ['EUR', 'GBP', 'JPY', 'USD'].includes(coin.symbol)
+        return coins.filter(coin =>
+          ['EUR', 'GBP', 'JPY'].includes(coin.symbol)
         );
+
+      case 'forex1':
+        // Filter for forex-related coins
+        return coins.filter(coin =>
+          ['EUR', 'GBP', 'JPY'].includes(coin.symbol)
+        );
+      
       case 'metal':
         // Filter for precious metal-related coins
-        return coins.filter(coin => 
-          ['XAU', 'XAG', 'XPT'].includes(coin.symbol)
+        return coins.filter(coin =>
+          ['XAU', 'XAG', 'XPT', 'XG', 'WTI'].includes(coin.symbol)
         );
+            
       case 'top':
         // Order all coins by profit rate (descending)
-        const c =  [...coins].sort((a, b) => getChangePct(b) - getChangePct(a));
+        const c = [...coins].sort((a, b) => getChangePct(b) - getChangePct(a));
         return c.slice(0, 6); // Return top 20 coins
       default:
         return coins;
@@ -114,9 +122,12 @@ export default function Page() {
                 color: COLORS.neonGreen
               }}
             >
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col ">
                 <div className="font-semibold" style={{ color: COLORS.neonGreen }}>Market</div>
-                <FinancialTags onFilterChange={handleFilterChange} />
+                <div className="flex flex-row items-center justify-between">
+                  <div className="font-semibold"></div>
+                  <FinancialTags onFilterChange={handleFilterChange} />
+                </div>
               </div>
             </div>
             <div className="grid gap-3">
@@ -135,75 +146,75 @@ export default function Page() {
             </div>
 
             {/* Latest News List */}
-           <div
-  className="rounded-2xl shadow-lg p-4 mt-6 border"
-  style={{
-    background: COLORS.navy || "#172042",
-    borderColor: COLORS.purple,
-    color: COLORS.textWhite,
-    boxShadow: "0 4px 32px 0 #4b0082aa"
-  }}
->
-  <div className="flex items-center justify-between mb-4">
-    <div className="font-semibold text-xl tracking-wide" style={{ color: COLORS.neonGreen, letterSpacing: 1 }}>Latest News</div>
-  </div>
-  <ul className="divide-y divide-[#23234a]">
-    {NEWS.map((news, idx) => (
-      <li
-        key={idx}
-        className="flex items-center gap-4 py-4 hover:bg-[#0a1026] rounded-xl transition group"
-        style={{
-          paddingLeft: 4,
-          paddingRight: 4,
-          cursor: "pointer",
-          boxShadow: "0 2px 8px 0 #0002"
-        }}
-      >
-        <Link 
-          href={`/news/${news.id}`}
-          className="flex items-center gap-4 w-full"
-        >
-          <div className="flex-shrink-0">
-            <img
-              src={news.image}
-              alt={news.source}
-              className="rounded-lg shadow"
+            <div
+              className="rounded-2xl shadow-lg p-4 mt-6 border"
               style={{
-                width: 48,
-                height: 48,
-                objectFit: "cover",
-                border: `2px solid ${COLORS.textGray}`,
-                background: COLORS.background
-              }}
-            />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="font-semibold text-lg group-hover:underline"
-              style={{
+                background: COLORS.navy || "#172042",
+                borderColor: COLORS.purple,
                 color: COLORS.textWhite,
-                textShadow: "0 1px 8px #39FF1440"
+                boxShadow: "0 4px 32px 0 #4b0082aa"
               }}
             >
-              {news.title}
+              <div className="flex items-center justify-between mb-4">
+                <div className="font-semibold text-xl tracking-wide" style={{ color: COLORS.neonGreen, letterSpacing: 1 }}>Latest News</div>
+              </div>
+              <ul className="divide-y divide-[#23234a]">
+                {NEWS.map((news, idx) => (
+                  <li
+                    key={idx}
+                    className="flex items-center gap-4 py-4 hover:bg-[#0a1026] rounded-xl transition group"
+                    style={{
+                      paddingLeft: 4,
+                      paddingRight: 4,
+                      cursor: "pointer",
+                      boxShadow: "0 2px 8px 0 #0002"
+                    }}
+                  >
+                    <Link
+                      href={`/news/${news.id}`}
+                      className="flex items-center gap-4 w-full"
+                    >
+                      <div className="flex-shrink-0">
+                        <img
+                          src={news.image}
+                          alt={news.source}
+                          className="rounded-lg shadow"
+                          style={{
+                            width: 48,
+                            height: 48,
+                            objectFit: "cover",
+                            border: `2px solid ${COLORS.textGray}`,
+                            background: COLORS.background
+                          }}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="font-semibold text-lg group-hover:underline"
+                          style={{
+                            color: COLORS.textWhite,
+                            textShadow: "0 1px 8px #39FF1440"
+                          }}
+                        >
+                          {news.title}
+                        </div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{
+                            background: COLORS.background,
+                            color: COLORS.purple,
+                            fontWeight: 600,
+                            letterSpacing: 0.5
+                          }}>
+                            {news.source}
+                          </span>
+                          <span className="text-xs" style={{ color: COLORS.textGray || "#b0b8c1" }}>{news.time}</span>
+                        </div>
+                      </div>
+                      <span className="ml-2 text-lg transition-transform group-hover:translate-x-1" style={{ color: COLORS.textGray }}>→</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                background: COLORS.background,
-                color: COLORS.purple,
-                fontWeight: 600,
-                letterSpacing: 0.5
-              }}>
-                {news.source}
-              </span>
-              <span className="text-xs" style={{ color: COLORS.textGray || "#b0b8c1" }}>{news.time}</span>
-            </div>
-          </div>
-          <span className="ml-2 text-lg transition-transform group-hover:translate-x-1" style={{ color: COLORS.textGray }}>→</span>
-        </Link>
-      </li>
-    ))}
-  </ul>
-</div>
           </div>
         </div>
       </section>

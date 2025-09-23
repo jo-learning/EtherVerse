@@ -35,3 +35,53 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # EtherVerse
+
+## Countdown Timer Component
+
+We added a reusable `CountdownTimer` component (`components/CountdownTimer.tsx`) used in the trade detail page to show live remaining time until a trade finalizes. When the timer finishes it triggers a `router.refresh()` call to pull updated data.
+
+Basic usage:
+
+```tsx
+import CountdownTimer from "@/components/CountdownTimer";
+
+<CountdownTimer
+	seconds={90}             // total duration (or use targetTime={Date.now() + 90_000})
+	label="Time Left"
+	onComplete={() => console.log('Finished!')}
+/>;
+```
+
+Props:
+- `seconds`: number (default 60) – duration if `targetTime` not provided
+- `targetTime`: timestamp in ms – absolute end time
+- `onComplete`: callback once (fires when it reaches zero)
+- `autoRestart`: restarts automatically using the same duration (optional)
+- `intervalMs`: update granularity (default 1000ms)
+- `label`: small label text
+- `render`: custom render function `(remainingSeconds) => ReactNode`
+
+Displayed format auto-switches between `MM:SS` and `H:MM:SS` for long timers. The component is client-only.
+
+## Wallet Data Architecture
+
+User balances now live in a consolidated `userWallet` table (one row per user, columns per symbol). Static metadata (logo, name) comes from `walletsData`.
+
+### API: `/api/userWallet`
+GET `/api/userWallet?userId=<email>&symbol=<optional>` returns merged metadata + per-user balance(s).
+
+Example response:
+```json
+{
+	"userId": "alice@example.com",
+	"wallets": [
+		{ "symbol": "BTC", "name": "BTC Wallet", "logo": "...", "balance": "0", "network": "", "address": "" }
+	]
+}
+```
+
+### Client Helpers
+- `fetchUserWalletSymbol(email, symbol)` – preferred single-symbol fetch
+- `fetchWallet(symbol, email)` – legacy-compatible (falls back to older `/api/getUserAddress`)
+
+If you add new coins to `userWallet` schema, update `walletsData` and they’ll flow automatically.

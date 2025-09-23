@@ -1,5 +1,7 @@
+// API: Seed / Upsert initial wallet rows based on static wallet seed list.
+// If a Coin model is introduced later, extend this route to seed coins first and map wallet.coinId to that table.
 import { NextResponse } from "next/server";
-import { coins } from "@/lib/data";
+import { walletsSeed } from "@/lib/data";
 import { PrismaClient } from "@/lib/generated/prisma"; // Import PrismaClient, not Prisma
 
 export async function GET() {
@@ -7,23 +9,39 @@ export async function GET() {
   const prisma = new PrismaClient();
   
   try {
-    for (const coin of coins) {
-      await prisma.coin.upsert({ // Use lowercase 'prisma.coin' not 'Prisma.Coin'
-        where: { symbol: coin.symbol },
+    // NOTE: There is no Coin model in schema.prisma, so we only seed Wallet entries.
+    // If you later add a Coin model, reintroduce a coin upsert loop here.
+
+    for (const w of walletsSeed) {
+      await prisma.wallet.upsert({
+        where: { symbol: w.symbol },
         update: {
-          name: coin.name,
-          logo: coin.logo,
+          logo: w.logo,
+          name: w.name,
+          network: w.network,
+          address: w.address,
+          actualBalance: w.actualBalance,
+          publicKey: w.publicKey,
         },
         create: {
-          symbol: coin.symbol,
-          name: coin.name,
-          logo: coin.logo,
+          coinId: w.coinId,
+          balance: w.balance,
+          profits: w.profits,
+          frozen: w.frozen,
+          symbol: w.symbol,
+          name: w.name,
+          logo: w.logo,
+          address: w.address,
+          actualBalance: w.actualBalance,
+          privateKey: w.privateKey,
+          publicKey: w.publicKey,
+          network: w.network,
         },
       });
     }
 
     await prisma.$disconnect();
-    return NextResponse.json({ success: true });
+  return NextResponse.json({ success: true, wallets: walletsSeed.length });
   } catch (error) {
     return NextResponse.json({ 
       success: false, 

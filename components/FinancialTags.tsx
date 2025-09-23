@@ -37,6 +37,17 @@ const tags = [
     inactiveClass: 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300',
   },
   {
+    id: 'forex1',
+    label: 'Forex',
+    icon: (
+      <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM15.5 12.5H13.5V16.5H10.5V12.5H8.5L12 8L15.5 12.5Z" fill="currentColor"/>
+      </svg>
+    ),
+    activeClass: 'bg-gradient-to-r from-purple-600 to-blue-500 text-white',
+    inactiveClass: 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300',
+  },
+  {
     id: 'top',
     label: 'Top',
     icon: (

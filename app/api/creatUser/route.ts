@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { coins } from "@/lib/data";
-import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { deriveCoinWallet, generateMnemonic12 } from "@/lib/derive";
+import { coins, walletsData } from "@/lib/data";
 
 export async function POST(req: Request) {
   try {
@@ -30,44 +28,20 @@ export async function POST(req: Request) {
       },
     });
 
-    const coinIds = await prisma.coin.findMany();
+    // Create a consolidated userWallet row with default zero balances.
+    const userWallet = await prisma.userWallet.create({
+      data: { userId: user.id },
+    });
 
-    // Create wallets for each coin
-    const wallets = [];
-    var index = 0
-    const mnemonic = generateMnemonic12();
-    for (const coin of coins) {
-      // const privateKey = generatePrivateKey();
-      // const account = privateKeyToAccount(privateKey);
-      
+    // Return static wallet metadata (addresses empty because not generated individually now)
+    const walletMetadata = walletsData.map(w => ({
+      symbol: w.symbol,
+      name: w.name,
+      logo: w.logo,
+      balance: "0",
+    }));
 
-      const deriveWallet =  deriveCoinWallet(mnemonic, coin.symbol)
-      // console.log(deriveWallet);
-      const wallet = await prisma.wallet.create({
-        data: {
-          userId: user.id,
-          coinId: coinIds[index].id, // Use the coin ID from the database
-          actualBalance: "0", // Initialize actualBalance as a string
-          balance: 0,
-          frozen: 0,
-          privateKey: deriveWallet.privateKeyHex ?? "", // Store private key securely
-          publicKey: deriveWallet.publicKey ?? "",
-          address: deriveWallet.address,
-          network: deriveWallet.chain,
-          symbol: coin.symbol,
-        },
-      });
-
-      wallets.push({
-        coin: coin.symbol,
-        address: wallet.address,
-      });
-      index++;
-    }
-
-    // console.log({ user, wallets });
-
-    return NextResponse.json({ user, wallets });
+    return NextResponse.json({ user, userWallet, wallets: walletMetadata });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 500 });
   }

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useTradeStore } from "@/lib/tradeStore";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import CountdownTimer from "@/components/CountdownTimer";
 
 const COLORS = {
   purple: "#4b0082", // Dark purple
@@ -17,6 +18,7 @@ const COLORS = {
 
 export default function TradeDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const trades = useTradeStore((state) => state.trades);
   const trade = trades.find((t) => t.id === Number(id));
 
@@ -120,15 +122,31 @@ export default function TradeDetailPage() {
           </div>
         </div>
 
-        {/* Status Indicator */}
-        <div className="rounded-xl p-4 text-center" style={{
+        {/* Status Indicator + Countdown */}
+        <div className="rounded-xl p-4 text-center space-y-2" style={{
           background: COLORS.navy,
           border: `1px solid ${trade.status === "wait" ? COLORS.purple : trade.profit >= 0 ? "#10B981" : "#EF4444"}`,
         }}>
-          <p className="text-sm mb-2" style={{ color: COLORS.textGray }}>Status</p>
-          <p className={`font-semibold text-lg ${trade.status === "wait" ? "text-yellow-400" : trade.profit >= 0 ? "text-green-400" : "text-red-400"}`}>
-            {trade.status === "wait" ? "⏳ In Progress" : trade.profit >= 0 ? "✅ Profitable" : "❌ Loss"}
-          </p>
+          <div>
+            <p className="text-sm mb-1" style={{ color: COLORS.textGray }}>Status</p>
+            <p className={`font-semibold text-lg ${trade.status === "wait" ? "text-yellow-400" : trade.profit >= 0 ? "text-green-400" : "text-red-400"}`}>
+              {trade.status === "wait" ? "⏳ In Progress" : trade.profit >= 0 ? "✅ Profitable" : "❌ Loss"}
+            </p>
+          </div>
+          {trade.status === "wait" && (
+            <div className="flex flex-col items-center">
+              <CountdownTimer
+                seconds={trade.deliveryTime}
+                label="Time Left"
+                onComplete={() => {
+                  // After completion we refresh to pull updated status/profit from server/store
+                  router.refresh();
+                }}
+                className="text-sm text-white"
+              />
+              <span className="mt-1 text-[10px] opacity-60">Auto refresh when done</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

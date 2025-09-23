@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { useTradeStore } from "@/lib/tradeStore";
+import { Toaster, toast } from "react-hot-toast";
 
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -86,7 +87,7 @@ export default function CoinDetailPage() {
     }
 
     if (address) {
-      fetchWallet(coinData, address).then(setCoins).catch(() => {});
+      fetchWallet("USDT", address).then(setCoins).catch(() => {});
     }
   }, [coinData, address, coin?.symbol]);
 
@@ -150,15 +151,15 @@ export default function CoinDetailPage() {
   }
 
   function handleEntrustNow() {
-    const profit = calculateProfit(amount, deliveryTime);
-
-    if (!coin) return;
-    if (!amount || isNaN(parseFloat(amount))) {
-      alert("Please enter a valid amount.");
+    if (!coin) {
+      toast.error("Coin unavailable.");
       return;
     }
-
-    var deliveryTimeNumber = deliveryTime.replace("S", "");
+    if (!amount || isNaN(parseFloat(amount))) {
+      toast.error("Enter a valid amount.");
+      return;
+    }
+    const profit = calculateProfit(amount, deliveryTime);
 
     addTrade({
       id: Date.now(),
@@ -170,11 +171,10 @@ export default function CoinDetailPage() {
       contract: 30,
       profit,
       deliveryPrice: parseFloat(coin.priceUsd as any),
-      deliveryTime: parseInt(deliveryTimeNumber, 10),
+      deliveryTime: parseInt(deliveryTime.replace("S", ""), 10),
       status: "wait",
     });
-    
-
+    toast.success(`Trade placed (${direction})`);
     setShowModal(false);
     setInputValue("");
   }
@@ -215,6 +215,14 @@ export default function CoinDetailPage() {
         color: COLORS.textWhite,
       }}
     >
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+          success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+          error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+        }}
+      />
       {/* Header */}
       <div
         className="flex flex-row sm:flex-row items-center gap-3 p-2 sm:p-4"
@@ -499,7 +507,7 @@ export default function CoinDetailPage() {
                   else if (deliveryTime === "21600S") basePercentage = 45;
                   else if (deliveryTime === "43200S") basePercentage = 50;
                   const options = [] as React.ReactNode[];
-                  for (let i = 0; i < 5; i++) {
+                  for (let i = 0; i < 1; i++) {
                     const percentage = basePercentage + (i * 5);
                     options.push(
                       <option key={i} value={percentage}>
