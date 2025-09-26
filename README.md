@@ -81,7 +81,45 @@ Example response:
 ```
 
 ### Client Helpers
-- `fetchUserWalletSymbol(email, symbol)` – preferred single-symbol fetch
-- `fetchWallet(symbol, email)` – legacy-compatible (falls back to older `/api/getUserAddress`)
 
 If you add new coins to `userWallet` schema, update `walletsData` and they’ll flow automatically.
+
+
+### Admin Chat API
+
+Endpoints (cookie `admin_session` required from admin login):
+
+1. Assign / Unassign User (SUPERADMIN only)
+	POST `/api/(admin)/chat/assign`
+	Body: `{ userId?: string, userEmail?: string, adminId?: string }`
+	- Provide `userId` or `userEmail` to identify user.
+	- Provide `adminId` (Admin primary id) to assign.
+	- Omit `adminId` to unassign (deactivate current active assignment).
+
+2. List Users
+	GET `/api/(admin)/chat/users?assigned=true|false`
+	- SUPERADMIN: all users, optional filter.
+	- ADMIN: only users assigned to them.
+
+3. Fetch Messages
+	GET `/api/(admin)/chat/messages?userId=...&cursor=...&limit=50`
+	- Pagination: pass last `chat.id` as `cursor` to fetch next page (ordered newest first).
+	- Access: SUPERADMIN any user; ADMIN only assigned users.
+
+4. Send Message (admin side)
+	POST `/api/(admin)/chat/messages`
+	Body: `{ userId: string, message: string }`
+	- Creates chat row with `who = 'admin'` and links `adminId`.
+
+Schema additions:
+```
+model AdminUserAssignment { id String @id @default(uuid()) admin Admin @relation(fields:[adminId], references:[id]) adminId String user User @relation(fields:[userId], references:[id]) userId String createdAt DateTime @default(now()) active Boolean @default(true) @@unique([userId, active], name: "one_active_assignment_per_user") }
+model chat { ... admin Admin? @relation(fields:[adminId], references:[id]) adminId String? }
+```
+
+Auth helper: `lib/adminAuth.ts` (`requireAdmin(req, { super: true })`).
+
+Notes:
+* Only one active assignment per user enforced by unique composite index `(userId, active)`.
+* Unassigning retains historical assignment records (active=false) for audit.
+* Chats remain even if reassigned; subsequent messages will carry new `adminId`.

@@ -9,6 +9,7 @@ export type Trade = {
   direction: "Buy short" | "Buy long";
   purchasePrice: number;
   contract: number;
+  accountType: string;
   profit: number;
   deliveryPrice: number;
   deliveryTime: number; // ⬅️ make this a number (seconds or ms), easier to compare

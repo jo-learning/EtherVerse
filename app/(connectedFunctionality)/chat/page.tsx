@@ -87,6 +87,101 @@ export default function ChatPage() {
     fetchChats();
   }, [address]);
 
+  // WebSocket realtime with priming, logs, heartbeat, reconnect jitter, and StrictMode guard
+  useEffect(() => {
+    if (!address) return;
+    let hb: any;
+    let reconnectTimer: any;
+    let tries = 0;
+
+    fetch('/api/ws').catch(() => {});
+
+    // Reuse existing in StrictMode double-mount
+    const existing: any = (window as any).__userWS;
+    if (existing && (existing.readyState === 0 || existing.readyState === 1)) {
+      console.debug('[WS-USER] reusing existing socket');
+      // Ensure subscribed for current address when it opens
+      if (existing.readyState === 1) {
+        try {
+          existing.send(JSON.stringify({ type: 'subscribe', channel: `user:${address}` }));
+          existing.send(JSON.stringify({ type: 'subscribe', channel: `userEmail:${address}` }));
+        } catch {}
+      } else {
+        existing.addEventListener('open', () => {
+          try {
+            existing.send(JSON.stringify({ type: 'subscribe', channel: `user:${address}` }));
+            existing.send(JSON.stringify({ type: 'subscribe', channel: `userEmail:${address}` }));
+          } catch {}
+        }, { once: true });
+      }
+      return () => { /* do not close someone else's socket */ };
+    }
+
+    const ownerId = Math.random().toString(36).slice(2);
+    const connect = () => {
+      const wsProto = window.location.protocol === 'https:' ? 'wss' : 'ws';
+      const url = `${wsProto}://${window.location.host}/api/ws`;
+      console.debug('[WS-USER] connecting', url);
+      const ws: any = new WebSocket(url);
+      ws.__ownerId = ownerId;
+      (window as any).__userWS = ws;
+      ws.addEventListener('open', () => {
+        tries = 0;
+        console.debug('[WS-USER] open');
+        clearInterval(hb);
+        hb = setInterval(() => { try { ws?.send(JSON.stringify({ type: 'ping', ts: Date.now() })); } catch {} }, 25000);
+        try {
+          ws.send(JSON.stringify({ type: 'subscribe', channel: `user:${address}` }));
+          ws.send(JSON.stringify({ type: 'subscribe', channel: `userEmail:${address}` }));
+        } catch {}
+      });
+      ws.addEventListener('message', (ev: MessageEvent) => {
+        console.debug('[WS-USER] message', ev.data);
+        try {
+          const data = JSON.parse(ev.data as any);
+          if (data?.type === 'message' && data.chat) {
+            const c = data.chat;
+            setMessages(prev => [...prev, { who: c.who, message: c.message, createdAt: new Date(c.createdAt).toLocaleString() }]);
+            setTimeout(() => { messagesRef.current && (messagesRef.current.scrollTop = messagesRef.current.scrollHeight); }, 20);
+          }
+        } catch (e) { console.warn('[WS-USER] parse error', e); }
+      });
+      ws.addEventListener('error', (e: any) => { console.warn('[WS-USER] error', e); });
+      ws.addEventListener('close', (ev: CloseEvent) => {
+        try { console.debug('[WS-USER] closed', ev.code, ev.reason); } catch {}
+        clearInterval(hb);
+        // Only clear global if we own it
+        if (((window as any).__userWS as any)?.__ownerId === ownerId) {
+          (window as any).__userWS = undefined;
+        }
+        const jitter = Math.floor(Math.random() * 300);
+        const delay = Math.min(1000 * Math.pow(2, tries++), 8000) + jitter;
+        reconnectTimer = setTimeout(connect, delay);
+      });
+    };
+
+    connect();
+    return () => {
+      clearInterval(hb);
+      clearTimeout(reconnectTimer);
+      const gws: any = (window as any).__userWS;
+      if (gws && gws.__ownerId === ownerId) {
+        try { gws.close(); } catch {}
+        (window as any).__userWS = undefined;
+      }
+    };
+  }, [address]);
+
+  // If address changes while socket is open, resubscribe channels
+  useEffect(() => {
+    const ws: WebSocket | undefined = (window as any).__userWS;
+    if (!ws || ws.readyState !== 1) return;
+    try {
+      ws.send(JSON.stringify({ type: 'subscribe', channel: `user:${address}` }));
+      ws.send(JSON.stringify({ type: 'subscribe', channel: `userEmail:${address}` }));
+    } catch {}
+  }, [address]);
+
   const handleSend = async () => {
     if (!input.trim()) return;
     setLoading(true);

@@ -18,6 +18,7 @@ const COLORS = {
 
 export default function HistoryPage() {
   const [tab, setTab] = useState<"wait" | "finished">("finished");
+  const [accountFilter, setAccountFilter] = useState<"demo" | "real">("demo");
   const { address } = useAccount();
   const trades = useTradeStore((state) => state.trades);
   const updateTrade = useTradeStore((state) => state.updateTrade);
@@ -59,7 +60,12 @@ export default function HistoryPage() {
     return () => clearInterval(interval);
   }, [trades, updateTrade]);
 
-  const filtered = trades.filter((t) => t.status === tab);
+  const filtered = trades
+    .filter((t) => {
+      const isReal = t.accountType === "Real Account";
+      return accountFilter === "real" ? isReal : !isReal;
+    })
+    .filter((t) => t.status === tab);
 
   return (
     <div
@@ -68,7 +74,7 @@ export default function HistoryPage() {
     >
       {/* Header */}
       <div
-        className="p-4 flex items-center justify-between"
+        className="p-4 flex items-center justify-between flex-wrap gap-4"
         style={{
           background: COLORS.navy,
           color: COLORS.textWhite,
@@ -82,13 +88,34 @@ export default function HistoryPage() {
           </svg>
           <h1 className="text-lg font-semibold">Trade History</h1>
         </div>
-        <span className="text-sm px-3 py-1 rounded-full" 
-              style={{ 
-                background: COLORS.purple, 
-                color: COLORS.textWhite 
-              }}>
-          Demo Account
-        </span>
+        <div className="flex items-center gap-3">
+          <div className="flex rounded-lg overflow-hidden border" style={{ borderColor: COLORS.purple }}>
+            <button
+              onClick={() => setAccountFilter("demo")}
+              className="px-3 py-1 text-xs font-medium transition-colors"
+              style={{
+                background: accountFilter === "demo" ? COLORS.purple : "transparent",
+                color: accountFilter === "demo" ? COLORS.textWhite : COLORS.textGray
+              }}
+            >
+              Demo
+            </button>
+            <button
+              onClick={() => setAccountFilter("real")}
+              className="px-3 py-1 text-xs font-medium transition-colors"
+              style={{
+                background: accountFilter === "real" ? COLORS.purple : "transparent",
+                color: accountFilter === "real" ? COLORS.textWhite : COLORS.textGray
+              }}
+            >
+              Real
+            </button>
+          </div>
+          <span className="text-sm px-3 py-1 rounded-full"
+            style={{ background: COLORS.purple, color: COLORS.textWhite }}>
+            {accountFilter === "demo" ? "Demo Account" : "Real Account"}
+          </span>
+        </div>
       </div>
 
       {/* Tabs */}

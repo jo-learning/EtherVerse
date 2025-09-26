@@ -9,10 +9,11 @@ import {
   FaUser,
 } from "react-icons/fa";
 import { MdOutlineDashboard } from "react-icons/md";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 import { FiMenu } from "react-icons/fi"; // Hamburger icon
 import { usePathname } from "next/navigation";
+import { COLORS } from "@/lib/theme";
 
 
 const menuItems = [
@@ -23,7 +24,8 @@ const menuItems = [
 //   { icon: <FaChartLine size={16} />, label: "Leverage", route: "/tradeHistory" },
 //   { icon: <FaChartLine size={16} />, label: "Activities", route: "" },
 //   { icon: <FaChartLine size={16} />, label: "Statistics", route: "" },
-  { icon: <FaComments size={16} />, label: "Chat", route: "/adminChat" },
+  { icon: <FaComments size={16} />, label: "Chat", route: "/chatAdmin" },
+  { icon: <FaCogs size={16} />, label: "Assignment", route: "/assignments" },
   { icon: <FaCogs size={16} />, label: "Wallet", route: "/wallet" },
   { icon: <FaCogs size={16} />, label: "Settings", route: "" },
 ];
@@ -35,6 +37,7 @@ export default function RootLayout({
 }>) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [adminRole, setAdminRole] = useState<"ADMIN" | "SUPERADMIN" | null>(null);
   const pathname = usePathname();
 
   // NEW: routes without sidebar/header
@@ -50,6 +53,24 @@ export default function RootLayout({
       setDrawerOpen(false);
     }
   };
+
+  // Fetch current admin role based on session cookie
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch('/api/login', { method: 'GET', credentials: 'include' });
+        if (!res.ok) { setAdminRole(null); return; }
+        const data = await res.json();
+        if (!alive) return;
+        const role = data?.admin?.role;
+        setAdminRole(role === 'SUPERADMIN' ? 'SUPERADMIN' : 'ADMIN');
+      } catch {
+        if (alive) setAdminRole(null);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   if (hideChrome) {
     return (
@@ -67,8 +88,8 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" style={{ background: COLORS.background }}>
+      <body style={{ background: COLORS.background }}>
         {/* Loading Overlay */}
         {loading && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-white dark:bg-black bg-opacity-40">
@@ -77,16 +98,15 @@ export default function RootLayout({
         )}
         <div className="flex min-h-screen">
           {/* Mobile top bar */}
-          <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-white/80 dark:bg-gray-800/90 backdrop-blur-lg border-b border-gray-200/50 dark:border-gray-700 p-4 lg:hidden">
+          <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between backdrop-blur-lg p-4 lg:hidden" style={{ background: COLORS.background, borderBottom: `1px solid ${COLORS.purple}` }}>
             <button
               onClick={() => setDrawerOpen(true)}
-              className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
+              className="hover:opacity-80"
+              style={{ color: COLORS.neonGreen }}
             >
               <FiMenu size={24} />
             </button>
-            <h2 className="font-bold text-lg text-purple-600 dark:text-purple-400">
-              EtherVerse
-            </h2>
+            <h2 className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>EtherVerse</h2>
             <div className="w-6" /> {/* Spacer for balance */}
           </header>
 
@@ -100,23 +120,21 @@ export default function RootLayout({
 
           {/* Sidebar */}
           <aside
-            className={`fixed top-0 left-0 z-50 h-full w-72 bg-white/80 dark:bg-gray-800/90 backdrop-blur-lg border-r border-gray-200/50 dark:border-gray-700 transform transition-transform duration-300 ease-in-out
+            className={`fixed top-0 left-0 z-50 h-full w-72 backdrop-blur-lg transform transition-transform duration-300 ease-in-out
               ${drawerOpen ? "translate-x-0" : "-translate-x-full"}
               lg:translate-x-0 lg:static`}
+            style={{ background: COLORS.background, borderRight: `1px solid ${COLORS.purple}` }}
           >
             {/* Sidebar header */}
-            <div className="p-5 border-b border-gray-200/50 dark:border-gray-700 flex justify-between items-center">
+            <div className="p-5 flex justify-between items-center" style={{ borderBottom: `1px solid ${COLORS.purple}` }}>
               <div>
-                <h2 className="font-bold text-xl text-purple-600 dark:text-purple-400">
-                  EtherVerse
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  MID: 60600243
-                </p>
+                <h2 className="font-bold text-xl" style={{ color: COLORS.neonGreen }}>EtherVerse</h2>
+                <p className="text-sm" style={{ color: COLORS.white }}>MID: 60600243</p>
               </div>
               <button
                 onClick={() => setDrawerOpen(false)}
-                className="lg:hidden text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                className="lg:hidden hover:opacity-80"
+                style={{ color: COLORS.neonGreen }}
               >
                 <AiOutlineClose size={20} />
               </button>
@@ -124,23 +142,23 @@ export default function RootLayout({
 
             {/* Navigation */}
             <nav className="p-4 space-y-1">
-              {menuItems.map((item, index) => {
+              {/* Determine items based on role: SUPERADMIN -> all, ADMIN -> only Chat */}
+              {adminRole === null && (
+                <div className="text-sm text-gray-500 dark:text-gray-400 p-3">Loading menu…</div>
+              )}
+              {(adminRole !== null ? (adminRole === 'ADMIN' ? menuItems.filter(m => m.label === 'Chat') : menuItems) : []).map((item, index) => {
                 const isActive = pathname === item.route;
                 return (
                   <button
                     key={index}
-                    className={`flex items-center w-full space-x-3 p-3 rounded-xl transition-all duration-200
-                      ${
-                        isActive
-                          ? "bg-purple-600/20 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 font-bold"
-                          : "hover:bg-purple-100/50 dark:hover:bg-purple-900/20 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400"
-                      }`}
+                    className={`flex items-center w-full space-x-3 p-3 rounded-xl transition-all duration-200`}
+                    style={isActive ? { background: 'rgba(75, 0, 130, 0.2)', color: COLORS.neonGreen } : { color: COLORS.white }}
                     onClick={() => {
                       handleNav(item.route);
                       setDrawerOpen(false);
                     }}
                   >
-                    <span className="text-purple-600 dark:text-purple-400">
+                    <span style={{ color: COLORS.purple }}>
                       {item.icon}
                     </span>
                     <span className="font-medium">{item.label}</span>

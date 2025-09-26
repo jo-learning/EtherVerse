@@ -86,10 +86,10 @@ export default function RootLayout({
     getUserId();
   }, [address]);
 
-  const showBackButton = pathname.split("/").length === 3 || pathname.split("/").length === 4;
-  const showSavingButton = pathname.split("/").length === 3 && pathname.startsWith("/wallets");
+  const showBackButton = (pathname?.split("/")?.length === 3 || pathname?.split("/")?.length === 4);
+  const showSavingButton = (pathname?.split("/")?.length === 3 && pathname?.startsWith("/wallets"));
   let coin = "";
-  if (showSavingButton) {
+  if (showSavingButton && pathname) {
     coin = pathname.split("/")[2];
   }
 

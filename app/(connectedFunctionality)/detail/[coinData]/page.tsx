@@ -172,6 +172,7 @@ export default function CoinDetailPage() {
       profit,
       deliveryPrice: parseFloat(coin.priceUsd as any),
       deliveryTime: parseInt(deliveryTime.replace("S", ""), 10),
+      accountType: accountType,
       status: "wait",
     });
     toast.success(`Trade placed (${direction})`);
@@ -544,15 +545,17 @@ export default function CoinDetailPage() {
                   type="button"
                   className="px-3 py-2 rounded-lg"
                   style={{
-                    background: COLORS.purple,
-                    color: COLORS.neonGreen,
+                  background: COLORS.purple,
+                  color: COLORS.neonGreen,
                   }}
                   onClick={() => {
-                    if (accountType == "Demo Account"){
-                      setInputValue("100");
-                    } else {
-                      setInputValue(coinWallet?.balance?.toString() || "");
-                    }
+                  if (accountType == "Demo Account") {
+                    // Get demo balance from localStorage, default to 100 if not set
+                    const demoBalance = localStorage.getItem("demoBalance");
+                    setInputValue(demoBalance || "100");
+                  } else {
+                    setInputValue(coinWallet?.balance?.toString() || "");
+                  }
                   }}
                 >
                   Max

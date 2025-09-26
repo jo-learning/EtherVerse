@@ -1,89 +1,98 @@
 "use client";
-import { useState } from "react";
-import { FaUser, FaCoins, FaChartBar } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaUser, FaComments, FaChartBar } from "react-icons/fa";
 
-const users = [
-  {
-    id: 1,
-    name: "Alice",
-    email: "alice@email.com",
-    balances: { BTC: 0.5, ETH: 2.1, USDT: 1200 },
-  },
-  {
-    id: 2,
-    name: "Bob",
-    email: "bob@email.com",
-    balances: { BTC: 0.1, ETH: 0.0, USDT: 500 },
-  },
-  {
-    id: 3,
-    name: "Charlie",
-    email: "charlie@email.com",
-    balances: { BTC: 0.0, ETH: 5.0, USDT: 3000 },
-  },
-];
-
-const coins = ["BTC", "ETH", "USDT"];
+type DashStats = {
+  scope: 'global' | 'assigned';
+  stats: { users: number; admins?: number; chats: number; assignments?: number };
+  recent: { users: Array<{ id: string; email: string; name: string | null; createdAt: string }>; chats: Array<{ id: string; userId: string; who: string; message: string; createdAt: string; adminId?: string | null }> };
+};
 
 export default function AdminDashboard() {
-  // Analysis
-  const userCount = users.length;
-  const totalBalances = coins.reduce((acc, coin) => {
-    acc[coin] = users.reduce(
-      (sum, user) => sum + (user.balances[coin as keyof typeof user.balances] || 0),
-      0
-    );
-    return acc;
-  }, {} as Record<string, number>);
+  const [data, setData] = useState<DashStats | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let alive = true; setLoading(true); setError(null);
+    (async () => {
+      try {
+        const res = await fetch('/api/dashboard', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Failed to load dashboard');
+        const json = await res.json();
+        if (!alive) return;
+        setData(json);
+      } catch (e: any) { if (alive) setError(e.message); }
+      finally { if (alive) setLoading(false); }
+    })();
+    return () => { alive = false; };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <h1 className="text-3xl font-bold mb-6 text-purple-700 dark:text-purple-400 flex items-center gap-2">
         <FaChartBar /> Admin Dashboard
       </h1>
-      {/* Analysis Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
-          <FaUser size={32} className="text-purple-600 mb-2" />
-          <div className="text-2xl font-bold">{userCount}</div>
-          <div className="text-gray-500 dark:text-gray-400">Total Users</div>
-        </div>
-        {coins.map((coin) => (
-          <div key={coin} className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
-            <FaCoins size={32} className="text-blue-500 mb-2" />
-            <div className="text-2xl font-bold">{totalBalances[coin]}</div>
-            <div className="text-gray-500 dark:text-gray-400">Total {coin} Balance</div>
+      {loading && <div className="text-sm text-gray-500">Loading…</div>}
+      {error && <div className="text-sm text-red-500">{error}</div>}
+      {data && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
+              <FaUser size={32} className="text-purple-600 mb-2" />
+              <div className="text-2xl font-bold">{data.stats.users}</div>
+              <div className="text-gray-500 dark:text-gray-400">{data.scope === 'global' ? 'Total Users' : 'Assigned Users'}</div>
+            </div>
+            {data.stats.admins !== undefined && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
+                <FaUser size={32} className="text-purple-600 mb-2" />
+                <div className="text-2xl font-bold">{data.stats.admins}</div>
+                <div className="text-gray-500 dark:text-gray-400">Admins</div>
+              </div>
+            )}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
+              <FaComments size={32} className="text-blue-500 mb-2" />
+              <div className="text-2xl font-bold">{data.stats.chats}</div>
+              <div className="text-gray-500 dark:text-gray-400">Chats</div>
+            </div>
+            {data.stats.assignments !== undefined && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 flex flex-col items-center">
+                <FaUser size={32} className="text-purple-600 mb-2" />
+                <div className="text-2xl font-bold">{data.stats.assignments}</div>
+                <div className="text-gray-500 dark:text-gray-400">Active Assignments</div>
+              </div>
+            )}
           </div>
-        ))}
-      </div>
-      {/* User Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-        <h2 className="text-xl font-bold mb-4 text-purple-700 dark:text-purple-400">User Balances</h2>
-        <div className="overflow-x-auto">
-          <table className="min-w-full text-left">
-            <thead>
-              <tr>
-                <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4">Email</th>
-                {coins.map((coin) => (
-                  <th key={coin} className="py-2 px-4">{coin} Balance</th>
+
+          {/* Recent lists */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+              <h2 className="text-xl font-bold mb-4 text-purple-700 dark:text-purple-400">Recent Users</h2>
+              <ul className="space-y-2">
+                {data.recent.users.map(u => (
+                  <li key={u.id} className="text-sm flex items-center justify-between">
+                    <span>{u.name || u.email}</span>
+                    <span className="text-gray-500 dark:text-gray-400">{new Date(u.createdAt).toLocaleString()}</span>
+                  </li>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id} className="border-t border-gray-200 dark:border-gray-700">
-                  <td className="py-2 px-4">{user.name}</td>
-                  <td className="py-2 px-4">{user.email}</td>
-                  {coins.map((coin) => (
-                    <td key={coin} className="py-2 px-4">{user.balances[coin as keyof typeof user.balances]}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                {!data.recent.users.length && <li className="text-sm text-gray-500">No recent users</li>}
+              </ul>
+            </div>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
+              <h2 className="text-xl font-bold mb-4 text-purple-700 dark:text-purple-400">Recent Chats</h2>
+              <ul className="space-y-2">
+                {data.recent.chats.map(c => (
+                  <li key={c.id} className="text-sm">
+                    <span className="font-semibold">[{c.who}]</span> {c.message}
+                    <span className="ml-2 text-gray-500 dark:text-gray-400">{new Date(c.createdAt).toLocaleString()}</span>
+                  </li>
+                ))}
+                {!data.recent.chats.length && <li className="text-sm text-gray-500">No recent chats</li>}
+              </ul>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

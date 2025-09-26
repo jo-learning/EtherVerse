@@ -32,6 +32,7 @@ model User {
   chat chat[]
 
   userWallet userWallet[]
+  assignments AdminUserAssignment[]
 }
 
 model userWallet {
@@ -156,6 +157,8 @@ model chat {
   message   String
   who  String @default("user")
   createdAt DateTime @default(now())
+  admin      Admin?   @relation(fields: [adminId], references: [id])
+  adminId    String?
 }
 
 enum AdminRole {
@@ -177,4 +180,21 @@ model Admin {
   resetTokenExpires DateTime?
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
+  assignments       AdminUserAssignment[]
+  chats             chat[]
+}
+
+// Relation table assigning users to admins (many users per admin, a user can have many admins? We restrict to one active assignment per user via unique index)
+model AdminUserAssignment {
+  id         String   @id @default(uuid())
+  admin      Admin    @relation(fields: [adminId], references: [id])
+  adminId    String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  createdAt  DateTime @default(now())
+  active     Boolean  @default(true)
+
+  @@unique([userId, active], name: "one_active_assignment_per_user")
+  @@index([adminId])
+  @@index([userId])
 }

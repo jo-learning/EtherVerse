@@ -24,6 +24,10 @@ export async function POST(req: NextRequest) {
             message
         }
     });
-
-    return NextResponse.json({ chat });
+        try {
+            const broadcast = (global as any).chatBroadcast as ((ch: string, payload: any) => void) | undefined;
+                broadcast?.(`user:${user.id}`, { type: 'message', chat });
+                broadcast?.(`userEmail:${user.email}`, { type: 'message', chat });
+        } catch {}
+        return NextResponse.json({ chat });
 }

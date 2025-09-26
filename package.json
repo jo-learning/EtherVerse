@@ -33,7 +33,8 @@
     "tweetnacl": "^1.0.3",
     "viem": "^2.34.0",
     "wagmi": "^2.16.4",
-    "zustand": "^5.0.7"
+    "zustand": "^5.0.7",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -43,6 +44,7 @@
     "@types/react-dom": "^19",
     "prisma": "^6.14.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@types/ws": "^8.5.12"
   }
 }
