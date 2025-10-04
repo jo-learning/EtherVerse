@@ -27,8 +27,6 @@ export function useAdminWS(
     let reconnectTimer: any;
     const ownerId = Math.random().toString(36).slice(2);
 
-  // Using standalone WS server; no priming needed
-
     const attachHandlers = (ws: WebSocket) => {
       const onOpen = () => {
         window.__ADMIN_WS_READY = true;
@@ -39,11 +37,11 @@ export function useAdminWS(
         if (channel) {
           try { ws.send(JSON.stringify({ type: 'subscribe', channel })); window.__ADMIN_WS_SUBS!.add(channel); } catch {}
         }
+        console.log('[WS-ADMIN] connected');
       };
       const onMessageEv = (event: MessageEvent) => {
         try {
           const data = JSON.parse(event.data as any);
-          console.log(data)
           if (data?.type === 'pong' || data?.type === 'subscribed' || data?.type === 'unsubscribed') {
             console.debug('[WS-ADMIN] control message', data);
             return;
@@ -54,6 +52,7 @@ export function useAdminWS(
         } catch (e) { console.warn('[WS-ADMIN] parse error', e); }
       };
       const onClose = (ev: CloseEvent) => {
+        console.log('[WS-ADMIN] disconnected', ev.code, ev.reason);
         window.__ADMIN_WS_READY = false;
         clearInterval(hb);
         // Only manage reconnect if this owner created it
@@ -63,7 +62,7 @@ export function useAdminWS(
           reconnectTimer = setTimeout(connect, delay);
         }
       };
-      const onError = () => {};
+      const onError = (e: Event) => { console.error('[WS-ADMIN] error', e); };
       ws.addEventListener('open', onOpen);
       ws.addEventListener('message', onMessageEv);      
       ws.addEventListener('close', onClose);
@@ -80,8 +79,8 @@ export function useAdminWS(
       if (window.__ADMIN_WS && (window.__ADMIN_WS.readyState === WebSocket.OPEN || window.__ADMIN_WS.readyState === WebSocket.CONNECTING)) {
         return; // already connected/connecting
       }
-  const base = process.env.NEXT_PUBLIC_WS_SERVER_URL || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/ws`;
-  const ws = new WebSocket(base) as WebSocket & { __ownerId?: string };
+      const base = process.env.NEXT_PUBLIC_WS_SERVER_URL || `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/api/ws`;
+      const ws = new WebSocket(base) as WebSocket & { __ownerId?: string };
       ws.__ownerId = ownerId;
       window.__ADMIN_WS = ws;
       window.__ADMIN_WS_READY = false;
@@ -130,10 +129,9 @@ export function useAdminWS(
         const err = await res.json().catch(() => ({}));
         console.error('[WS-ADMIN] send failed', res.status, err);
         throw new Error(err?.error || `Send failed (${res.status})`);
-        throw new Error(err?.error || `Send failed (${res.status})`);
-      console.debug('[WS-ADMIN] sent message via API', { userId: postUserId, length: message.length });
       }
-      try { console.debug('[WS-ADMIN] sent message via API for userId', postUserId); } catch {}
+      // Rely on the server POST handler to broadcast the message back via WS
+      console.debug('[WS-ADMIN] sent message via API for userId', postUserId);
     },
     [postUserId]
   );

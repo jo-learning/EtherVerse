@@ -1,22 +1,40 @@
 'use client';
 
 import '@rainbow-me/rainbowkit/styles.css';
-import { WagmiProvider } from 'wagmi';
+import React, { useMemo } from 'react';
+import { WagmiProvider, createConfig } from 'wagmi';
+import { injected } from 'wagmi/connectors';
+import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RainbowKitProvider, getDefaultConfig, darkTheme } from '@rainbow-me/rainbowkit';
 import { mainnet, polygon, arbitrum, optimism, bsc } from 'wagmi/chains';
+import { custom } from 'viem';
 
-const config = getDefaultConfig({
-  appName: 'EtherTrade',
-  projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!, // required
-  chains: [mainnet, polygon, arbitrum, optimism, bsc],
-  ssr: true,
-  // autoConnect is enabled internally by default config
-});
+const chains = [mainnet, polygon, arbitrum, optimism, bsc] as const;
+
+// Build injected-only transports (no remote RPC to avoid CORS)
+function buildInjectedTransports() {
+  if (typeof window !== 'undefined' && (window as any).ethereum) {
+    const t = custom((window as any).ethereum);
+    return Object.fromEntries(chains.map((c) => [c.id, t]));
+  }
+  const stub = { request: async () => { throw new Error('RPC disabled (no injected wallet).'); } };
+  const t = custom(stub as any);
+  return Object.fromEntries(chains.map((c) => [c.id, t]));
+}
 
 const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
+  const config = useMemo(() => {
+    // Strict default: injected-only. No WalletConnect, no remote http().
+    return createConfig({
+      chains,
+      ssr: true,
+      connectors: [injected()],
+      transports: buildInjectedTransports() as any,
+    });
+  }, []);
+
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
