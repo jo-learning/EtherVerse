@@ -61,9 +61,9 @@ export default function ChatPage() {
   }, [address]);
 
   // ✅ use WebSocket hook
-  const emailLike = address ?? USER_ADDRESS;
+  const emailLike = address;
   const { sendMessage: sendWSMessage } = useUserWS(
-    `userEmail:${emailLike}`,
+    `userEmail:${address}`,
     (data) => {
       if (data?.type === "message" && data.chat) {
         setMessages((prev) => [...prev, data.chat]);
