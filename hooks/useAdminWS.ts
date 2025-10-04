@@ -80,7 +80,7 @@ export function useAdminWS(
       if (window.__ADMIN_WS && (window.__ADMIN_WS.readyState === WebSocket.OPEN || window.__ADMIN_WS.readyState === WebSocket.CONNECTING)) {
         return; // already connected/connecting
       }
-  const base = process.env.NEXT_PUBLIC_WS_SERVER_URL || `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}/api/ws`;
+  const base = process.env.NEXT_PUBLIC_WS_SERVER_URL || `${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/ws`;
   const ws = new WebSocket(base) as WebSocket & { __ownerId?: string };
       ws.__ownerId = ownerId;
       window.__ADMIN_WS = ws;
