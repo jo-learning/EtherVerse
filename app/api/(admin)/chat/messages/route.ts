@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
           headers: { 'Content-Type': 'application/json', 'x-ws-secret': broadcastSecret },
           body: JSON.stringify(p),
         }).then(r => { 
-          console.log(r)
+          // console.log(r)
           return { ok: r.ok, status: r.status }
         }).catch((e) => { console.warn('[ADMIN CHAT] broadcast fetch error', e?.message || e); return undefined; })));
       } else {

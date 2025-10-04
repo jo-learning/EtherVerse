@@ -151,23 +151,23 @@ wss.on('connection', (ws, req) => {
     }
   });
 
-  // ws.on('close', (code, reason) => {
-  //   const r = reason?.toString() || '';
-  //   const subCount = ws.subs ? ws.subs.size : 0;
-  //   console.log(`[WS #${ws._id}] Client closed`, code, r, `subs=${subCount}`);
-  //   // Clean up without echoing unsubscribed to avoid client-side noise after close
-  //   if (ws.subs) {
-  //     for (const ch of Array.from(ws.subs)) {
-  //       const set = channels.get(ch);
-  //       if (set) {
-  //         set.delete(ws);
-  //         if (set.size === 0) channels.delete(ch);
-  //       }
-  //       // do not send 'unsubscribed' after close
-  //       ws.subs.delete(ch);
-  //     }
-  //   }
-  // });
+  ws.on('close', (code, reason) => {
+    const r = reason?.toString() || '';
+    const subCount = ws.subs ? ws.subs.size : 0;
+    console.log(`[WS #${ws._id}] Client closed`, code, r, `subs=${subCount}`);
+    // Clean up without echoing unsubscribed to avoid client-side noise after close
+    if (ws.subs) {
+      for (const ch of Array.from(ws.subs)) {
+        const set = channels.get(ch);
+        if (set) {
+          set.delete(ws);
+          if (set.size === 0) channels.delete(ch);
+        }
+        // do not send 'unsubscribed' after close
+        ws.subs.delete(ch);
+      }
+    }
+  });
 
   ws.on('error', (err) => {
     console.warn('[WS] Client error', err?.message || err);
