@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
         prisma.admin.count(),
         prisma.chat.count(),
         prisma.adminUserAssignment.count({ where: { active: true } }),
-        prisma.user.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, email: true, name: true, createdAt: true } }),
+        prisma.user.findMany({ orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, email: true, name: true, createdAt: true, userId: true } }),
         prisma.chat.findMany({ orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, userId: true, who: true, message: true, createdAt: true, adminId: true } }),
       ]);
       return NextResponse.json({
@@ -34,9 +34,10 @@ export async function GET(req: NextRequest) {
     const [users, chats, recentUsers, recentChats] = await Promise.all([
       prisma.user.count({ where: { id: { in: assignedUserIds.length ? assignedUserIds : ['__none__'] } } }),
       prisma.chat.count({ where: { OR: [ { userId: { in: assignedUserIds.length ? assignedUserIds : ['__none__'] } }, { adminId: me.id } ] } }),
-      prisma.user.findMany({ where: { id: { in: assignedUserIds.length ? assignedUserIds : ['__none__'] } }, orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, email: true, name: true, createdAt: true } }),
+      prisma.user.findMany({ where: { id: { in: assignedUserIds.length ? assignedUserIds : ['__none__'] } }, orderBy: { createdAt: 'desc' }, take: 5, select: { id: true, email: true, name: true, createdAt: true, userId: true } }),
       prisma.chat.findMany({ where: { OR: [ { userId: { in: assignedUserIds.length ? assignedUserIds : ['__none__'] } }, { adminId: me.id } ] }, orderBy: { createdAt: 'desc' }, take: 10, select: { id: true, userId: true, who: true, message: true, createdAt: true, adminId: true } }),
     ]);
+
     return NextResponse.json({
       scope: 'assigned',
       stats: { users, chats },

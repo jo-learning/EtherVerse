@@ -5,7 +5,7 @@ import { FaUser, FaComments, FaChartBar } from "react-icons/fa";
 type DashStats = {
   scope: 'global' | 'assigned';
   stats: { users: number; admins?: number; chats: number; assignments?: number };
-  recent: { users: Array<{ id: string; email: string; name: string | null; createdAt: string }>; chats: Array<{ id: string; userId: string; who: string; message: string; createdAt: string; adminId?: string | null }> };
+  recent: { users: Array<{ id: string; email: string; name: string | null; createdAt: string; userId: number }>; chats: Array<{ id: string; userId: string; who: string; message: string; createdAt: string; adminId?: string | null }> };
 };
 
 export default function AdminDashboard() {
@@ -22,6 +22,7 @@ export default function AdminDashboard() {
         const json = await res.json();
         if (!alive) return;
         setData(json);
+        console.log(json);
       } catch (e: any) { if (alive) setError(e.message); }
       finally { if (alive) setLoading(false); }
     })();
@@ -71,7 +72,7 @@ export default function AdminDashboard() {
               <ul className="space-y-2">
                 {data.recent.users.map(u => (
                   <li key={u.id} className="text-sm flex items-center justify-between">
-                    <span>{u.name || u.email}</span>
+                    <span>{u.userId}</span>
                     <span className="text-gray-500 dark:text-gray-400">{new Date(u.createdAt).toLocaleString()}</span>
                   </li>
                 ))}

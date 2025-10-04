@@ -21,13 +21,28 @@ export async function POST(req: NextRequest) {
     const chat = await prisma.chat.create({
         data: {
             userId: user.id,
-            message
+            message,
+            who: 'user'
         }
     });
-        try {
-            const broadcast = (global as any).chatBroadcast as ((ch: string, payload: any) => void) | undefined;
-                broadcast?.(`user:${user.id}`, { type: 'message', chat });
-                broadcast?.(`userEmail:${user.email}`, { type: 'message', chat });
-        } catch {}
+    console.log('[USER CHAT] created chat', { id: chat.id, userId: chat.userId });
+                try {
+                        const broadcastUrl = process.env.WS_BROADCAST_URL;
+                        const broadcastSecret = process.env.WS_BROADCAST_SECRET;
+                        const payloads = [
+                            { channel: `user:${user.id}`, payload: { type: 'message', chat } },
+                            { channel: `userEmail:${user.email}`, payload: { type: 'message', chat } },
+                        ];
+                        if (broadcastUrl && broadcastSecret) {
+                            await Promise.all(payloads.map(p => fetch(broadcastUrl, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'x-ws-secret': broadcastSecret },
+                                body: JSON.stringify(p),
+                            }).catch(() => undefined)));
+                        } else {
+                            const broadcast = (global as any).chatBroadcast as ((ch: string, payload: any) => void) | undefined;
+                            payloads.forEach(p => broadcast?.(p.channel, p.payload));
+                        }
+                } catch {}
         return NextResponse.json({ chat });
 }

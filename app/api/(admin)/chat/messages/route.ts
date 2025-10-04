@@ -55,15 +55,35 @@ export async function POST(req: NextRequest) {
     }
 
     const chat = await prisma.chat.create({ data: { userId, message, who: 'admin', adminId: me.id } });
+    console.log('[ADMIN CHAT] created chat', { id: chat.id, userId: chat.userId, adminId: me.id });
     try {
       const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
-      const broadcast = (global as any).chatBroadcast as ((ch: string, payload: any) => void) | undefined;
-      broadcast?.(`user:${userId}`, { type: 'message', chat });
-      if (user?.email) broadcast?.(`userEmail:${user.email}`, { type: 'message', chat });
-      broadcast?.(`admin:${me.id}`, { type: 'message', chat });
+      const broadcastUrl = process.env.WS_BROADCAST_URL;
+      const broadcastSecret = process.env.WS_BROADCAST_SECRET;
+      const payloads = [
+        { channel: `user:${userId}`, payload: { type: 'message', chat } },
+        ...(user?.email ? [{ channel: `userEmail:${user.email}`, payload: { type: 'message', chat } }] : []),
+        { channel: `admin:${me.id}`, payload: { type: 'message', chat } },
+      ];
+      if (broadcastUrl && broadcastSecret) {
+        console.log('[ADMIN CHAT] broadcasting via standalone server', payloads.map(p => p.channel));
+        await Promise.all(payloads.map(p => fetch(broadcastUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-ws-secret': broadcastSecret },
+          body: JSON.stringify(p),
+        }).then(r => { 
+          console.log(r)
+          return { ok: r.ok, status: r.status }
+        }).catch((e) => { console.warn('[ADMIN CHAT] broadcast fetch error', e?.message || e); return undefined; })));
+      } else {
+        console.warn('[ADMIN CHAT] WS_BROADCAST_URL/SECRET not set; using in-process broadcast (will NOT reach standalone WS server)');
+        const broadcast = (global as any).chatBroadcast as ((ch: string, payload: any) => void) | undefined;
+        payloads.forEach(p => broadcast?.(p.channel, p.payload));
+      }
     } catch {}
     return NextResponse.json({ chat });
   } catch (e:any) {
+    console.log(e)
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

@@ -15,7 +15,7 @@ export const coins: Coin[] = [
   { symbol: "ADA", name: "ADA Coin", priceUsd: "0", change24hPct: 0.0512, spark: [1,1,2,3,4,5,6,6,7,7], logo: "https://assets.coingecko.com/coins/images/975/large/cardano.png" },
   { symbol: "DOGE", name: "DOGE Coin", priceUsd: "0", change24hPct: 0.0271, spark: [2,2,3,3,4,3,4,4,5,5], logo: "https://assets.coingecko.com/coins/images/5/large/dogecoin.png" },
   { symbol: "EOS", name: "EOS Coin", priceUsd: "0", change24hPct: 0.0152, spark: [1,2,2,1,2,3,2,3,3,4], logo: "https://assets.coingecko.com/coins/images/738/standard/CG_EOS_Icon.png" },
-{ symbol: "XAU", name: "XAU Coin", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "https://assets.coingecko.com/coins/images/31894/standard/GOLD.png" },
+{ symbol: "XAU", name: "XAU Coin", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "gold--big.svg" },
 { symbol: "XAG", name: "XAG Coin", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://assets.coingecko.com/coins/images/66401/standard/200.jpg" },
 { symbol: "XPT", name: "XPT Coin", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://assets.coingecko.com/coins/images/66401/standard/200.jpg" },
 { symbol: "WTI", name: "WTI Coin", priceUsd: "0", change24hPct: 0.0018, spark: [2,3,2,4,4,5,4,6,6,7], logo: "https://assets.coingecko.com/coins/images/66401/standard/200.jpg" },
@@ -76,7 +76,8 @@ export const walletsSeed = coins.filter(c => ["USDT","BTC","ETH","AAVE","BNB","X
 export async function fetchCoinPrices(): Promise<Coin[]> {
   const ids = [
     "bitcoin", "ethereum", "tether", "binancecoin", "ripple", "solana", "aave",
-    "polkadot", "chainlink", "uniswap", "litecoin", "cardano", "dogecoin", "eos"
+    "polkadot", "chainlink", "uniswap", "litecoin", "cardano", "dogecoin", "eos",
+    "xau", "xag", "xpt", "wti", "xg", "gbp", "jpy"
   ];
   const symbolToId: Record<string, string> = {
     BTC: "bitcoin",
@@ -93,6 +94,13 @@ export async function fetchCoinPrices(): Promise<Coin[]> {
     ADA: "cardano",
     DOGE: "dogecoin",
     EOS: "eos",
+    XAU: "Gold",
+    XAG: "xag",
+    XPT: "xpt",
+    WTI: "wti",
+    XG: "xg",
+    GBP: "gbp",
+    JPY: "jpy",
   };
 
   const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids.join(",")}&vs_currencies=usd`;
@@ -205,19 +213,43 @@ export async function fetchWallet(symbol: string, userEmail: string): Promise<Wa
 }
 
 
-export async function subscribePrice(symbol: string, cb: (price: string, change: string) => void) {
+export async function subscribePrice(
+  symbol: string,
+  cb: (price: string, change: string) => void
+) {
+  const excluded = new Set(["XAU", "XAG", "XPT", "WTI", "XG", "GBP", "JPY"]);
+  const isFutures = excluded.has(symbol.toUpperCase());
+
   const pair = `${symbol.toLowerCase()}usdt`;
-  const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${pair}@ticker`);
+  console.log("Subscribing to", pair, isFutures ? "futures" : "spot");
+  const wsUrl = isFutures
+    ? `wss://fstream.binance.com/ws/${pair}@ticker` // futures for metals
+    : `wss://stream.binance.com:9443/ws/${pair}@ticker`; // spot for crypto
+
+  const ws = new WebSocket(wsUrl);
 
   ws.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    if (!data?.c || !data?.P) return;
+
     const priceUsd = `$${parseFloat(data.c).toFixed(2)}`; // last price
-    const change = `${parseFloat(data.P).toFixed(2)}%`;  // 24h % change
+    const change = `${parseFloat(data.P).toFixed(2)}%`;    // 24h % change
     cb(priceUsd, change);
   };
 
-  return () => ws.close(); // cleanup
+  ws.onerror = (err) => {
+    console.error("WebSocket error:", err);
+    ws.close();
+  };
+
+  ws.onclose = () => {
+    console.warn(`WebSocket closed for ${symbol}.`);
+    // Optional: reconnect logic can be added here
+  };
+
+  return () => ws.close(); // cleanup function
 }
+
 
 
 export function subscribeMarket(symbols: string[], onUpdate: (symbol: string, price: string, change: string) => void) {
@@ -236,6 +268,39 @@ export function subscribeMarket(symbols: string[], onUpdate: (symbol: string, pr
 
   return () => ws.close();
 }
+export function subscribeFuturesMarket(
+  symbols: string[],
+  onUpdate: (symbol: string, price: string, change: string) => void
+) {
+  // Futures base
+  const streams = symbols.map(s => `${s.toLowerCase()}usdt@ticker`).join("/");
+  const ws = new WebSocket(`wss://fstream.binance.com/stream?streams=${streams}`);
+
+  ws.onmessage = (event) => {
+    const msg = JSON.parse(event.data);
+    const d = msg.data;
+
+    if (d?.s && d?.c && d?.P) {
+      const sym = d.s; // e.g. "XAUUSDT"
+      const price = `$${parseFloat(d.c).toFixed(2)}`;
+      const change = `${parseFloat(d.P).toFixed(2)}%`;
+      onUpdate(sym, price, change);
+    }
+  };
+
+  ws.onclose = () => {
+    console.warn("Futures WebSocket closed. Reconnecting...");
+    setTimeout(() => subscribeFuturesMarket(symbols, onUpdate), 2000);
+  };
+
+  ws.onerror = (err) => {
+    console.error("Futures WebSocket error:", err);
+    ws.close();
+  };
+
+  return () => ws.close();
+}
+
 
 const sparks: Record<string, number[]> = {};
 const MAX_POINTS = 50; // small size, e.g., 50 points for the sparkline
@@ -260,40 +325,62 @@ export function subscribeMarketWithSpark(
     trades24h: number
   ) => void
 ) {
-  // fetch initial spark for all symbols
-  // await Promise.all(symbols.map(s => fetchInitialSpark(s)));
+  // separate futures vs spot symbols
+  const futuresSymbols = symbols.filter(s =>
+    ["xau", "xag"].includes(s.toLowerCase())
+  );
+  const spotSymbols = symbols.filter(
+    s => !["xau", "xag", "jpy"].includes(s.toLowerCase())
+  );
 
-  const streams = symbols.map(s => `${s.toLowerCase()}usdt@ticker`).join("/");
-  const ws = new WebSocket(`wss://stream.binance.com:9443/stream?streams=${streams}`);
+  // helper to create websocket
+  function createWS(baseUrl: string, syms: string[]) {
+    if (!syms.length) return null;
+    var streams = syms.map(s => `${s.toLowerCase()}usdt@ticker`).join("/");
+    if ("wss://fstream.binance.com" === baseUrl) {
+    var streams = syms.map(s => `${s.toLowerCase()}usdt@ticker_24hr`).join("/");
+    }
+    const ws = new WebSocket(`${baseUrl}/stream?streams=${streams}`);
 
-  ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data);
-    const d = msg.data;
-    const sym = d.s.replace("USDT", "");
-    const priceNum = parseFloat(d.c);
+    ws.onmessage = (event) => {
+      const msg = JSON.parse(event.data);
+      const d = msg.data;
+      const sym = d.s.replace("USDT", "");
+      const priceNum = parseFloat(d.c);
 
-    // keep spark history
-    if (!sparks[sym]) sparks[sym] = [];
-    sparks[sym].push(priceNum);
-    if (sparks[sym].length > MAX_POINTS) sparks[sym].shift();
+      // keep spark history
+      if (!sparks[sym]) sparks[sym] = [];
+      sparks[sym].push(priceNum);
+      if (sparks[sym].length > MAX_POINTS) sparks[sym].shift();
 
-    // normalize spark to range 0–8
-    const min = Math.min(...sparks[sym]);
-    const max = Math.max(...sparks[sym]);
-    const normalized =
-      max === min
-        ? sparks[sym].map(() => 5)
-        : sparks[sym].map(v => ((v - min) / (max - min)) * 8);
+      // normalize spark to range 0–8
+      const min = Math.min(...sparks[sym]);
+      const max = Math.max(...sparks[sym]);
+      const normalized =
+        max === min
+          ? sparks[sym].map(() => 5)
+          : sparks[sym].map(v => ((v - min) / (max - min)) * 8);
 
-    const price = `$${priceNum.toFixed(2)}`;
-    const change = `${parseFloat(d.P).toFixed(2)}%`;
-    const volume24h = parseFloat(d.q || d.v || 0); // quote or base volume
-    const trades24h = Number(d.n || 0); // trade count 24h
+      const price = `$${priceNum.toFixed(2)}`;
+      const change = `${parseFloat(d.P).toFixed(2)}%`;
+      const volume24h = parseFloat(d.q || d.v || 0); // quote or base volume
+      const trades24h = Number(d.n || 0); // trade count 24h
 
-    onUpdate(sym, price, change, normalized, volume24h, trades24h);
+      onUpdate(sym, price, change, normalized, volume24h, trades24h);
+    };
+
+    return ws;
+  }
+
+  console.log(`Fetching initial spark data... ${futuresSymbols}`);
+
+  const wsFutures = createWS("wss://fstream.binance.com", futuresSymbols);
+  const wsSpot = createWS("wss://stream.binance.com:9443", spotSymbols);
+
+  return () => {
+    if (wsFutures) wsFutures.close();
+    if (wsSpot) wsSpot.close();
   };
-
-  return () => ws.close();
 }
 
 // lib/data.ts

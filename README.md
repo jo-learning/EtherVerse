@@ -84,6 +84,32 @@ Example response:
 
 If you add new coins to `userWallet` schema, update `walletsData` and they’ll flow automatically.
 
+## Realtime WebSocket Server (Standalone)
+
+We moved chat websockets to a standalone Node server to avoid Next.js dev StrictMode reconnects and 1006 closes.
+
+Run it locally:
+
+```bash
+WS_PORT=4001 WS_BROADCAST_SECRET=dev-secret npm run ws-server
+```
+
+Configure the app to use it:
+
+- In your environment, set:
+	- `NEXT_PUBLIC_WS_SERVER_URL=ws://localhost:4001` (for the browser clients)
+	- `WS_BROADCAST_URL=http://localhost:4001/broadcast` (for API routes to fan-out)
+	- `WS_BROADCAST_SECRET=dev-secret` (must match the server)
+
+Clients (hooks/useAdminWS.ts and hooks/useUserWS.ts) will connect to `NEXT_PUBLIC_WS_SERVER_URL` when present. API routes `/api/(admin)/chat/messages` and `/api/chat` will POST to `WS_BROADCAST_URL` with header `x-ws-secret` to broadcast events to channels.
+
+Channels used:
+- `user:<userId>` – per-user stream (UUID id)
+- `userEmail:<email>` – user’s email/address stream
+- `admin:<adminId>` – per-admin stream
+
+Health check: GET `http://localhost:4001/health` returns `{ ok: true }`.
+
 
 ### Admin Chat API
 
