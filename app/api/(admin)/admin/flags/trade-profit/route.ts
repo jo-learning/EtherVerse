@@ -9,7 +9,7 @@ const FLAG_KEY = 'trade-profit';
 export async function GET(req: NextRequest) {
   const auth = await requireAdmin(req);
   if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
-  const flag = await prisma.featureFlag.findUnique({ where: { key: FLAG_KEY } });
+  const flag = await prisma.featureFlag.findFirst({ where: { key: FLAG_KEY } });
   return NextResponse.json({ key: FLAG_KEY, enabled: !!flag?.enabled, updatedAt: flag?.updatedAt ?? null, updatedBy: flag?.updatedBy ?? null });
 }
 
