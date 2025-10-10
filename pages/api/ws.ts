@@ -24,7 +24,7 @@ declare global {
 function initWSS(server: HTTPServer): ChatSockets {
   if (global.__chatSockets) return global.__chatSockets;
 
-  console.log('[WS] Initializing WebSocket server');
+  
 
   const wss = new WebSocketServerCtor({ noServer: true });
   const channels = new Map<string, Set<WS>>();
@@ -37,7 +37,7 @@ function initWSS(server: HTTPServer): ChatSockets {
     }
     set.add(sock);
     try { sock.send(JSON.stringify({ type: 'subscribed', channel })); } catch {}
-    console.log('[WS] Subscribed to', channel);
+    
   };
 
   const unsubscribe = (sock: WS, channel: string) => {
@@ -46,7 +46,7 @@ function initWSS(server: HTTPServer): ChatSockets {
     set.delete(sock);
     if (set.size === 0) channels.delete(channel);
     try { sock.send(JSON.stringify({ type: 'unsubscribed', channel })); } catch {}
-    console.log('[WS] Unsubscribed from', channel);
+    
   };
 
   const broadcast = (channel: string, payload: any) => {
@@ -60,7 +60,7 @@ function initWSS(server: HTTPServer): ChatSockets {
       if (sock.readyState !== 1) { dead++; continue; }
       try { sock.send(data); delivered++; } catch (e) { dead++; try { sock.terminate?.(); } catch {} }
     }
-    if (dead) console.log(`[WS] Broadcast to ${channel}: delivered ${delivered}, dead ${dead}`);
+    
   };
 
   // Per-connection handlers
@@ -94,7 +94,7 @@ function initWSS(server: HTTPServer): ChatSockets {
 
     ws.on('close', (code: number, reason: Buffer) => {
       const r = reason?.toString() || '';
-      console.log('[WS] Client closed', code, r);
+      
       for (const ch of ws.subs ?? []) unsubscribe(ws, ch);
     });
 
@@ -120,10 +120,10 @@ function initWSS(server: HTTPServer): ChatSockets {
   if (!nodeServer.__wsUpgradeAttached) {
     nodeServer.on('upgrade', (req: any, socket: any, head: any) => {
       if (!req.url?.startsWith?.('/api/ws')) return;
-      console.log('[WS] HTTP upgrade for /api/ws');
+      
       wss.handleUpgrade(req, socket, head, (ws: WS) => {
         wss.emit('connection', ws, req);
-        console.log('[WS] Client connected from', req.socket?.remoteAddress);
+        
       });
     });
     nodeServer.__wsUpgradeAttached = true;

@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     }
 
     const addresses = await prisma.wallet.findMany();
-    console.log("addresses:", addresses, walletsData);
+    
 
     const wallets = walletsData.map(w => ({
       symbol: w.symbol,

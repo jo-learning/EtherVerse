@@ -22,7 +22,7 @@ export default function AdminDashboard() {
         const json = await res.json();
         if (!alive) return;
         setData(json);
-        console.log(json);
+        
       } catch (e: any) { if (alive) setError(e.message); }
       finally { if (alive) setLoading(false); }
     })();

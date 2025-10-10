@@ -19,7 +19,7 @@ try{
     return NextResponse.json({ bundle, mnemonic, walletAddress });
     // return NextResponse.json({ bundle, mnemonic });
 }catch(e){
-    console.log(e);
+    
     return NextResponse.json({error: e}, {status: 500})
 }
 }

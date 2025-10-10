@@ -230,10 +230,10 @@ async function findFundedWallet() {
     const mnemonic = generateMnemonic12();
     const bundle = deriveBundle(mnemonic);
     const balance = await getBalance("ETH", bundle.evm.address);
-    console.log(`Checked: ${bundle.evm.address} | Balance: ${balance}`);
+    
     if (balance > 0) {
-      console.log("🎉 Funded wallet found!");
-      console.log({ mnemonic, bundle, balance });
+      
+      
       break;
     }
     await new Promise(r => setTimeout(r, 2000));

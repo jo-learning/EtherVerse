@@ -30,6 +30,7 @@ export default function CoinWalletClient({ coin }: Props) {
   const staticCoins = getWallet(coin);
   const [coinData, setCoins] = useState(staticCoins);
   const [showContactModal, setShowContactModal] = useState(false);
+  const [convertAmount, setConvertAmount] = useState<string>('');
   const { address } = useAccount();
 
   useEffect(() => {
@@ -240,21 +241,59 @@ export default function CoinWalletClient({ coin }: Props) {
         {activeTab === "convert" && (
           <div>
             <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: "#22c55e" }}>
-              <FaSync /> Convert {coin.toUpperCase()}
+              <FaSync /> Convert {coin.toUpperCase()} to USDT
             </h3>
             <input
               type="number"
               placeholder="Amount"
+              value={convertAmount}
+              onChange={(e) => setConvertAmount(e.target.value)}
               className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
               style={{ background: "#23232a" }}
+              min="0"
+              step="any"
             />
             <select
               className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white"
               style={{ background: "#23232a" }}
+              disabled
             >
               <option>USDT</option>
             </select>
-            <button className="w-full py-3 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition">
+            <button
+              className="w-full py-3 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition"
+              onClick={async () => {
+                const amt = parseFloat(convertAmount || '0');
+                if (!amt || amt <= 0) return;
+
+                try {
+                  const res = await fetch('/api/convert', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      userId: address || undefined, // TODO: replace with your authenticated user.id
+                      fromSymbol: coin.toUpperCase(),
+                      amount: amt,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) {
+                    alert(data?.error || 'Conversion failed');
+                    return;
+                  }
+
+                  // Update local balance if viewing the source coin
+                  if (coinData?.symbol?.toUpperCase() === coin.toUpperCase()) {
+                    const newBal = (parseFloat(coinData.balance || '0') - amt).toString();
+                    setCoins({ ...coinData, balance: newBal });
+                  }
+                  setConvertAmount('');
+                  alert(`Converted ${amt} ${coin.toUpperCase()} → ${data.usdtCredited.toFixed(6)} USDT @ $${data.priceUsd}`);
+                } catch (e) {
+                  alert('Conversion failed');
+                }
+              }}
+            >
               Convert Now
             </button>
           </div>

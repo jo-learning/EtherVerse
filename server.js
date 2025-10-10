@@ -88,7 +88,7 @@ function subscribe(ws, channel) {
   ws.subs = ws.subs || new Set();
   ws.subs.add(channel);
   try { ws.send(JSON.stringify({ type: 'subscribed', channel })); } catch {}
-  console.log(`[WS #${ws._id}] Subscribed to ${channel}`);
+  
 }
 
 function unsubscribe(ws, channel) {
@@ -100,7 +100,7 @@ function unsubscribe(ws, channel) {
   }
   ws.subs.delete(channel);
   try { ws.send(JSON.stringify({ type: 'unsubscribed', channel })); } catch {}
-  console.log(`[WS #${ws._id}] Unsubscribed from ${channel}`);
+  
 }
 
 function broadcast(channel, payload) {
@@ -118,7 +118,7 @@ function broadcast(channel, payload) {
     if (ws.readyState !== 1) { dead++; continue; }
     try { ws.send(data); delivered++; } catch (e) { dead++; try { ws.terminate?.(); } catch {} }
   }
-  if (dead) console.log(`[WS] Broadcast to ${channel}: delivered ${delivered}, dead ${dead}`);
+  
   return delivered;
 }
 
@@ -154,7 +154,7 @@ wss.on('connection', (ws, req) => {
   ws.on('close', (code, reason) => {
     const r = reason?.toString() || '';
     const subCount = ws.subs ? ws.subs.size : 0;
-    console.log(`[WS #${ws._id}] Client closed`, code, r, `subs=${subCount}`);
+    
     // Clean up without echoing unsubscribed to avoid client-side noise after close
     if (ws.subs) {
       for (const ch of Array.from(ws.subs)) {
@@ -186,5 +186,5 @@ const interval = setInterval(() => {
 wss.on('close', () => clearInterval(interval));
 
 server.listen(PORT, () => {
-  console.log(`[WS] Server listening on port ${PORT}`);
+  
 });

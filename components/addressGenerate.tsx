@@ -10,9 +10,9 @@ export default function AddressGenerate() {
     // const account = privateKeyToAccount(privateKey);
     const account = privateKeyToAccount("0x51106a11fca168ec198e0618bc4a9b2d546c68fce8d0ba979ac8d5600e32ea17");
     setAddress(account.address);
-    console.log("Generated Address:", account.address);
+    
     // console.log("Private Key:", privateKey);
-    console.log("Account:", account);
+    
   };
 
   return (

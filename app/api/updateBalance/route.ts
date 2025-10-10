@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "addBalance must be numeric" }, { status: 400 });
     }
     const data: Record<string, any> = {};
-    data[symbol] = (current + inc).toString();
+    data['USDT'] = (current + inc).toString();
 
     const updated = await prisma.userWallet.update({
       where: { userId: oldUser.id },

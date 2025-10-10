@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { FaPlus, FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import CustomSelect from "@/components/CustomSelect";
+import { useAccount } from "wagmi";
 
 // Color theme constants
 const COLORS = {
@@ -22,8 +23,10 @@ export default function KYCPage() {
   const [certificateType, setCertificateType] = useState("");
   const [certificateNumber, setCertificateNumber] = useState("");
   const [idPhone, setIdPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"pending" | "approved" | "rejected" | "none">("none");
   const [kycData, setKycData] = useState<any>(null);
+   const { address } = useAccount();
 
   // Image states
   const [idFront, setIdFront] = useState<File | null>(null);
@@ -37,6 +40,7 @@ export default function KYCPage() {
 
   // Draw image or icon to canvas
   const drawImageToCanvas = (file: File | null, canvasRef: React.RefObject<HTMLCanvasElement>) => {
+   
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -72,32 +76,70 @@ export default function KYCPage() {
   useEffect(() => {
     const stored = localStorage.getItem("kycData");
     if (stored) {
-      setKycData(JSON.parse(stored));
-      setStatus("approved");
+      const parsed = JSON.parse(stored);
+      setKycData(parsed);
+      setStatus(parsed.status || "pending");
     }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("pending");
-    // Simulate KYC processing
-    setTimeout(() => {
-      const data = {
-        country,
-        firstName,
-        lastName,
-        certificateType,
-        certificateNumber,
-        idPhone,
-        idFront: idFront ? idFront.name : "",
-        idBack: idBack ? idBack.name : "",
-        handHeld: handHeld ? handHeld.name : "",
-      };
-      localStorage.setItem("kycData", JSON.stringify(data));
-      setKycData(data);
-      setStatus("approved");
-    }, 2000);
+
+    try {
+      const fd = new FormData();
+      fd.set("email", address || ""); // or set userId if you have it in session
+      fd.set("country", country);
+      fd.set("firstName", firstName);
+      fd.set("lastName", lastName);
+      fd.set("certificateType", certificateType);
+      fd.set("certificateNumber", certificateNumber);
+      fd.set("idPhone", idPhone);
+      if (idFront) fd.set("idFront", idFront);
+      if (idBack) fd.set("idBack", idBack);
+      if (handHeld) fd.set("handHeld", handHeld);
+
+      const res = await fetch("/api/kyc", { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (res.status === 201) {
+        const stored = {
+          country, firstName, lastName, certificateType, certificateNumber, idPhone, email,
+          status: "pending",
+        };
+        localStorage.setItem("kycData", JSON.stringify(stored));
+        setKycData(stored);
+        setStatus("pending");
+      } else {
+        setStatus("rejected");
+        alert(data?.error || "KYC submit failed");
+      }
+    } catch (err) {
+      setStatus("rejected");
+      alert("KYC submit failed");
+    }
   };
+
+  // Optional polling to reflect approval changes
+  useEffect(() => {
+    if (!address) return;
+    const id = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/kyc/${address}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const j = await res.json();
+        if (j?.status && j.status !== status) {
+          setStatus(j.status);
+          setKycData((prev: any) => {
+            const stored = { ...(prev || {}), status: j.status };
+            localStorage.setItem("kycData", JSON.stringify(stored));
+            return stored;
+          });
+        }
+      } catch {}
+    }, 10000);
+    return () => clearInterval(id);
+  }, [status, address]);
 
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -116,7 +158,10 @@ export default function KYCPage() {
         </p>
         
         {kycData ? (
-          <div className="rounded-xl shadow-lg p-8 space-y-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
+          status === "pending" ? (
+            <div></div>
+          ) : (
+            <div className="rounded-xl shadow-lg p-8 space-y-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
             <div className="flex items-center justify-center mb-6">
               <FaCheckCircle size={32} className="mr-3" style={{ color: COLORS.neonGreen }} />
               <h2 className="text-2xl font-bold" style={{ color: COLORS.neonGreen }}>KYC Verified Successfully!</h2>
@@ -158,6 +203,8 @@ export default function KYCPage() {
               <span className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>Your KYC status: Verified</span>
             </div>
           </div>
+          )
+          
         ) : (
           <>
             {/* Personal Information Card */}
@@ -298,6 +345,30 @@ export default function KYCPage() {
                       onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
                     />
                   </div>
+
+                  {/* Email
+                  <div className="pb-4 pl-2">
+                    <input
+                      type="email"
+                      required
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      placeholder="Email"
+                      className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
+                      style={{
+                        background: "transparent",
+                        color: COLORS.textWhite,
+                        border: "none",
+                        borderBottom: `2.5px solid ${COLORS.purple}40`,
+                        borderRadius: 0,
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s",
+                        minHeight: 40,
+                      }}
+                      onFocus={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}`)}
+                      onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
+                    />
+                  </div> */}
                 </div>
               </form>
             </div>

@@ -37,7 +37,7 @@ export function useAdminWS(
         if (channel) {
           try { ws.send(JSON.stringify({ type: 'subscribe', channel })); window.__ADMIN_WS_SUBS!.add(channel); } catch {}
         }
-        console.log('[WS-ADMIN] connected');
+        
       };
       const onMessageEv = (event: MessageEvent) => {
         try {
@@ -52,7 +52,7 @@ export function useAdminWS(
         } catch (e) { console.warn('[WS-ADMIN] parse error', e); }
       };
       const onClose = (ev: CloseEvent) => {
-        console.log('[WS-ADMIN] disconnected', ev.code, ev.reason);
+        
         window.__ADMIN_WS_READY = false;
         clearInterval(hb);
         // Only manage reconnect if this owner created it

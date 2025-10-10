@@ -25,7 +25,7 @@ export async function getBalance(
   switch (symbol.toUpperCase()) {
     // ---------- EVM coins ----------
     case "ETH":
-      console.log("Fetching ETH balance for address:", address);
+      
       if (!ethers.isAddress(address)) {
         throw new Error("Invalid Ethereum address");
       }

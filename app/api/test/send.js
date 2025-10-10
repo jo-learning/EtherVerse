@@ -14,11 +14,11 @@ async function sendEth(privateKey, recipient, amountEth = '10') {
 	};
 
 	try {
-		console.log(`Sending ${amountEth} ETH to ${recipient}...`);
+		
 		const transaction = await wallet.sendTransaction(tx);
-		console.log('Transaction sent! Hash:', transaction.hash);
+		
 		await transaction.wait();
-		console.log('Transaction confirmed!');
+		
 	} catch (err) {
 		console.error('Error sending ETH:', err);
 	}

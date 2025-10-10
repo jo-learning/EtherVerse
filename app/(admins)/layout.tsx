@@ -27,6 +27,8 @@ const menuItems = [
   { icon: <FaComments size={16} />, label: "Chat", route: "/chatAdmin" },
   { icon: <FaCogs size={16} />, label: "Assignment", route: "/assignments" },
   { icon: <FaCogs size={16} />, label: "Wallet", route: "/wallet" },
+  { icon: <FaCogs size={16} />, label: "KYC Manager", route: "/kycManager" },
+  { icon: <FaCogs size={16} />, label: "Trade Manager", route: "/tradeProfileManager" },
   { icon: <FaCogs size={16} />, label: "Settings", route: "" },
 ];
 

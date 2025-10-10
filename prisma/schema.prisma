@@ -117,18 +117,34 @@ model Transaction {
 }
 
 model KYC {
-  id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String   @unique
-  firstName String
-  lastName  String
-  Brithdate String
-  Place String
-  Email String
-  status     String   @default("pending")
-  submittedAt DateTime @default(now())
-  verifiedAt DateTime?
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @unique
+
+  firstName    String
+  lastName     String
+  Brithdate    String   @default("")   // was required, make safe default
+  Place        String   @default("")   // was required, make safe default
+  Email        String
+  status       String   @default("pending")
+  submittedAt  DateTime @default(now())
+  verifiedAt   DateTime?
+
+  // New optional fields to match UI
+  country            String?
+  certificateType    String?
+  certificateNumber  String?
+  phone              String?
+
+  // Stored file paths (served from /public)
+  idFrontPath  String?
+  idBackPath   String?
+  handHeldPath String?
+
+  metadata     Json?
 }
+
+
 
 model Notification {
   id        String   @id @default(uuid())
@@ -197,4 +213,13 @@ model AdminUserAssignment {
   @@unique([userId, active], name: "one_active_assignment_per_user")
   @@index([adminId])
   @@index([userId])
+}
+
+// Global feature flags controlled by admins
+model FeatureFlag {
+  id         String   @id @default(uuid())
+  key        String   @unique
+  enabled    Boolean  @default(false)
+  updatedAt  DateTime @updatedAt
+  updatedBy  String?  // Admin ID who last changed it
 }

@@ -162,7 +162,7 @@ export async function getBalance(symbol, address) {
         const lamports = await solanaConnection.getBalance(pubkey);
         return lamports / 1e9;
       } catch (error) {
-        console.log("Official Solana RPC failed, trying alternative...");
+        
         
         // Alternative: Use blockchain.com API
         try {
@@ -251,11 +251,11 @@ async function findFundedWallet() {
       
       checked++;
     //   console.log(`Checked ${checked}: ETH=${ethBalance}, BTC=${btcBalance}, SOL=${solBalance}`);
-      console.log(`Checked ${checked}: ETH=${ethBalance}, BTC=${btcBalance}`);
+      
       
     //   if (ethBalance > 0 || btcBalance > 0 || solBalance > 0) {
       if (ethBalance > 0 || btcBalance > 0 ) {
-        console.log("🎉 Funded wallet found!");
+        
         console.log({
           mnemonic,
           addresses: {

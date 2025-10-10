@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
             who: 'user'
         }
     });
-    console.log('[USER CHAT] created chat', { id: chat.id, userId: chat.userId });
+    
                 try {
                         const broadcastUrl = process.env.WS_BROADCAST_URL;
                         const broadcastSecret = process.env.WS_BROADCAST_SECRET;
