@@ -1,5 +1,10 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { corsResponse, corsOptions } from "@/lib/cors";
+
+export function OPTIONS() {
+  return corsOptions();
+}
 // Per-user consolidated balances now live in userWallet table.
 
 export async function POST(req: Request) {
