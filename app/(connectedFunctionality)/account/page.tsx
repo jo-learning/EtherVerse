@@ -1,20 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import {
-  FaUser,
-  FaExchangeAlt,
-  FaGift,
-  FaChartLine,
-  FaCogs,
-  FaComments,
+  // FaUser,
+  // FaExchangeAlt,
+  // FaGift,
+  // FaChartLine,
+  // FaCogs,
+  // FaComments,
   FaSearch,
-  FaMoon,
-  FaSun,
+  // FaMoon,
+  // FaSun,
 } from "react-icons/fa";
-import { MdOutlineDashboard } from "react-icons/md";
-import { AiOutlineBars, AiOutlineClose } from "react-icons/ai";
-import { log } from "console";
-import { useLoading } from "@/components/loadingPage";
+// import { MdOutlineDashboard } from "react-icons/md";
+// import { AiOutlineBars, AiOutlineClose } from "react-icons/ai";
+// import { log } from "console";
+// import { useLoading } from "@/components/loadingPage";
 import { useAccount } from "wagmi";
 
 // Color palette
@@ -380,6 +380,10 @@ export default function WalletPage() {
   const getWallets = async () => {
     try {
       // const address = window.ethereum?.selectedAddress;
+      if (!address) {
+        console.error("No address found");
+        return;
+      }
       const response = await fetch(`/api/getUserAddress?userId=${address}`);
       const data = await response.json();
 

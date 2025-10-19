@@ -10,7 +10,8 @@ import { custom } from "viem";
 import { ReactNode } from "react";
 
 const isProd = process.env.NODE_ENV === "production";
-const chains = [mainnet, sepolia] as const;
+// const chains = [mainnet, sepolia] as const;
+const chains = [mainnet] as const;
 
 function buildDevTransports() {
   if (typeof window !== "undefined" && (window as any).ethereum) {
@@ -28,12 +29,16 @@ const config = isProd
       projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
       chains,
       ssr: true,
+      // enableEns: false,
     })
   : createConfig({
       chains,
       ssr: true,
       connectors: [injected()],
-      transports: buildDevTransports() as any,
+      // transports: buildDevTransports() as any,
+      transports: {
+          [mainnet.id]: http('https://rpc.ankr.com/eth/d9b3f05464a68ef472b6a2b1cbc8abcd0b82b49d4f328e24b59fede350d96d9d')
+        },
     });
 
 const queryClient = new QueryClient();
@@ -42,7 +47,7 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider>{children}</RainbowKitProvider>
+        <RainbowKitProvider showRecentTransactions={false}>{children}</RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

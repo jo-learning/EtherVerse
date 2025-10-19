@@ -2,11 +2,6 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { coins } from "@/lib/data";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { corsResponse, corsOptions } from "@/lib/cors";
-
-export function OPTIONS() {
-  return corsOptions();
-}
 
 export async function POST(req: Request) {
   try {

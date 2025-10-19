@@ -1,9 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { corsResponse, corsOptions } from "@/lib/cors";
-
-export function OPTIONS() {
-  return corsOptions();
-}
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);

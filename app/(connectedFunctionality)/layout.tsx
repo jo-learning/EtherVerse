@@ -57,7 +57,7 @@ export default function RootLayout({
       if (!address) {
         console.error("No Ethereum address found");
         // uId = 1111;
-        setUId(1111)
+        setUId(1111111)
         return;
       }
       const response = await fetch(`/api/getId?userId=${address}`, {

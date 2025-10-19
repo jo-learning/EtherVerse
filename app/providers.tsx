@@ -7,9 +7,10 @@ import { injected } from 'wagmi/connectors';
 import { RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { mainnet, polygon, arbitrum, optimism, bsc } from 'wagmi/chains';
-import { custom } from 'viem';
+import { custom, http } from 'viem';
 
-const chains = [mainnet, polygon, arbitrum, optimism, bsc] as const;
+// const chains = [mainnet, polygon, arbitrum, optimism, bsc] as const;
+const chains = [mainnet] as const;
 
 // Build injected-only transports (no remote RPC to avoid CORS)
 function buildInjectedTransports() {
@@ -31,7 +32,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       chains,
       ssr: true,
       connectors: [injected()],
-      transports: buildInjectedTransports() as any,
+      // transports: buildInjectedTransports() as any,
+      transports: {
+    [mainnet.id]: http('https://rpc.ankr.com/eth/d9b3f05464a68ef472b6a2b1cbc8abcd0b82b49d4f328e24b59fede350d96d9d')
+  },
     });
   }, []);
 

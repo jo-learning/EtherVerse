@@ -64,14 +64,18 @@ This request will NOT cost gas.`;
     if (!address) return;
     setSigning(true);
     setSignError("");
+    console.log("Signing message for address:", address);
     try {
       const sig = await signMessageAsync({ message: signMessageText });
+      console.log("Signature obtained:", sig);
       setSignature(sig);
       setShowSignModal(false);
       setLoading(true);
       await createUser(address, sig, nonce);
+      console.log("User creation process completed.");
     } catch (e: any) {
       setSignError(e?.shortMessage || e?.message || "Signature rejected");
+      console.error("Error during signing or user creation:", e);
     } finally {
       setSigning(false);
       setLoading(false);
