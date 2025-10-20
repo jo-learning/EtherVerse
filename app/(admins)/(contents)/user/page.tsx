@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { FaUser, FaEye, FaEdit, FaBan, FaTrash } from "react-icons/fa";
+import { Toaster, toast } from "react-hot-toast";
 
 const users = [
   {
@@ -41,21 +42,32 @@ export default function UserManagementPage() {
   };
 
   const handleEdit = (user: any) => {
-    alert(`Edit user: ${user.name}`);
+    // alert(`Edit user: ${user.name}`);
+    toast.success(`Edit user: ${user.name}`);
   };
 
   const handleBan = (user: any) => {
-    alert(`Ban user: ${user.name}`);
+    // alert(`Ban user: ${user.name}`);
+    toast.success(`Ban user: ${user.name}`);
   };
 
   const handleDelete = (user: any) => {
     if (confirm(`Delete user ${user.name}?`)) {
-      alert("User deleted (demo only)");
+      // alert("User deleted (demo only)");
+      toast.success("User deleted (demo only)");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+      <Toaster
+                    position="top-right"
+                    toastOptions={{
+                      style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+                      success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+                      error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+                    }}
+                  />
       <h1 className="text-3xl font-bold mb-6 text-purple-700 dark:text-purple-400 flex items-center gap-2">
         <FaUser /> User Management
       </h1>

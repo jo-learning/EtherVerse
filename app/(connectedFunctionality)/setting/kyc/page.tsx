@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { FaPlus, FaCheckCircle, FaTimesCircle, FaClock } from "react-icons/fa";
 import CustomSelect from "@/components/CustomSelect";
 import { useAccount } from "wagmi";
+import { Toaster, toast } from "react-hot-toast";
 
 // Color theme constants
 const COLORS = {
@@ -112,11 +113,13 @@ export default function KYCPage() {
         setStatus("pending");
       } else {
         setStatus("rejected");
-        alert(data?.error || "KYC submit failed");
+        // alert(data?.error || "KYC submit failed");
+        toast.error(data?.error || "KYC submit failed");
       }
     } catch (err) {
       setStatus("rejected");
-      alert("KYC submit failed");
+      // alert("KYC submit failed");
+      toast.error("KYC submit failed")
     }
   };
 
@@ -151,6 +154,14 @@ export default function KYCPage() {
 
   return (
     <div className="min-h-screen p-6" style={{ background: COLORS.background }}>
+      <Toaster
+              position="top-right"
+              toastOptions={{
+                style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+                success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+                error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+              }}
+            />
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-2 text-center" style={{ color: COLORS.neonGreen }}>KYC Verification</h1>
         <p className="mb-8 text-center" style={{ color: COLORS.textGray }}>

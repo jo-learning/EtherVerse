@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { Toaster, toast } from "react-hot-toast";
 
 const COLORS = {
   purple: '#4b0082',
@@ -80,7 +81,8 @@ export default function KycManagerPage() {
         body: JSON.stringify({ status: next }),
       });
       if (!res.ok) {
-        alert('Update failed');
+        // alert('Update failed');
+        toast.error('Update failed');
         return;
       }
       await load();
@@ -88,7 +90,8 @@ export default function KycManagerPage() {
       const updated = items.find(i => i.userId === selected.userId);
       setSelected(updated || null);
     } catch {
-      alert('Update failed');
+      // alert('Update failed');
+      toast.error('Update failed');
     } finally {
       setUpdating(null);
     }
@@ -96,6 +99,14 @@ export default function KycManagerPage() {
 
   return (
     <div className="min-h-screen p-6" style={{ background: COLORS.background, color: COLORS.textWhite }}>
+      <Toaster
+              position="top-right"
+              toastOptions={{
+                style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+                success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+                error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+              }}
+            />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold mb-4">KYC Manager</h1>
 

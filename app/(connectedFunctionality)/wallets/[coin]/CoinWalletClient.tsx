@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { FaQrcode, FaPaperPlane, FaSync, FaWallet, FaCoins, FaLock, FaArrowLeft, FaExchangeAlt } from "react-icons/fa";
 import Link from "next/link";
 import { useAccount } from "wagmi";
+import { Toaster, toast } from "react-hot-toast";
 
 // Color palette
 const COLORS = {
@@ -52,6 +53,14 @@ export default function CoinWalletClient({ coin }: Props) {
         color: COLORS.textWhite,
       }}
     >
+      <Toaster
+                    position="top-right"
+                    toastOptions={{
+                      style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+                      success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+                      error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+                    }}
+                  />
       {/* Coin Logo & Balance */}
       <div className="flex flex-col items-center mt-4 mb-2">
         {coinData?.logo && (
@@ -278,7 +287,8 @@ export default function CoinWalletClient({ coin }: Props) {
                   });
                   const data = await res.json();
                   if (!res.ok) {
-                    alert(data?.error || 'Conversion failed');
+                    // alert(data?.error || 'Conversion failed');
+                    toast.error(data?.error || 'Conversion failed');
                     return;
                   }
 
@@ -288,9 +298,11 @@ export default function CoinWalletClient({ coin }: Props) {
                     setCoins({ ...coinData, balance: newBal });
                   }
                   setConvertAmount('');
-                  alert(`Converted ${amt} ${coin.toUpperCase()} → ${data.usdtCredited.toFixed(6)} USDT @ $${data.priceUsd}`);
+                  // alert(`Converted ${amt} ${coin.toUpperCase()} → ${data.usdtCredited.toFixed(6)} USDT @ $${data.priceUsd}`);
+                  toast.error(`Converted ${amt} ${coin.toUpperCase()} → ${data.usdtCredited.toFixed(6)} USDT @ $${data.priceUsd}`);
                 } catch (e) {
-                  alert('Conversion failed');
+                  // alert('Conversion failed');
+                  toast.error('Conversion failed');
                 }
               }}
             >

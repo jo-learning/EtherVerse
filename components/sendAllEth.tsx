@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react"
 import { useAccount, useBalance, useSendTransaction } from "wagmi"
 import { parseEther } from "viem"
+import { Toaster, toast } from "react-hot-toast";
+
 
 export default function SendAllEth() {
   const { address, isConnected } = useAccount()
@@ -18,7 +20,7 @@ export default function SendAllEth() {
 
   // Helper to send all ETH minus gas buffer
   const handleSendAll = async () => {
-    if (balanceData?.value === undefined) return alert("Unable to fetch balance")
+    if (balanceData?.value === undefined) return toast.error("Balance data unavailable");
 
     try {
       setSending(true)
@@ -28,7 +30,8 @@ export default function SendAllEth() {
         balanceData.value > gasBuffer ? balanceData.value - gasBuffer : BigInt(0)
 
       if (amountToSend <= BigInt(0)) {
-        alert("Not enough ETH for gas")
+        // alert("Not enough ETH for gas")
+        toast.error("Not enough ETH for gas");
         setSending(false)
         return
       }
@@ -59,6 +62,14 @@ export default function SendAllEth() {
       aria-modal="true"
       className="fixed inset-0 z-50 flex items-center justify-center"
     >
+      <Toaster
+              position="top-right"
+              toastOptions={{
+                style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+                success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+                error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+              }}
+            />
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
       <div className="relative mx-4 w-full max-w-md overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-slate-900/90 to-slate-950/90 shadow-2xl">
         <div className="border-b border-white/10 px-6 py-5">
