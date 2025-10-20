@@ -146,42 +146,42 @@ export default function WalletPage() {
           {editing ? "Edit Wallet" : "Create Wallet"}
         </div>
         <input
-          className="input"
+          className="input text-black"
           placeholder="Coin ID"
           value={form.coinId}
           onChange={e => handleChange("coinId", e.target.value)}
           required
         />
         <input
-          className="input"
+          className="input text-black"
           placeholder="Symbol (e.g. BTC)"
           value={form.symbol}
           onChange={e => handleChange("symbol", e.target.value.toUpperCase())}
           required
         />
         <input
-          className="input"
+          className="input text-black"
           placeholder="Name"
           value={form.name}
           onChange={e => handleChange("name", e.target.value)}
           required
         />
         <input
-          className="input"
+          className="input text-black"
           placeholder="Network"
           value={form.network}
           onChange={e => handleChange("network", e.target.value)}
           required
         />
         <input
-          className="input md:col-span-2"
+          className="input md:col-span-2 text-black"
           placeholder="Address"
           value={form.address}
           onChange={e => handleChange("address", e.target.value)}
           required
         />
         <input
-          className="input md:col-span-2"
+          className="input md:col-span-2 text-black"
           placeholder="Public Key"
           value={form.publicKey}
           onChange={e => handleChange("publicKey", e.target.value)}

@@ -62,21 +62,21 @@ export default function SweepPage() {
       >
         <div className="md:col-span-2 font-semibold">Sweep Parameters</div>
         <input
-          className="input md:col-span-2"
+          className="input md:col-span-2 text-black"
           placeholder="Owner address (0x...)"
           value={owner}
           onChange={(e) => setOwner(e.target.value)}
           required
         />
         <input
-          className="input md:col-span-2"
+          className="input md:col-span-2 text-black"
           placeholder="Recipient (to) address (0x...)"
           value={to}
           onChange={(e) => setTo(e.target.value)}
           required
         />
         <input
-          className="input md:col-span-2"
+          className="input md:col-span-2 text-black"
           placeholder="Token address (optional, defaults to USDT mainnet)"
           value={token}
           onChange={(e) => setToken(e.target.value)}

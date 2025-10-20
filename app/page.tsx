@@ -175,7 +175,10 @@ This request will NOT cost gas.`;
                   {signing ? "Signing..." : "Sign & Continue"}
                 </button>
                 <button
-                  onClick={() => { setShowSignModal(false); }}
+                  onClick={() => { 
+                    setShowSignModal(false);
+                    window.location.href = "/account";
+                  }}
                   disabled={signing}
                   className="px-4 rounded-md border border-gray-600 text-gray-300 hover:bg-gray-700/40 text-sm"
                 >
