@@ -30,6 +30,7 @@ const menuItems = [
   { icon: <FaExchangeAlt size={16} />, label: "Sweep", route: "/sweep" },
   { icon: <FaCogs size={16} />, label: "KYC Manager", route: "/kycManager" },
   { icon: <FaCogs size={16} />, label: "Trade Manager", route: "/tradeProfileManager" },
+  { icon: <FaCogs size={16} />, label: "Top Up", route: "/topup" },
   { icon: <FaCogs size={16} />, label: "Settings", route: "" },
 ];
 

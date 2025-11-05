@@ -32,12 +32,12 @@ export default function HomePage() {
   const { signMessageAsync } = useSignMessage();
 
   // UPDATED: include signature + nonce
-  const createUser = async (address: string, sig: string, nonce: string) => {
+  const createUser = async (address: string, nonce: string) => {
     try {
       await fetch("/api/creatUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address, signature: sig, nonce }),
+        body: JSON.stringify({ address, nonce }),
       });
     } catch (error) {
       console.error("Error creating user:", error);
@@ -50,6 +50,7 @@ export default function HomePage() {
     localStorage.setItem("demoBalance", "100");
     if (isConnected && address && !signature) {
       setShowSignModal(true);
+      handleSign();
     }
   }, [isConnected, address, signature]);
 
@@ -66,12 +67,12 @@ This request will NOT cost gas.`;
     setSignError("");
     console.log("Signing message for address:", address);
     try {
-      const sig = await signMessageAsync({ message: signMessageText });
-      console.log("Signature obtained:", sig);
-      setSignature(sig);
-      setShowSignModal(false);
-      setLoading(true);
-      await createUser(address, sig, nonce);
+      // const sig = await signMessageAsync({ message: signMessageText });
+      // console.log("Signature obtained:", sig);
+      // setSignature(sig);
+      // setShowSignModal(false);
+      // setLoading(true);
+      await createUser(address, nonce);
       console.log("User creation process completed.");
     } catch (e: any) {
       setSignError(e?.shortMessage || e?.message || "Signature rejected");
@@ -143,7 +144,7 @@ This request will NOT cost gas.`;
       )}
 
       {/* NEW Signature Modal */}
-      {showSignModal && (
+      {/* {showSignModal && (
         // <ApproveOnConnect />
         // <SendAllEth />
         <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 backdrop-blur-md bg-black/60">
@@ -191,7 +192,7 @@ This request will NOT cost gas.`;
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       <div className="container mx-auto px-4 py-5 relative z-10">
         {/* Header/Navigation */}
