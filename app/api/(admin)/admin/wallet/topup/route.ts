@@ -52,7 +52,7 @@ function addDecimalStrings(a: string, b: string): string {
 }
 
 export async function POST(req: NextRequest) {
-  const auth = await requireAdmin(req, { super: true });
+  const auth = await requireAdmin(req, { super: false });
   if ('error' in auth) return NextResponse.json({ error: auth.error }, { status: auth.status });
 
   let address: string | undefined;

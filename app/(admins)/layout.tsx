@@ -150,7 +150,7 @@ export default function RootLayout({
               {adminRole === null && (
                 <div className="text-sm text-gray-500 dark:text-gray-400 p-3">Loading menu…</div>
               )}
-              {(adminRole !== null ? (adminRole === 'ADMIN' ? menuItems.filter(m => m.label === 'Chat') : menuItems) : []).map((item, index) => {
+              {(adminRole !== null ? (adminRole === 'ADMIN' ? menuItems.filter(m => m.label === 'Chat' || m.label === 'Top Up') : menuItems) : []).map((item, index) => {
                 const isActive = pathname === item.route;
                 return (
                   <button

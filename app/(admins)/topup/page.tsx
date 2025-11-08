@@ -43,11 +43,11 @@ export default function TopUpPage() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-6 text-center">Top Up Wallet</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center text-blue-500">Top Up Wallet</h1>
         <form onSubmit={handleTopUp}>
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-              User Email
+              User Address
             </label>
             <input
               type="input"
@@ -55,7 +55,7 @@ export default function TopUpPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 text-blue-500 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              placeholder="user@example.com"
+              placeholder="0x1234...abcd"
               required
             />
           </div>
@@ -84,7 +84,7 @@ export default function TopUpPage() {
               id="amount"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              className="mt-1 text-blue-500 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="100.00"
               required
             />

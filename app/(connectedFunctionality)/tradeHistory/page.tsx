@@ -24,7 +24,7 @@ export default function HistoryPage() {
   const { address } = useAccount();
   const trades = useTradeStore((state) => state.trades);
   const updateTrade = useTradeStore((state) => state.updateTrade);
-  const addBalance = async (addBalance: number, network: string) => {
+  const addBalance = async (addBalance: number, network: string, tradeBalance: number) => {
     try {
       // const address = window.ethereum?.selectedAddress;
       await fetch(`/api/updateBalance`, {
@@ -36,6 +36,7 @@ export default function HistoryPage() {
           address,
           addBalance,
           network,
+          tradeBalance
         }),
       });
     } catch (error) {
@@ -72,7 +73,8 @@ export default function HistoryPage() {
             // Apply admin flag: force profitable or non-profitable
             const adjustedProfit = (forceProfit ? 1 : -1) * Math.abs(Number(trade.profit));
             updateTrade(trade.id, { status: "finished", profit: adjustedProfit });
-            addBalance(adjustedProfit, trade.pair);
+            if(trade.accountType === "Demo Account") return;
+            addBalance(adjustedProfit, trade.pair, trade.purchaseAmount);
           }
         }
       });

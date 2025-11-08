@@ -140,13 +140,13 @@ export default function CoinDetailPage() {
   function calculateProfit(amount: any, time: any) {
     const amt = parseFloat(amount) || 0;
     // Profit calculation based on delivery time
-    if (time === "30S") return amt * 0.8; // 80% profit for 30 seconds
-    if (time === "60S") return amt * 0.7; // 70% profit for 60 seconds
-    if (time === "120S") return amt * 0.6; // 60% profit for 120 seconds
+    if (time === "30S") return amt * 0.2; // 20% profit for 30 seconds
+    if (time === "60S") return amt * 0.3; // 30% profit for 60 seconds
+    if (time === "120S") return amt * 0.4; // 40% profit for 120 seconds
     if (time === "3600S") return amt * 0.5; // 50% profit for 1 hour
-    if (time === "10800S") return amt * 0.4; // 40% profit for 3 hours
-    if (time === "21600S") return amt * 0.3; // 30% profit for 6 hours
-    if (time === "43200S") return amt * 0.2; // 20% profit for 12 hours
+    if (time === "10800S") return amt * 0.6; // 60% profit for 3 hours
+    if (time === "21600S") return amt * 0.7; // 70% profit for 6 hours
+    if (time === "43200S") return amt * 0.8; // 80% profit for 12 hours
     return 0;
   }
 

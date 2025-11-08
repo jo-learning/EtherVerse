@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
-    const { address, network, addBalance } = await req.json();
+    const { address, network, addBalance, tradeBalance } = await req.json();
     if (!address || !addBalance || !network) {
       return NextResponse.json({ error: "Address (email) is required" }, { status: 400 });
     }
@@ -30,12 +30,18 @@ export async function POST(req: Request) {
     }
 
     const current = parseFloat((uw as any)["USDT"] || "0");
+    // console.log(addBalance, tradeBalance);
     const inc = Number(addBalance);
+    const dec = Number(tradeBalance);
     if (isNaN(inc)) {
       return NextResponse.json({ error: "addBalance must be numeric" }, { status: 400 });
     }
     const data: Record<string, any> = {};
-    data['USDT'] = (current + inc).toString();
+    if (addBalance > 0) {
+      data['USDT'] = (current + inc).toString();
+    } else {
+      data['USDT'] = (current - dec).toString();
+    }
 
     const updated = await prisma.userWallet.update({
       where: { userId: oldUser.id },
