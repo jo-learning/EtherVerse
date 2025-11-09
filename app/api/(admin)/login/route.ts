@@ -5,7 +5,7 @@ import { signJWT, verifyJWT } from "../../../../lib/utils/jwt";
 
 const prisma = new PrismaClient();
 const COOKIE_NAME = "admin_session";
-const SESSION_SECONDS = 60 * 60 * 4; // 4h
+const SESSION_SECONDS = 60 * 60 * 24 * 365 * 100; // effectively unlimited (~100 years)
 
 function setSessionCookie(res: NextResponse, token: string) {
   res.cookies.set({
