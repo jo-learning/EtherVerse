@@ -19,6 +19,11 @@ function setSessionCookie(res: NextResponse, token: string) {
   });
 }
 
+// New helper to clear cookie
+function clearSessionCookie(res: NextResponse) {
+  res.cookies.delete(COOKIE_NAME);
+}
+
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json().catch(() => ({}));
@@ -31,24 +36,30 @@ export async function POST(request: Request) {
 
     const admin = await prisma.admin.findUnique({ where: { email } });
     if (!admin) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { error: "Invalid credentials admin" },
         { status: 401 }
       );
+      clearSessionCookie(res);
+      return res;
     }
     if (admin.status !== "active") {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { error: "Account disabled" },
         { status: 403 }
       );
+      clearSessionCookie(res);
+      return res;
     }
 
     const valid = verifyPassword(password, admin.hashedPassword);
     if (!valid) {
-      return NextResponse.json(
+      const res = NextResponse.json(
         { error: "Invalid credentials" },
         { status: 401 }
       );
+      clearSessionCookie(res);
+      return res;
     }
 
     // Update last login (non-blocking best-effort)
@@ -83,18 +94,22 @@ export async function GET(request: Request) {
   const token = match.split("=")[1];
   const { valid, payload, reason } = verifyJWT(token);
   if (!valid || !payload) {
-    return NextResponse.json(
+    const res = NextResponse.json(
       { authenticated: false, reason },
       { status: 401 }
     );
+    clearSessionCookie(res);
+    return res;
   }
   // Fetch latest admin (sanitized)
   const admin = await prisma.admin.findUnique({ where: { id: payload.sub } });
   if (!admin) {
-    return NextResponse.json(
+    const res = NextResponse.json(
       { authenticated: false, reason: "not-found" },
       { status: 401 }
     );
+    clearSessionCookie(res);
+    return res;
   }
   const { hashedPassword, resetToken, resetTokenExpires, twoFactorSecret, ...safe } = admin;
   return NextResponse.json({ authenticated: true, admin: safe });
