@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   const assignedFilter = searchParams.get('assigned');
 
   try {
-    if (me.role === 'SUPERADMIN') {
+    // if (me.role === 'SUPERADMIN') {
       // optionally filter assignment presence
       if (assignedFilter === 'true') {
         const users = await prisma.user.findMany({
@@ -36,15 +36,15 @@ export async function GET(req: NextRequest) {
         orderBy: { createdAt: 'desc' }
       });
       return NextResponse.json({ users });
-    }
+    // }
 
     // ADMIN role: only their assigned users
-    const users = await prisma.user.findMany({
-      where: { assignments: { some: { adminId: me.id, active: true } } },
-      include: { assignments: { where: { adminId: me.id, active: true } } },
-      orderBy: { createdAt: 'desc' }
-    });
-    return NextResponse.json({ users });
+    // const users = await prisma.user.findMany({
+    //   where: { assignments: { some: { adminId: me.id, active: true } } },
+    //   include: { assignments: { where: { adminId: me.id, active: true } } },
+    //   orderBy: { createdAt: 'desc' }
+    // });
+    // return NextResponse.json({ users });
   } catch (e:any) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }

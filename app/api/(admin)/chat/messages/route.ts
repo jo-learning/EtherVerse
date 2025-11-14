@@ -18,14 +18,14 @@ export async function GET(req: NextRequest) {
   if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
 
   // access control
-  if (me.role !== 'SUPERADMIN') {
-    const assignment = await prisma.adminUserAssignment.findFirst({ where: { userId, adminId: me.id, active: true } });
-    if (!assignment) {
-      // allow if any chat already linked to this admin for this user
-      const anyChat = await prisma.chat.findFirst({ where: { userId, adminId: me.id } });
-      if (!anyChat) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
-  }
+  // if (me.role !== 'SUPERADMIN') {
+    // const assignment = await prisma.adminUserAssignment.findFirst({ where: { userId, adminId: me.id, active: true } });
+    // if (!assignment) {
+    //   // allow if any chat already linked to this admin for this user
+    //   const anyChat = await prisma.chat.findFirst({ where: { userId, adminId: me.id } });
+    //   if (!anyChat) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // }
+  // }
 
   const where = { userId } as any;
   const orderBy = { createdAt: 'desc' } as const;
@@ -49,10 +49,10 @@ export async function POST(req: NextRequest) {
     const { userId, message } = await req.json();
     if (!userId || !message) return NextResponse.json({ error: 'userId & message required' }, { status: 400 });
 
-    if (me.role !== 'SUPERADMIN') {
-      const assignment = await prisma.adminUserAssignment.findFirst({ where: { userId, adminId: me.id, active: true } });
-      if (!assignment) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    // if (me.role !== 'SUPERADMIN') {
+    //   const assignment = await prisma.adminUserAssignment.findFirst({ where: { userId, adminId: me.id, active: true } });
+    //   if (!assignment) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    // }
 
     const chat = await prisma.chat.create({ data: { userId, message, who: 'admin', adminId: me.id } });
     
