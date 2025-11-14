@@ -375,6 +375,22 @@ export default function WalletPage() {
     XRP: "ripple",
     ADA: "cardano",
     SOL: "solana",
+    USDC: "usd-coin",
+    DOGE: "dogecoin",
+    DOT: "polkadot",
+    MATIC: "matic-network",
+    LTC: "litecoin",
+    LINK: "chainlink",
+    UNI: "uniswap",
+    AVAX: "avalanche-2",
+    SHIB: "shiba-inu",
+    WBTC: "wrapped-bitcoin",
+    DAI: "dai",
+    TUSD: "true-usd",
+    BCH: "bitcoin-cash",
+    XLM: "stellar",
+    VET: "vechain",
+    FIL: "filecoin",
   };
 
   const getWallets = async () => {
