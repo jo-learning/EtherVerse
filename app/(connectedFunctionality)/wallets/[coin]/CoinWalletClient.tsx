@@ -36,6 +36,7 @@ export default function CoinWalletClient({ coin }: Props) {
 
   useEffect(() => {
     // const address = window.ethereum?.selectedAddress;
+    console.log(coin, address);
     fetchWallet(coin, address ?? "").then(setCoins);
   }, [address]);
 

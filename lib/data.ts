@@ -38,7 +38,7 @@ const dynamicSymbols = new Set<string>(["XAU", "XAG", "XPT", "WTI", "XG", "GBP",
 // Legacy UI wallets representation (still used by components).
 // NOTE: This does not directly mirror the Prisma Wallet model, which includes profits, frozen, actualBalance, etc.
 // For seeding the database, use `walletsSeed` below.
-export const walletsData: Wallet[] = ["USDT","BTC","ETH","AAVE","BNB","XRP","ADA","SOL"].map(sym => {
+export const walletsData: Wallet[] = ["USDT","BTC","ETH","AAVE","BNB","XRP","ADA","SOL", "USDC", "DOGE", "BCH", "TWT", "ETC", "ZEC"].map(sym => {
   const coin = coins.find(c => c.symbol === sym);
   return {
     name: `${sym} Wallet`,
