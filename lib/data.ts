@@ -4,6 +4,7 @@ export const coins: Coin[] = [
   { symbol: "BTC", name: "BTC Coin", priceUsd: "0", change24hPct: 0.0021, spark: [3,4,3,5,5,6,5,7,7,8], logo: "https://assets.coingecko.com/coins/images/1/large/bitcoin.png" },
   { symbol: "ETH", name: "ETH Coin", priceUsd: "0", change24hPct: -0.0087, spark: [4,4,5,5,4,4,3,3,4,4], logo: "https://assets.coingecko.com/coins/images/279/large/ethereum.png" },
   { symbol: "USDT", name: "USDT Coin", priceUsd: "0", change24hPct: 0.0000, spark: [0,0,0,0,0,0,0,0,0,0], logo: "https://assets.coingecko.com/coins/images/325/large/Tether.png" },
+  { symbol: "USDC", name: "USDC Coin", priceUsd: "0", change24hPct: 0.0000, spark: [0,0,0,0,0,0,0,0,0,0], logo: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png" },
   { symbol: "BNB", name: "BNB Coin", priceUsd: "0", change24hPct: 0.0132, spark: [2,2,3,3,4,4,5,5,6,6], logo: "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png" },
   { symbol: "XRP", name: "XRP Coin", priceUsd: "0", change24hPct: 0.0175, spark: [1,1,2,2,3,3,4,4,5,5], logo: "https://assets.coingecko.com/coins/images/44/large/xrp-symbol-white-128.png" },
   { symbol: "SOL", name: "SOL Coin", priceUsd: "0", change24hPct: 0.0321, spark: [3,3,4,5,5,6,7,7,8,8], logo: "https://assets.coingecko.com/coins/images/4128/large/solana.png" },
