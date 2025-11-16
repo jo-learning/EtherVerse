@@ -125,7 +125,7 @@ export async function fetchCoinPrices(): Promise<Coin[]> {
 
   // 1) CoinGecko for non-forex/metals symbols
   const ids = [
-    'bitcoin','ethereum','tether','binancecoin','ripple','solana','aave',
+    'bitcoin','ethereum','tether', 'usd-coin','binancecoin','ripple','solana','aave',
     'polkadot','chainlink','uniswap','litecoin','cardano','dogecoin','eos',
     // metals handled by Finnhub: xau,xag,xpt
     // oil/platinum aliases not on CG (WTI/XG) remain as-is
@@ -134,6 +134,7 @@ export async function fetchCoinPrices(): Promise<Coin[]> {
     BTC: 'bitcoin',
     ETH: 'ethereum',
     USDT: 'tether',
+    USDC: 'usd-coin',
     BNB: 'binancecoin',
     XRP: 'ripple',
     SOL: 'solana',

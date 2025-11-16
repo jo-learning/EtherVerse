@@ -5,7 +5,8 @@ export default function Google2FAPage() {
   const [codes, setCodes] = useState(["", "", "", "", "", ""]);
   const [status, setStatus] = useState<"none" | "pending" | "verified" | "error">("none");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  
+  const isUnderMaintenance = true;
+
   // Simulated secret and QR code
   const secret = "JBSWY3DPEHPK3PXP";
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=otpauth://totp/EtherVerse?secret=${secret}`;
@@ -74,6 +75,22 @@ export default function Google2FAPage() {
       else setStatus("error");
     }, 1000);
   };
+
+  if (isUnderMaintenance) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: "#0a1026" }}>
+        <div
+          className="max-w-md w-full text-center rounded-xl shadow p-6 space-y-4"
+          style={{ background: "#172042", color: "#ffffff", border: "1px solid #4b0082" }}
+        >
+          <h1 className="text-2xl font-bold">2FA Maintenance</h1>
+          <p className="text-sm" style={{ color: "#b0b8c1" }}>
+            Google Authenticator setup is temporarily unavailable while we perform scheduled maintenance. Please try again later.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-6" style={{ background: "#0a1026" }}>

@@ -291,7 +291,7 @@ export default function AdminChatPage() {
                 }`}
               >
                 {m.who === "admin" && (
-                  <div className="hidden group-hover:flex items-center gap-1">
+                  <div className="flex items-center gap-1 transition-opacity sm:opacity-0 sm:pointer-events-none sm:group-hover:opacity-100 sm:group-hover:pointer-events-auto sm:group-focus-within:opacity-100">
                     <button
                       onClick={() => startEditing(m)}
                       className="text-xs text-gray-500 hover:text-blue-500"
