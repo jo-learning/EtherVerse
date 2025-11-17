@@ -29,6 +29,9 @@ type KycItem = {
   certificateType?: string | null;
   certificateNumber?: string | null;
   phone?: string | null;
+  idPathPath?: string | null;
+  idBackPath?: string | null;
+  handHeldPath?: string | null;
   user?: { id: string; email?: string | null };
   [key: string]: any;
 };
@@ -47,6 +50,7 @@ export default function KycManagerPage() {
   const [status, setStatus] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const [selected, setSelected] = useState<KycItem | null>(null);
   const [updating, setUpdating] = useState<'approve' | 'reject' | null>(null);
+  const [origin, setOrigin] = useState('');
 
   const load = async () => {
     setLoading(true);
@@ -69,7 +73,32 @@ export default function KycManagerPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setOrigin(window.location.origin);
+    }
+  }, []);
+
   const filtered = useMemo(() => items, [items]);
+
+  const assetLinks = useMemo(() => {
+    if (!selected || !origin) return [];
+    const buildLink = (label: string, raw?: string | null) => {
+      if (!raw) return null;
+      const cleaned = raw.replace(/^\/+/, '');
+      const encoded = cleaned
+        .split(/[/\\]+/)
+        .filter(Boolean)
+        .map(encodeURIComponent)
+        .join('/');
+      return { label, url: `${origin}/api/${encoded}` };
+    };
+    return [
+      buildLink('ID Front', selected.idFrontPath),
+      buildLink('ID Back', selected.idBackPath),
+      buildLink('Hand Held', selected.handHeldPath),
+    ].filter(Boolean) as { label: string; url: string }[];
+  }, [selected, origin]);
 
   const onApproveReject = async (next: 'approved' | 'rejected') => {
     if (!selected?.userId) return;
@@ -271,6 +300,23 @@ export default function KycManagerPage() {
                   <pre className="text-xs bg-black/30 p-3 rounded overflow-x-auto">
                     {JSON.stringify(selected, null, 2)}
                   </pre>
+                  {assetLinks.length > 0 && (
+                    <div className="mt-2 space-y-1 text-xs break-all">
+                      {assetLinks.map(({ label, url }) => (
+                        <div key={label}>
+                        <a
+                          key={label}
+                          href={url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-300 underline"
+                        >
+                          {label}: {url}
+                        </a>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex gap-2 pt-4">

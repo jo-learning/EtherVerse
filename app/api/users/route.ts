@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const search = searchParams.get("search");
   const pageParam = Number(searchParams.get("page") ?? "1");
-  const pageSizeParam = Number(searchParams.get("pageSize") ?? "20");
+  const pageSizeParam = Number(searchParams.get("pageSize") ?? "1000");
 
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const pageSize =
