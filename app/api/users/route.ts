@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   const pageSize =
     Number.isFinite(pageSizeParam) && pageSizeParam > 0 && pageSizeParam <= 100
       ? pageSizeParam
-      : 20;
+      : 300;
 
   const where = buildSearchFilter(search);
   const [users, total] = await Promise.all([
