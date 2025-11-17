@@ -340,11 +340,15 @@ export default function CoinDetailPage() {
     style={{ background: "rgba(13,13,13,0.85)" }}
   >
     <div
-      className="rounded-xl w-full max-w-md mx-2 sm:mx-0 p-4 sm:p-6 relative flex flex-col"
-      style={{ 
-        background: COLORS.navy, 
+      className="rounded-2xl w-full max-w-md md:max-w-5xl mx-2 sm:mx-0 p-4 sm:p-6 md:p-8 relative flex flex-col"
+      style={{
+        background: COLORS.navy,
+        backgroundImage: "radial-gradient(120% 120% at 50% 0%, rgba(75, 0, 130, 0.2) 0%, transparent 60%)",
         color: COLORS.textWhite,
-        maxHeight: "90vh"
+        maxHeight: "90vh",
+        border: "1px solid rgba(75, 0, 130, 0.35)",
+        boxShadow: "0 30px 80px rgba(0, 0, 0, 0.6)",
+        backdropFilter: "blur(12px)",
       }}
     >
       <button
@@ -352,263 +356,284 @@ export default function CoinDetailPage() {
           setShowModal(false);
           setInputValue("");
         }}
-        className="absolute right-4 top-4 z-10"
+        className="absolute right-4 top-4 z-10 transition-opacity duration-150 md:hover:opacity-70"
         style={{ color: COLORS.textGray }}
       >
         ✕
       </button>
-      
-      {/* Fixed header section */}
+
       <div className="flex-shrink-0">
-        <h2 className="text-lg font-bold mb-4" style={{ color: COLORS.neonGreen }}>
-          {coin.symbol} Coin Delivery
-        </h2>
+        <div
+          className="rounded-2xl border border-purple-500/30 bg-black/30 p-4 md:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.45)] space-y-6"
+          style={{
+            background: "linear-gradient(150deg, rgba(25,31,65,0.95), rgba(12,18,38,0.85))",
+            borderColor: "rgba(75, 0, 130, 0.4)",
+          }}
+        >
+          <h2 className="text-lg font-bold" style={{ color: COLORS.neonGreen }}>
+            {coin.symbol} Coin Delivery
+          </h2>
 
-        {/* Coin Info */}
-        <div className="flex items-center gap-3 mb-4">
-          <img
-            src={coin.logo}
-            alt={coin.name}
-            className="w-8 h-8"
-            style={{ borderRadius: 8, background: COLORS.white }}
-          />
-          <div>
-            <p className="font-bold" style={{ color: COLORS.textWhite }}>{coin.name}</p>
-            <span className="text-sm" style={{ color: COLORS.textGray }}>{direction}</span>
+          <div className="flex items-center gap-3 md:gap-4">
+            <img
+              src={coin.logo}
+              alt={coin.name}
+              className="w-8 h-8"
+              style={{ borderRadius: 8, background: COLORS.white }}
+            />
+            <div>
+              <p className="font-bold" style={{ color: COLORS.textWhite }}>{coin.name}</p>
+              <span className="text-sm" style={{ color: COLORS.textGray }}>{direction}</span>
+            </div>
+            <span
+              className="ml-auto text-xs md:text-sm px-3 py-1 rounded-full border"
+              style={{
+                borderColor: "rgba(75, 0, 130, 0.35)",
+                background: "rgba(34, 197, 94, 0.12)",
+                color: COLORS.neonGreen,
+              }}
+            >
+              {coinWallet?.balance} USDT
+            </span>
           </div>
-          <span className="ml-auto text-sm" style={{ color: COLORS.neonGreen }}>
-            {coinWallet?.balance} USDT
-          </span>
-        </div>
 
-        {/* Buy Direction Switch */}
-        <div className="flex justify-center mb-4">
-          <div
-            className="flex rounded-full p-1 gap-2"
-            style={{ background: COLORS.background }}
-          >
-            <button
-              type="button"
-              className="px-6 py-2 rounded-full font-semibold transition-colors duration-200"
-              style={{
-                background:
-                  direction === "Buy long"
-                    ? `linear-gradient(90deg, ${COLORS.neonGreen}, ${COLORS.purple})`
-                    : "transparent",
-                color:
-                  direction === "Buy long"
-                    ? COLORS.black
-                    : COLORS.textGray,
-              }}
-              onClick={() => setDirection("Buy long")}
+          <div className="flex justify-center">
+            <div
+              className="flex rounded-full p-1 gap-2"
+              style={{ background: COLORS.background }}
             >
-              Buy Long
-            </button>
-            <button
-              type="button"
-              className="px-6 py-2 rounded-full font-semibold transition-colors duration-200"
-              style={{
-                background:
-                  direction === "Buy short"
-                    ? `linear-gradient(90deg, #ff3b3b, ${COLORS.purple})`
-                    : "transparent",
-                color:
-                  direction === "Buy short"
-                    ? COLORS.white
-                    : COLORS.textGray,
-              }}
-              onClick={() => setDirection("Buy short")}
-            >
-              Buy Short
-            </button>
+              <button
+                type="button"
+                className="px-6 py-2 rounded-full font-semibold transition-all duration-200 md:hover:-translate-y-0.5"
+                style={{
+                  background:
+                    direction === "Buy long"
+                      ? `linear-gradient(90deg, ${COLORS.neonGreen}, ${COLORS.purple})`
+                      : "transparent",
+                  color:
+                    direction === "Buy long"
+                      ? COLORS.black
+                      : COLORS.textGray,
+                }}
+                onClick={() => setDirection("Buy long")}
+              >
+                Buy Long
+              </button>
+              <button
+                type="button"
+                className="px-6 py-2 rounded-full font-semibold transition-all duration-200 md:hover:-translate-y-0.5"
+                style={{
+                  background:
+                    direction === "Buy short"
+                      ? `linear-gradient(90deg, #ff3b3b, ${COLORS.purple})`
+                      : "transparent",
+                  color:
+                    direction === "Buy short"
+                      ? COLORS.white
+                      : COLORS.textGray,
+                }}
+                onClick={() => setDirection("Buy short")}
+              >
+                Buy Short
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Scrollable content section */}
-      <div className="flex-1 overflow-y-auto scrollbar-hide">
-        <div className="flex flex-col md:flex-row gap-4 pb-2">
-          {/* Right Column - Account Type and Done Button */}
-          <div className="w-full md:w-1/3 flex flex-col justify-between">
-            {/* Account Type Buttons */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
-                Account Type
-              </label>
-              <div className="flex flex-col rounded-lg overflow-hidden gap-2">
-                <button
-                  type="button"
-                  className={`py-3 text-center font-semibold rounded-lg ${
-                    accountType === "Real Account" 
-                      ? "bg-green-600 text-white" 
-                      : "bg-gray-700 text-gray-300"
-                  }`}
-                  onClick={() => setAccountType("Real Account")}
-                >
-                  Real Account
-                </button>
-                <button
-                  type="button"
-                  className={`py-3 text-center font-semibold rounded-lg ${
-                    accountType === "Demo Account" 
-                      ? "bg-blue-600 text-white" 
-                      : "bg-gray-700 text-gray-300"
-                  }`}
-                  onClick={() => setAccountType("Demo Account")}
-                >
-                  Demo Account
-                </button>
-              </div>
-            </div>
-
-            {/* Delivery Time */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
-                Delivery Time
-              </label>
-              <select
-                value={deliveryTime}
-                onChange={(e) => setDeliveryTime(e.target.value)}
-                className="w-full rounded-lg p-3 mb-2"
-                style={{
-                  background: COLORS.background,
-                  color: COLORS.textWhite,
-                  border: `1px solid ${COLORS.purple}`,
-                }}
-              >
-                <option value="30S">30S</option>
-                <option value="60S">60S</option>
-                <option value="120S">120S</option>
-                <option value="3600S">1H</option>
-                <option value="10800S">3H</option>
-                <option value="21600S">6H</option>
-                <option value="43200S">12H</option>
-              </select>
-            </div>
-
-            {/* Price Range */}
-            <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
-                Price Range
-              </label>
-              <select
-                className="w-full rounded-lg p-3 mb-4"
-                style={{
-                  background: COLORS.background,
-                  color: COLORS.textWhite,
-                  border: `1px solid ${COLORS.purple}`,
-                }}
-              >
-                {(() => {
-                  let basePercentage = 20;
-                  if (deliveryTime === "60S") basePercentage = 25;
-                  else if (deliveryTime === "120S") basePercentage = 30;
-                  else if (deliveryTime === "3600S") basePercentage = 35;
-                  else if (deliveryTime === "10800S") basePercentage = 40;
-                  else if (deliveryTime === "21600S") basePercentage = 45;
-                  else if (deliveryTime === "43200S") basePercentage = 50;
-                  const options = [] as React.ReactNode[];
-                  for (let i = 0; i < 1; i++) {
-                    const percentage = basePercentage + (i * 5);
-                    options.push(
-                      <option key={i} value={percentage}>
-                        (±{percentage}%)
-                      </option>
-                    );
-                  }
-                  return options;
-                })()}
-              </select>
-            </div>
-
-            
-          </div>
-          {/* Left Column - Number Keys */}
-          <div className="w-full md:w-2/3">
-            {/* Amount Display */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
-                USDT Amount
-              </label>
-              <div className="flex gap-2">
-                <div className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
-                  style={{
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                    border: `1px solid ${COLORS.purple}`,
-                    minHeight: '50px'
-                  }}
-                >
-                  {inputValue || "0"} USDT
-                </div>
-                <button
-                  type="button"
-                  className="px-3 py-2 rounded-lg"
-                  style={{
-                  background: COLORS.purple,
-                  color: COLORS.neonGreen,
-                  }}
-                  onClick={() => {
-                  if (accountType == "Demo Account") {
-                    // Get demo balance from localStorage, default to 100 if not set
-                    const demoBalance = localStorage.getItem("demoBalance");
-                    setInputValue(demoBalance || "100");
-                  } else {
-                    setInputValue(coinWallet?.balance?.toString() || "");
-                  }
-                  }}
-                >
-                  Max
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center">
-              <p className="text-xs" style={{ color: COLORS.textGray }}>
-                Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
-              </p>
-              <p className="text-xs" style={{ color: COLORS.neonGreen }}>
-                Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
-              </p>
-            </div>
-            <div className="grid grid-cols-3 gap-2 mb-4 mt-2">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
-                <button
-                  key={item}
-                  onClick={() => handleNumberInput(item.toString())}
-                  className="p-3 rounded-lg text-lg font-medium h-14"
-                  style={{
-                    background: COLORS.background,
-                    color: COLORS.textWhite,
-                    border: `1px solid ${COLORS.purple}`,
-                  }}
-                >
-                  {item === "backspace" ? "⌫" : item}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          
-
-
-          {/* Done Button */}
-            <button
-              onClick={() => {
-                setAmount(inputValue);
-                handleNumberInput("done");
-              }}
-              className="w-full py-4 font-bold mt-auto"
+      <div className="flex-1 overflow-y-auto scrollbar-hide mt-6 md:mt-8">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 pb-2 md:pb-0 items-stretch">
+          <div className="w-full md:w-1/3">
+            <div
+              className="rounded-2xl border border-purple-500/30 bg-black/25 p-4 md:p-6 space-y-6 shadow-[0_10px_35px_rgba(0,0,0,0.4)]"
               style={{
-                background: direction === "Buy long" 
-                  ? `linear-gradient(90deg, ${COLORS.neonGreen}, ${COLORS.purple})`
-                  : `linear-gradient(90deg, #ff3b3b, ${COLORS.purple})`,
-                color: COLORS.textWhite,
-                borderRadius: 16,
+                background: "linear-gradient(170deg, rgba(16,23,49,0.92), rgba(10,16,38,0.82))",
+                borderColor: "rgba(75, 0, 130, 0.33)",
               }}
             >
-              DONE
-            </button>
+              <div>
+                <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
+                  Account Type
+                </label>
+                <div className="flex flex-col rounded-lg overflow-hidden gap-2 md:gap-3">
+                  <button
+                    type="button"
+                    className={`py-3 text-center font-semibold rounded-lg transition-all duration-200 md:hover:-translate-y-0.5 ${
+                      accountType === "Real Account"
+                        ? "bg-green-600 text-white"
+                        : "bg-gray-700 text-gray-300"
+                    }`}
+                    onClick={() => setAccountType("Real Account")}
+                  >
+                    Real Account
+                  </button>
+                  <button
+                    type="button"
+                    className={`py-3 text-center font-semibold rounded-lg transition-all duration-200 md:hover:-translate-y-0.5 ${
+                      accountType === "Demo Account"
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-700 text-gray-300"
+                    }`}
+                    onClick={() => setAccountType("Demo Account")}
+                  >
+                    Demo Account
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
+                    Delivery Time
+                  </label>
+                  <select
+                    value={deliveryTime}
+                    onChange={(e) => setDeliveryTime(e.target.value)}
+                    className="w-full rounded-lg p-3"
+                    style={{
+                      background: COLORS.background,
+                      color: COLORS.textWhite,
+                      border: `1px solid ${COLORS.purple}`,
+                    }}
+                  >
+                    <option value="30S">30S</option>
+                    <option value="60S">60S</option>
+                    <option value="120S">120S</option>
+                    <option value="3600S">1H</option>
+                    <option value="10800S">3H</option>
+                    <option value="21600S">6H</option>
+                    <option value="43200S">12H</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
+                    Price Range
+                  </label>
+                  <select
+                    className="w-full rounded-lg p-3"
+                    style={{
+                      background: COLORS.background,
+                      color: COLORS.textWhite,
+                      border: `1px solid ${COLORS.purple}`,
+                    }}
+                  >
+                    {(() => {
+                      let basePercentage = 20;
+                      if (deliveryTime === "60S") basePercentage = 25;
+                      else if (deliveryTime === "120S") basePercentage = 30;
+                      else if (deliveryTime === "3600S") basePercentage = 35;
+                      else if (deliveryTime === "10800S") basePercentage = 40;
+                      else if (deliveryTime === "21600S") basePercentage = 45;
+                      else if (deliveryTime === "43200S") basePercentage = 50;
+                      const options = [] as React.ReactNode[];
+                      for (let i = 0; i < 1; i++) {
+                        const percentage = basePercentage + (i * 5);
+                        options.push(
+                          <option key={i} value={percentage}>
+                            (±{percentage}%)
+                          </option>
+                        );
+                      }
+                      return options;
+                    })()}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="w-full md:w-2/3">
+            <div
+              className="rounded-2xl border border-purple-500/30 bg-black/25 p-4 md:p-6 shadow-[0_10px_35px_rgba(0,0,0,0.4)] flex flex-col h-full"
+              style={{
+                background: "linear-gradient(170deg, rgba(14,22,42,0.92), rgba(18,26,52,0.85))",
+                borderColor: "rgba(75, 0, 130, 0.33)",
+              }}
+            >
+              <div>
+                <label className="block text-sm font-medium mb-1" style={{ color: COLORS.textGray }}>
+                  USDT Amount
+                </label>
+                <div className="flex gap-2">
+                  <div
+                    className="flex-1 rounded-lg p-3 text-right text-xl font-medium"
+                    style={{
+                      background: COLORS.background,
+                      color: COLORS.textWhite,
+                      border: `1px solid ${COLORS.purple}`,
+                      minHeight: "50px",
+                    }}
+                  >
+                    {inputValue || "0"} USDT
+                  </div>
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded-lg transition-all duration-200 md:hover:-translate-y-0.5"
+                    style={{
+                      background: COLORS.purple,
+                      color: COLORS.neonGreen,
+                      boxShadow: "0 8px 20px rgba(75, 0, 130, 0.35)",
+                    }}
+                    onClick={() => {
+                      if (accountType == "Demo Account") {
+                        const demoBalance = localStorage.getItem("demoBalance");
+                        setInputValue(demoBalance || "100");
+                      } else {
+                        setInputValue(coinWallet?.balance?.toString() || "");
+                      }
+                    }}
+                  >
+                    Max
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center text-xs md:text-sm mt-3 md:mt-4">
+                <p style={{ color: COLORS.textGray }}>
+                  Available Balance: {accountType == "Real Account" ? coinWallet?.balance : 100} USDT
+                </p>
+                <p style={{ color: COLORS.neonGreen }}>
+                  Estimated Profit: {calculateProfit(inputValue, deliveryTime).toFixed(2)} USDT
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mt-4 md:mt-6">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => handleNumberInput(item.toString())}
+                    className="p-3 rounded-lg text-lg font-medium h-14 transition-all duration-150 md:hover:-translate-y-0.5"
+                    style={{
+                      background: COLORS.background,
+                      color: COLORS.textWhite,
+                      border: `1px solid ${COLORS.purple}`,
+                    }}
+                  >
+                    {item === "backspace" ? "⌫" : item}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  setAmount(inputValue);
+                  handleNumberInput("done");
+                }}
+                className="w-full py-4 font-bold mt-4 md:mt-8"
+                style={{
+                  background:
+                    direction === "Buy long"
+                      ? `linear-gradient(135deg, ${COLORS.neonGreen}, ${COLORS.purple})`
+                      : `linear-gradient(135deg, #ff3b3b, ${COLORS.purple})`,
+                  color: COLORS.textWhite,
+                  borderRadius: 16,
+                  boxShadow: "0 12px 32px rgba(75, 0, 130, 0.35)",
+                }}
+              >
+                DONE
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

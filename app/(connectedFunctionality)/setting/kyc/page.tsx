@@ -175,7 +175,7 @@ export default function KYCPage() {
             <div className="rounded-xl shadow-lg p-8 space-y-6" style={{ background: COLORS.navy, color: COLORS.textWhite, border: `1px solid ${COLORS.purple}` }}>
             <div className="flex items-center justify-center mb-6">
               <FaCheckCircle size={32} className="mr-3" style={{ color: COLORS.neonGreen }} />
-              <h2 className="text-2xl font-bold" style={{ color: COLORS.neonGreen }}>KYC Verified Successfully!</h2>
+              <h2 className="text-2xl font-bold" style={{ color: COLORS.neonGreen }}> {status === "rejected" ? <span>KYC Rejected</span> : <span>KYC Verified Successfully!</span>}</h2>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -211,7 +211,7 @@ export default function KYCPage() {
             </div>
             
             <div className="mt-8 p-4 rounded-lg text-center" style={{ background: COLORS.background }}>
-              <span className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>Your KYC status: Verified</span>
+              <span className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>Your KYC status: {status === "rejected" ? <span className="text-red-500">Rejected</span> : <span className="text-green-500">Verified</span>}</span>
             </div>
           </div>
           )
