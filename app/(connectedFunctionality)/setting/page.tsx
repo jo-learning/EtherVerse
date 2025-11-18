@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { FaShieldAlt, FaIdCard, FaEnvelope, FaBell, FaLanguage, FaTrash, FaChevronRight } from "react-icons/fa";
 
 const settings = [
@@ -11,6 +12,14 @@ const settings = [
 ];
 
 export default function SettingPage() {
+  const [kycStatus, setKycStatus] = useState<"set" | "not-set">("not-set");
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const stored = localStorage.getItem("kycData");
+    setKycStatus(stored ? "set" : "not-set");
+  }, []);
+
   return (
     <div className="min-h-screen p-4" style={{ background: "#0a1026" }}>
       <div className="max-w-2xl mx-auto">
@@ -53,7 +62,12 @@ export default function SettingPage() {
                 }
                 {
                   item.label === "KYC Verification" && (
-                    <span className="pr-1" style={{color: "gray"}}>Not set</span>
+                    <span
+                      className="pr-1"
+                      style={{ color: kycStatus === "set" ? "#22c55e" : "gray" }}
+                    >
+                      {kycStatus === "set" ? "Set" : "Not set"}
+                    </span>
                   )
                 }
                 <FaChevronRight 
