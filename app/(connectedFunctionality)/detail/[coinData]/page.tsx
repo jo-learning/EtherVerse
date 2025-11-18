@@ -150,16 +150,16 @@ export default function CoinDetailPage() {
     return 0;
   }
 
-  function handleEntrustNow() {
+  function handleEntrustNow(inputValue: string) {
     if (!coin) {
       toast.error("Coin unavailable.");
       return;
     }
-    if (!amount || isNaN(parseFloat(amount))) {
+    if (!inputValue || isNaN(parseFloat(inputValue))) {
       toast.error("Enter a valid amount.");
       return;
     }
-    const profit = calculateProfit(amount, deliveryTime);
+    const profit = calculateProfit(inputValue, deliveryTime);
 
     addTrade({
       id: Date.now(),
@@ -200,7 +200,7 @@ export default function CoinDetailPage() {
       setInputValue(prev => prev.slice(0, -1));
     } else if (value === "done") {
       setAmount(inputValue);
-      handleEntrustNow();
+      handleEntrustNow(inputValue);
     } else if (value === "." && !inputValue.includes(".")) {
       setInputValue(prev => prev + value);
     } else if (value !== ".") {
