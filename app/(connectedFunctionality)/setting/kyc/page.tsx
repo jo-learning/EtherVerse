@@ -33,6 +33,7 @@ export default function KYCPage() {
   const [idFront, setIdFront] = useState<File | null>(null);
   const [idBack, setIdBack] = useState<File | null>(null);
   const [handHeld, setHandHeld] = useState<File | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Canvas refs
   const idFrontRef = useRef<HTMLCanvasElement>(null!);
@@ -83,8 +84,30 @@ export default function KYCPage() {
     }
   }, []);
 
+  const validate = () => {
+    const next: Record<string, string> = {};
+    if (!country.trim()) next.country = "Country is required";
+    if (!certificateType.trim()) next.certificateType = "Certificate type is required";
+    if (!firstName.trim()) next.firstName = "First name is required";
+    else if (firstName.trim().length < 2) next.firstName = "First name must be at least 2 characters";
+    if (!lastName.trim()) next.lastName = "Last name is required";
+    else if (lastName.trim().length < 2) next.lastName = "Last name must be at least 2 characters";
+    if (!certificateNumber.trim()) next.certificateNumber = "Certificate number is required";
+    if (!idPhone.trim()) next.idPhone = "Phone number is required";
+    else if (!/^\+?[0-9\s-]{7,15}$/.test(idPhone.trim())) next.idPhone = "Enter a valid phone number";
+    if (!idFront) next.idFront = "Upload the front of your ID";
+    if (!idBack) next.idBack = "Upload the back of your ID";
+    if (!handHeld) next.handHeld = "Upload a hand-held ID photo";
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validate()) {
+      toast.error("Please fix the highlighted fields.");
+      return;
+    }
     setStatus("pending");
 
     try {
@@ -100,6 +123,8 @@ export default function KYCPage() {
       if (idBack) fd.set("idBack", idBack);
       if (handHeld) fd.set("handHeld", handHeld);
 
+      console.log(fd);
+
       const res = await fetch("/api/kyc", { method: "POST", body: fd });
       const data = await res.json();
 
@@ -111,6 +136,7 @@ export default function KYCPage() {
         localStorage.setItem("kycData", JSON.stringify(stored));
         setKycData(stored);
         setStatus("pending");
+        setErrors({});
       } else {
         setStatus("rejected");
         // alert(data?.error || "KYC submit failed");
@@ -118,8 +144,7 @@ export default function KYCPage() {
       }
     } catch (err) {
       setStatus("rejected");
-      // alert("KYC submit failed");
-      toast.error("KYC submit failed")
+      toast.error("KYC submit failed");
     }
   };
 
@@ -146,10 +171,12 @@ export default function KYCPage() {
 
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setter: (file: File | null) => void
+    setter: (file: File | null) => void,
+    field: "idFront" | "idBack" | "handHeld"
   ) => {
     const file = e.target.files?.[0] || null;
     setter(file);
+    setErrors(prev => ({ ...prev, [field]: "" }));
   };
 
   return (
@@ -228,7 +255,11 @@ export default function KYCPage() {
                   <div >
                     <CustomSelect
                       value={country}
-                      onChange={e => setCountry(typeof e === "string" ? e : e.target.value)}
+                      onChange={value => {
+                        const nextValue = typeof value === "string" ? value : value.target.value;
+                        setCountry(nextValue);
+                        setErrors(prev => ({ ...prev, country: "" }));
+                      }}
                       options={[
                         { value: "United States", label: "United States" },
                         { value: "Canada", label: "Canada" },
@@ -245,12 +276,17 @@ export default function KYCPage() {
                       required
                     />
                   </div>
+                  {errors.country && <p className="mt-1 text-xs text-red-400">{errors.country}</p>}
 
                   {/* Certificate Type Select */}
                   <div >
                     <CustomSelect
                       value={certificateType}
-                      onChange={e => setCertificateType(typeof e === "string" ? e : e.target.value)}
+                      onChange={value => {
+                        const nextValue = typeof value === "string" ? value : value.target.value;
+                        setCertificateType(nextValue);
+                        setErrors(prev => ({ ...prev, certificateType: "" }));
+                      }}
                       options={[
                         { value: "Passport", label: "Passport" },
                         { value: "National ID", label: "National ID" },
@@ -260,6 +296,7 @@ export default function KYCPage() {
                       required
                     />
                   </div>
+                  {errors.certificateType && <p className="mt-1 text-xs text-red-400">{errors.certificateType}</p>}
 
                   {/* First and Last Name */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-4 pl-2">
@@ -268,7 +305,10 @@ export default function KYCPage() {
                         type="text"
                         required
                         value={firstName}
-                        onChange={e => setFirstName(e.target.value)}
+                        onChange={e => {
+                          setFirstName(e.target.value);
+                          setErrors(prev => ({ ...prev, firstName: "" }));
+                        }}
                         placeholder="First name"
                         className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
                         style={{
@@ -285,12 +325,16 @@ export default function KYCPage() {
                         onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
                       />
                     </div>
+                    {errors.firstName && <p className="mt-1 text-xs text-red-400">{errors.firstName}</p>}
                     <div>
                       <input
                         type="text"
                         required
                         value={lastName}
-                        onChange={e => setLastName(e.target.value)}
+                        onChange={e => {
+                          setLastName(e.target.value);
+                          setErrors(prev => ({ ...prev, lastName: "" }));
+                        }}
                         placeholder="Last name"
                         className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
                         style={{
@@ -307,6 +351,7 @@ export default function KYCPage() {
                         onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
                       />
                     </div>
+                    {errors.lastName && <p className="mt-1 text-xs text-red-400">{errors.lastName}</p>}
                   </div>
 
                   {/* Certificate Number */}
@@ -315,7 +360,10 @@ export default function KYCPage() {
                       type="text"
                       required
                       value={certificateNumber}
-                      onChange={e => setCertificateNumber(e.target.value)}
+                      onChange={e => {
+                        setCertificateNumber(e.target.value);
+                        setErrors(prev => ({ ...prev, certificateNumber: "" }));
+                      }}
                       placeholder="Certificate number"
                       className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
                       style={{
@@ -332,6 +380,7 @@ export default function KYCPage() {
                       onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
                     />
                   </div>
+                  {errors.certificateNumber && <p className="mt-1 text-xs text-red-400">{errors.certificateNumber}</p>}
 
                   {/* Phone Number */}
                   <div className="pl-2"> 
@@ -339,7 +388,10 @@ export default function KYCPage() {
                       type="text"
                       required
                       value={idPhone}
-                      onChange={e => setIdPhone(e.target.value)}
+                      onChange={e => {
+                        setIdPhone(e.target.value);
+                        setErrors(prev => ({ ...prev, idPhone: "" }));
+                      }}
                       placeholder="Phone number"
                       className="w-full px-2 pt-2 pb-1 font-semibold focus:outline-none"
                       style={{
@@ -356,6 +408,7 @@ export default function KYCPage() {
                       onBlur={e => (e.currentTarget.style.borderBottom = `2.5px solid ${COLORS.purple}40`)}
                     />
                   </div>
+                  {errors.idPhone && <p className="mt-1 text-xs text-red-400">{errors.idPhone}</p>}
 
                   {/* Email
                   <div className="pb-4 pl-2">
@@ -396,7 +449,7 @@ export default function KYCPage() {
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={e => handleImageChange(e, setIdFront)}
+                          onChange={e => handleImageChange(e, setIdFront, "idFront")}
                           className="hidden"
                         />
                         <canvas
@@ -413,6 +466,7 @@ export default function KYCPage() {
                         />
                       </label>
                       <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>ID Front</p>
+                      {errors.idFront && <p className="text-xs text-red-400 mt-1">{errors.idFront}</p>}
                     </div>
                   </div>
                   
@@ -422,7 +476,7 @@ export default function KYCPage() {
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={e => handleImageChange(e, setIdBack)}
+                          onChange={e => handleImageChange(e, setIdBack, "idBack")}
                           className="hidden"
                         />
                         <canvas
@@ -439,6 +493,7 @@ export default function KYCPage() {
                         />
                       </label>
                       <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>ID Back</p>
+                      {errors.idBack && <p className="text-xs text-red-400 mt-1">{errors.idBack}</p>}
                     </div>
                   </div>
                   
@@ -448,7 +503,7 @@ export default function KYCPage() {
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={e => handleImageChange(e, setHandHeld)}
+                          onChange={e => handleImageChange(e, setHandHeld, "handHeld")}
                           className="hidden"
                         />
                         <canvas
@@ -465,6 +520,7 @@ export default function KYCPage() {
                         />
                       </label>
                       <p className="mt-2 text-sm" style={{ color: COLORS.textGray }}>Hand-held ID</p>
+                      {errors.handHeld && <p className="text-xs text-red-400 mt-1">{errors.handHeld}</p>}
                     </div>
                   </div>
                 </div>
