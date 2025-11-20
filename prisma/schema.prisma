@@ -23,16 +23,20 @@ model User {
   status       String   @default("active")
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  googlefa     Boolean  @default(false)
   // wallets      Wallet[]
   transactions Transaction[]
   kyc          KYC?
   notifications Notification[]
   settings     Settings?
 
+  googlefaConfig UserGoogleFA?
+
   chat chat[]
 
   userWallet userWallet[]
   assignments AdminUserAssignment[]
+
 }
 
 model userWallet {
@@ -222,4 +226,15 @@ model FeatureFlag {
   enabled    Boolean  @default(false)
   updatedAt  DateTime @updatedAt
   updatedBy  String?  // Admin ID who last changed it
+}
+
+model UserGoogleFA {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  secret     String
+  verified   Boolean  @default(false)
+  verifiedAt DateTime?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

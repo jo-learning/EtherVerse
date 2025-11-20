@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAccount } from "wagmi";
 import { FaShieldAlt, FaIdCard, FaEnvelope, FaBell, FaLanguage, FaTrash, FaChevronRight } from "react-icons/fa";
 
 const settings = [
@@ -13,12 +14,60 @@ const settings = [
 
 export default function SettingPage() {
   const [kycStatus, setKycStatus] = useState<"set" | "not-set">("not-set");
+  const [twoFAStatus, setTwoFAStatus] = useState<"unknown" | "enabled" | "pending" | "disabled">("unknown");
+  const { address } = useAccount();
+  const identifier = useMemo(() => address?.toLowerCase() ?? null, [address]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem("kycData");
     setKycStatus(stored ? "set" : "not-set");
   }, []);
+
+  useEffect(() => {
+    if (!identifier) {
+      setTwoFAStatus("disabled");
+      return;
+    }
+
+    const currentIdentifier = identifier;
+
+    let abort = false;
+    async function fetchStatus() {
+      try {
+        const res = await fetch(`/api/2fa/status?identifier=${encodeURIComponent(currentIdentifier)}`);
+        if (!res.ok) throw new Error("Failed to fetch 2FA status");
+        const data = await res.json();
+        if (abort) return;
+        if (data.enabled) setTwoFAStatus("enabled");
+        else if (data.pending) setTwoFAStatus("pending");
+        else setTwoFAStatus("disabled");
+      } catch (error) {
+        console.error("Unable to load 2FA status", error);
+        if (!abort) setTwoFAStatus("disabled");
+      }
+    }
+
+    fetchStatus();
+    return () => {
+      abort = true;
+    };
+  }, [identifier]);
+
+  const renderTwoFAStatus = () => {
+    switch (twoFAStatus) {
+      case "enabled":
+        return { text: "Enabled", color: "#22c55e" };
+      case "pending":
+        return { text: "Pending", color: "#fbbf24" };
+      case "disabled":
+        return { text: "Not set", color: "gray" };
+      default:
+        return { text: "Loading...", color: "gray" };
+    }
+  };
+
+  const twoFAIndicator = renderTwoFAStatus();
 
   return (
     <div className="min-h-screen p-4" style={{ background: "#0a1026" }}>
@@ -57,7 +106,12 @@ export default function SettingPage() {
                   {/* <span className="pr-1">Not set</span> */}
                 {
                   item.label === "Google 2FA" && (
-                    <span className="pr-1" style={{color: "gray"}}>Not set</span>
+                    <span
+                      className="pr-1"
+                      style={{ color: twoFAIndicator.color }}
+                    >
+                      {twoFAIndicator.text}
+                    </span>
                   )
                 }
                 {
