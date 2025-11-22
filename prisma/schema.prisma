@@ -176,6 +176,7 @@ model chat {
   userId    String
   message   String
   who  String @default("user")
+  type      String   @default("text")
   createdAt DateTime @default(now())
   admin      Admin?   @relation(fields: [adminId], references: [id])
   adminId    String?

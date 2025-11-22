@@ -117,13 +117,13 @@ export function useAdminWS(
 
   // Send via REST so it persists; WS will broadcast it back
   const sendMessage = useCallback(
-    async (message: string) => {
+    async (message: string, type: 'text' | 'image' = 'text') => {
       if (!postUserId || !message.trim()) return;
       const res = await fetch('/api/chat/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ userId: postUserId, message }),
+        body: JSON.stringify({ userId: postUserId, message, type }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));

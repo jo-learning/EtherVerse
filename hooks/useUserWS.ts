@@ -137,7 +137,13 @@ export function useUserWS(
         console.error('[WS-USER] send failed', res.status, err);
         throw new Error(err?.error || `Send failed (${res.status})`);
       }
-      try { console.debug('[WS-USER] sent message via API', { length: message.length }); } catch {}
+      try { 
+        console.debug('[WS-USER] sent message via API', { length: message.length });
+        return await res.json();
+      } catch (e) {
+        console.error('[WS-USER] failed to parse response', e);
+        return null;
+      }
     },
     []
   );

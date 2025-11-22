@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma'; // Adjust path if needed
 
 export async function POST(req: NextRequest) {
-    const { message, address } = await req.json();
+    const { message, address, type = 'text' } = await req.json();
 
     if (!message || !address) {
         return NextResponse.json({ error: 'Missing message or address' }, { status: 400 });
@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
         data: {
             userId: user.id,
             message,
-            who: 'user'
+            who: 'user',
+            type,
         }
     });
     

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { FaUserCircle, FaPaperPlane, FaSync, FaExclamationTriangle, FaEdit, FaTrash } from "react-icons/fa";
+import { FaUserCircle, FaPaperPlane, FaSync, FaExclamationTriangle, FaEdit, FaTrash, FaImage, FaTimes } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";
 import { useAdminWS } from "../../../../hooks/useAdminWS";
 
@@ -10,6 +10,7 @@ interface ChatMessage {
   who: string;
   createdAt: string;
   adminId?: string | null;
+  type?: string;
 }
 
 interface UserItem {
@@ -33,6 +34,9 @@ export default function AdminChatPage() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   const [editingMessageContent, setEditingMessageContent] = useState("");
+  const [imageToSend, setImageToSend] = useState<File | null>(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchUsers = useCallback(async (selectFirstUser = false) => {
     setLoadingUsers(true);
@@ -131,6 +135,24 @@ export default function AdminChatPage() {
       setMsgInput(text);
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImageToSend(file);
+      setMsgInput(file.name);
+      setImagePreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const clearImage = () => {
+    setImageToSend(null);
+    setImagePreviewUrl(null);
+    setMsgInput("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -338,7 +360,11 @@ export default function AdminChatPage() {
                         : "bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 border border-gray-200 dark:border-gray-600"
                     }`}
                   >
-                    {m.message}
+                    {m.type === 'image' ? (
+                      <img src={m.message} alt="chat image" className="rounded-lg max-w-xs" />
+                    ) : (
+                      m.message
+                    )}
                   </div>
                 )}
               </div>
@@ -349,43 +375,62 @@ export default function AdminChatPage() {
             </div>
           )}
         </div>
-        <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex items-center bg-white dark:bg-gray-800 gap-2">
+        <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex flex-col bg-white dark:bg-gray-800 gap-2">
           {error && (
             <div className="text-red-500 text-xs flex items-center gap-1">
               <FaExclamationTriangle />
               {error}
             </div>
           )}
-          <textarea
-            ref={textareaRef}
-            rows={1}
-            style={{ resize: "none", overflowY: "auto" }}
-            disabled={!selectedUserId || sending}
-            value={msgInput}
-            onChange={(e) => setMsgInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage();
+          {imagePreviewUrl && (
+            <div className="relative mb-2 self-start">
+              <img src={imagePreviewUrl} alt="preview" className="max-h-40 rounded-lg" />
+              <button 
+                onClick={clearImage} 
+                className="absolute top-1 right-1 bg-gray-800 rounded-full p-1 text-white"
+              >
+                <FaTimes />
+              </button>
+            </div>
+          )}
+          <div className="flex items-center w-full">
+            <button onClick={() => fileInputRef.current?.click()}
+                    className="mr-3 px-4 py-2 rounded-lg flex items-center font-semibold transition bg-purple-600 text-white hover:bg-purple-700 self-end">
+              <FaImage />
+            </button>
+            <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} accept="image/*" />
+            <textarea
+              ref={textareaRef}
+              rows={1}
+              style={{ resize: "none", overflowY: "auto" }}
+              disabled={!selectedUserId || sending}
+              value={msgInput}
+              onChange={(e) => setMsgInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage();
+                }
+              }}
+              placeholder={
+                selectedUserId ? "Type a message..." : "Select a user"
               }
-            }}
-            placeholder={
-              selectedUserId ? "Type a message..." : "Select a user"
-            }
-            className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:outline-none text-sm"
-          />
-          <button
-            disabled={!msgInput.trim() || !selectedUserId || sending}
-            onClick={handleSendMessage}
-            className="ml-1 px-4 py-2 bg-purple-600 disabled:opacity-50 text-white rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm self-end"
-          >
-            {sending ? (
-              <FaSync className="animate-spin" />
-            ) : (
-              <FaPaperPlane />
-            )}
-            Send
-          </button>
+              className="flex-1 p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 focus:outline-none text-sm"
+              readOnly={!!imageToSend}
+            />
+            <button
+              disabled={!msgInput.trim() || !selectedUserId || sending}
+              onClick={handleSendMessage}
+              className="ml-1 px-4 py-2 bg-purple-600 disabled:opacity-50 text-white rounded-lg hover:bg-purple-700 flex items-center gap-1 text-sm self-end"
+            >
+              {sending ? (
+                <FaSync className="animate-spin" />
+              ) : (
+                <FaPaperPlane />
+              )}
+              Send
+            </button>
+          </div>
         </div>
       </section>
     </div>
