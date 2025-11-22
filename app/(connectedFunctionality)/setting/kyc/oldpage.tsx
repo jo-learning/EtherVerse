@@ -79,95 +79,95 @@ export default function KYCPage() {
     const stored = localStorage.getItem("kycData");
     if (stored) {
       const parsed = JSON.parse(stored);
-      if (parsed.status === "pending" && parsed.submissionTime) {
-        const elapsed = Date.now() - parsed.submissionTime;
-        const remaining = 30000 - elapsed;
-        if (remaining <= 0) {
-          const updatedData = { ...parsed, status: "approved" };
-          localStorage.setItem("kycData", JSON.stringify(updatedData));
-          setKycData(updatedData);
-          setStatus("approved");
-        } else {
-          setKycData(parsed);
-          setStatus("pending");
-        }
-      } else {
-        setKycData(parsed);
-        setStatus(parsed.status || "none");
-      }
+      setKycData(parsed);
+      setStatus(parsed.status || "pending");
     }
   }, []);
 
-  useEffect(() => {
-    if (status === "pending") {
-      const stored = localStorage.getItem("kycData");
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed.submissionTime) {
-          const elapsed = Date.now() - parsed.submissionTime;
-          const remaining = 30000 - elapsed;
-
-          const timer = setTimeout(() => {
-            const updatedData = { ...parsed, status: "approved" };
-            localStorage.setItem("kycData", JSON.stringify(updatedData));
-            setKycData(updatedData);
-            setStatus("approved");
-            toast.success("KYC has been verified!");
-          }, Math.max(0, remaining));
-
-          return () => clearTimeout(timer);
-        }
-      }
-    }
-  }, [status]);
-
   const validate = () => {
     const next: Record<string, string> = {};
-    const namePattern = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]+$/;
-
     if (!country.trim()) next.country = "Country is required";
-
     if (!certificateType.trim()) next.certificateType = "Certificate type is required";
-
     if (!firstName.trim()) next.firstName = "First name is required";
     else if (firstName.trim().length < 2) next.firstName = "First name must be at least 2 characters";
-    else if (!namePattern.test(firstName.trim())) next.firstName = "First name can only contain letters";
-
     if (!lastName.trim()) next.lastName = "Last name is required";
     else if (lastName.trim().length < 2) next.lastName = "Last name must be at least 2 characters";
-    else if (!namePattern.test(lastName.trim())) next.lastName = "Last name can only contain letters";
-
     if (!certificateNumber.trim()) next.certificateNumber = "Certificate number is required";
-
     if (!idPhone.trim()) next.idPhone = "Phone number is required";
     else if (!/^\+?[0-9\s-]{7,15}$/.test(idPhone.trim())) next.idPhone = "Enter a valid phone number";
-
     if (!idFront) next.idFront = "Upload the front of your ID";
     if (!idBack) next.idBack = "Upload the back of your ID";
     if (!handHeld) next.handHeld = "Upload a hand-held ID photo";
-
     setErrors(next);
     return Object.keys(next).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
       toast.error("Please fix the highlighted fields.");
       return;
     }
-
-    const stored = {
-      country, firstName, lastName, certificateType, certificateNumber, idPhone, email,
-      status: "pending",
-      submissionTime: Date.now(),
-    };
-    localStorage.setItem("kycData", JSON.stringify(stored));
-    setKycData(stored);
     setStatus("pending");
-    setErrors({});
-    toast.success("KYC information submitted. Verification will complete in 30 seconds.");
+
+    try {
+      const fd = new FormData();
+      fd.set("email", address || ""); // or set userId if you have it in session
+      fd.set("country", country);
+      fd.set("firstName", firstName);
+      fd.set("lastName", lastName);
+      fd.set("certificateType", certificateType);
+      fd.set("certificateNumber", certificateNumber);
+      fd.set("idPhone", idPhone);
+      if (idFront) fd.set("idFront", idFront);
+      if (idBack) fd.set("idBack", idBack);
+      if (handHeld) fd.set("handHeld", handHeld);
+
+      console.log(fd);
+
+      const res = await fetch("/api/kyc", { method: "POST", body: fd });
+      const data = await res.json();
+
+      if (res.status === 201) {
+        const stored = {
+          country, firstName, lastName, certificateType, certificateNumber, idPhone, email,
+          status: "pending",
+        };
+        localStorage.setItem("kycData", JSON.stringify(stored));
+        setKycData(stored);
+        setStatus("pending");
+        setErrors({});
+      } else {
+        setStatus("rejected");
+        // alert(data?.error || "KYC submit failed");
+        toast.error(data?.error || "KYC submit failed");
+      }
+    } catch (err) {
+      setStatus("rejected");
+      toast.error("KYC submit failed");
+    }
   };
+
+  // Optional polling to reflect approval changes
+  useEffect(() => {
+    if (!address) return;
+    const id = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/kyc/${address}`, { cache: "no-store" });
+        if (!res.ok) return;
+        const j = await res.json();
+        if (j?.status && j.status !== status) {
+          setStatus(j.status);
+          setKycData((prev: any) => {
+            const stored = { ...(prev || {}), status: j.status };
+            localStorage.setItem("kycData", JSON.stringify(stored));
+            return stored;
+          });
+        }
+      } catch {}
+    }, 10000);
+    return () => clearInterval(id);
+  }, [status, address]);
 
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
