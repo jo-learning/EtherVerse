@@ -137,6 +137,13 @@ export default function CoinDetailPage() {
   const [direction, setDirection] = useState<"Buy long" | "Buy short">("Buy long");
   const [inputValue, setInputValue] = useState("");
 
+  useEffect(() => {
+    const amountValue = parseFloat(inputValue) || 0;
+    if (amountValue < 50000) {
+      setDeliveryTime("30S");
+    } 
+  }, [inputValue]);
+
   function calculateProfit(amount: any, time: any) {
     const amt = parseFloat(amount) || 0;
     // Profit calculation based on delivery time
@@ -486,6 +493,7 @@ export default function CoinDetailPage() {
                   <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
                     Delivery Time
                   </label>
+                  
                   <select
                     value={deliveryTime}
                     onChange={(e) => setDeliveryTime(e.target.value)}
@@ -497,12 +505,16 @@ export default function CoinDetailPage() {
                     }}
                   >
                     <option value="30S">30S</option>
-                    <option value="60S">60S</option>
-                    <option value="120S">120S</option>
-                    <option value="3600S">1H</option>
-                    <option value="10800S">3H</option>
-                    <option value="21600S">6H</option>
-                    <option value="43200S">12H</option>
+                    {(parseFloat(coinWallet?.balance || "0") || 0) >= 50000 && (
+                      <>
+                        <option value="60S">60S</option>
+                        <option value="120S">120S</option>
+                        <option value="3600S">1H</option>
+                        <option value="10800S">3H</option>
+                        <option value="21600S">6H</option>
+                        <option value="43200S">12H</option>
+                      </>
+                    )}
                   </select>
                 </div>
                 <div>
