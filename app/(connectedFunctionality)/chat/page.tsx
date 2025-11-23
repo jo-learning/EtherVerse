@@ -18,6 +18,46 @@ const COLORS = {
 
 const USER_ADDRESS = "user@email.com";
 
+const ChatMessageImage = ({ path }: { path: string }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api${path}`);
+        if (res.ok) {
+          const blob = await res.blob();
+          setImageUrl(URL.createObjectURL(blob));
+        }
+      } catch (error) {
+        console.error("Failed to fetch image", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+    };
+  }, [path]);
+
+  if (loading) {
+    return <FaSpinner className="animate-spin" />;
+  }
+
+  if (!imageUrl) {
+    return <span>Image not available</span>;
+  }
+
+  return <img src={imageUrl} alt="chat image" className="rounded-lg" />;
+};
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<{ who: string; message: string; createdAt: string, type?: string }[]>([]);
   const [input, setInput] = useState("");
@@ -164,7 +204,7 @@ export default function ChatPage() {
                     ? { background: COLORS.purple, color: COLORS.neonGreen, borderRadius: 20, padding: "8px 16px", maxWidth: "16rem", fontWeight: 500 }
                     : { background: COLORS.navy, color: COLORS.textWhite, borderRadius: 20, padding: "8px 16px", maxWidth: "16rem", fontWeight: 500, border: `1px solid ${COLORS.purple}` } }>
                   {msg.type === "image" ? (
-                    <img src={msg.message} alt="chat image" className="rounded-lg" />
+                    <ChatMessageImage path={msg.message} />
                   ) : (
                     msg.message
                   )}
