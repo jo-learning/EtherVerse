@@ -505,7 +505,7 @@ export default function CoinDetailPage() {
                     }}
                   >
                     <option value="30S">30S</option>
-                    {(parseFloat(coinWallet?.balance || "0") || 0) >= 50000 && (
+                    {(parseFloat(inputValue || "0") || 0) >= 50000 && (
                       <>
                         <option value="60S">60S</option>
                         <option value="120S">120S</option>

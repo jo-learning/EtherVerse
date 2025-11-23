@@ -31,7 +31,9 @@ const menuItems = [
   { icon: <FaCogs size={16} />, label: "KYC Manager", route: "/kycManager" },
   { icon: <FaCogs size={16} />, label: "Trade Manager", route: "/tradeProfileManager" },
   { icon: <FaCogs size={16} />, label: "Top Up", route: "/topup" },
-  { icon: <FaCogs size={16} />, label: "Settings", route: "" },
+  { icon: <FaCogs size={16} />, label: "Withdraw", route: "/withdraw" },
+  // { icon: <FaCogs size={16} />, label: "Settings", route: "" },
+  { icon: <FaCogs size={16} />, label: "Logout", route: "/logout" },
 ];
 
 export default function RootLayout({
@@ -150,7 +152,7 @@ export default function RootLayout({
               {adminRole === null && (
                 <div className="text-sm text-gray-500 dark:text-gray-400 p-3">Loading menu…</div>
               )}
-              {(adminRole !== null ? (adminRole === 'ADMIN' ? menuItems.filter(m => m.label === 'Chat' || m.label === 'Top Up') : menuItems) : []).map((item, index) => {
+              {(adminRole !== null ? (adminRole === 'ADMIN' ? menuItems.filter(m => m.label === 'Chat' || m.label === 'Top Up' || m.label === 'Logout') : menuItems) : []).map((item, index) => {
                 const isActive = pathname === item.route;
                 return (
                   <button
