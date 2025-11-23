@@ -77,6 +77,7 @@ export type SerializableUser = {
   status: UserStatus;
   createdAt: Date;
   updatedAt: Date;
+  googlefa: boolean;
   balances: Record<CoinKey, number>;
   wallet: SerializableWallet | null;
 };
@@ -106,6 +107,7 @@ export function serializeUser(user: UserWithWallet): SerializableUser {
     email: user.email,
     name: user.name,
     avatar: user.avatar,
+    googlefa: user.googlefa,
     status: normalizeStatus(user.status),
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,

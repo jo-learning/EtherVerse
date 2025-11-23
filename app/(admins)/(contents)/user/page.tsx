@@ -14,6 +14,7 @@ type ApiUser = {
   createdAt: string;
   updatedAt: string;
   balances: Record<string, number>;
+  googlefa: boolean;
   wallet: {
     id: string;
     createdAt: string;
@@ -259,6 +260,7 @@ export default function UserManagementPage() {
             userId: values.userId,
           }),
         });
+        
         const body = (await parseBody(response)) as { user?: ApiUser; error?: string };
         if (!response.ok) {
           throw new Error(body?.error ?? "Failed to create user");
@@ -307,6 +309,7 @@ export default function UserManagementPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: nextStatus }),
       });
+      
       const body = (await parseBody(response)) as { user?: ApiUser; error?: string };
       if (!response.ok) {
         throw new Error(body?.error ?? "Failed to update user status");
@@ -404,6 +407,7 @@ export default function UserManagementPage() {
                 {coins.map((coin) => (
                   <th key={coin} className="py-2 px-4">{coin} Balance</th>
                 ))}
+                <th className="py-2 px-4">google auth</th>
                 <th className="py-2 px-4">Actions</th>
               </tr>
             </thead>
@@ -448,6 +452,9 @@ export default function UserManagementPage() {
                         {user.balances?.[coin] ?? 0}
                       </td>
                     ))}
+                    <td className="py-2 px-4">
+                        {user.googlefa ? "Enabled" : "Disabled"}
+                      </td>
                     <td className="py-2 px-4 flex gap-2">
                       <button
                         className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30 hover:bg-purple-200 dark:hover:bg-purple-900/50"
