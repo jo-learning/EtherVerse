@@ -142,7 +142,7 @@ export default function RootLayout({
               </button>
             </div>
             <h2 className="font-bold text-lg" style={{ color: COLORS.white }}>
-              EtherVerse
+              ProCryptoTrading
             </h2>
             <div className="w-6" />
             {showSavingButton && (
@@ -185,7 +185,7 @@ export default function RootLayout({
             <div className="p-5 border-b flex justify-between items-center" style={{ borderColor: COLORS.purple }}>
               <div>
                 <h2 className="font-bold text-xl" style={{ color: COLORS.white }}>
-                  EtherVerse
+                  ProCryptoTrading
                 </h2>
                 <p className="text-sm" style={{ color: COLORS.white }}>
                   UID: {uId}

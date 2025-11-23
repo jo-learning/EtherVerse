@@ -110,7 +110,7 @@ export default function RootLayout({
             >
               <FiMenu size={24} />
             </button>
-            <h2 className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>EtherVerse</h2>
+            <h2 className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>ProCryptoTrading</h2>
             <div className="w-6" /> {/* Spacer for balance */}
           </header>
 
@@ -132,7 +132,7 @@ export default function RootLayout({
             {/* Sidebar header */}
             <div className="p-5 flex justify-between items-center" style={{ borderBottom: `1px solid ${COLORS.purple}` }}>
               <div>
-                <h2 className="font-bold text-xl" style={{ color: COLORS.neonGreen }}>EtherVerse</h2>
+                <h2 className="font-bold text-xl" style={{ color: COLORS.neonGreen }}>ProCryptoTrading</h2>
                 <p className="text-sm" style={{ color: COLORS.white }}>MID: 60600243</p>
               </div>
               <button

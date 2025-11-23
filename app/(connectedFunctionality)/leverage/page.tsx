@@ -62,7 +62,7 @@ export default function LeaveragePage() {
         className="absolute bottom-6 w-full text-center text-sm"
         style={{ color: COLORS.textGray }}
       >
-        &copy; {new Date().getFullYear()} EtherVerse. All rights reserved.
+        &copy; {new Date().getFullYear()} ProCryptoTrading. All rights reserved.
       </footer>
     </div>
   );

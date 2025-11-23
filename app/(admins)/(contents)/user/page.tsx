@@ -398,7 +398,7 @@ export default function UserManagementPage() {
             <thead>
               <tr>
                 <th className="py-2 px-4">Name</th>
-                <th className="py-2 px-4">Email</th>
+                <th className="py-2 px-4">user Id</th>
                 <th className="py-2 px-4">Status</th>
                 <th className="py-2 px-4">Joined</th>
                 {coins.map((coin) => (
@@ -430,7 +430,7 @@ export default function UserManagementPage() {
                 users.map((user) => (
                   <tr key={user.id} className="border-t border-gray-200 dark:border-gray-700">
                     <td className="py-2 px-4">{user.name ?? "-"}</td>
-                    <td className="py-2 px-4">{user.email}</td>
+                    <td className="py-2 px-4">{user.userId}</td>
                     <td
                       className={`py-2 px-4 font-semibold ${
                         user.status === "active"

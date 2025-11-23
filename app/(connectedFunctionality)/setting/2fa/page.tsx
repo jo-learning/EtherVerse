@@ -135,7 +135,7 @@ export default function Google2FAPage() {
       const res = await fetch("/api/2fa/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ identifier, label: `EtherVerse (${identifier})` }),
+        body: JSON.stringify({ identifier, label: `ProCryptoTrading (${identifier})` }),
       });
 
       if (!res.ok) {
@@ -277,7 +277,7 @@ export default function Google2FAPage() {
               Google Authenticator 2FA
             </h1>
             <p className="text-sm" style={{ color: COLORS.textSubtle }}>
-              Add a second layer of protection to your EtherVerse account.
+              Add a second layer of protection to your ProCryptoTrading account.
             </p>
           </div>
           <span

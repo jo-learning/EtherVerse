@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState, useCallback } from "react";
-import { FaUserCircle, FaPaperPlane, FaSync, FaExclamationTriangle, FaEdit, FaTrash, FaImage, FaTimes } from "react-icons/fa";
+import { FaUserCircle, FaPaperPlane, FaSync, FaExclamationTriangle, FaEdit, FaTrash, FaImage, FaTimes, FaSpinner } from "react-icons/fa";
 import { HiHome } from "react-icons/hi";
 import { useAdminWS } from "../../../../hooks/useAdminWS";
 
@@ -19,6 +19,46 @@ interface UserItem {
   name: string | null;
   userId: string;
 }
+
+const ChatMessageImage = ({ path }: { path: string }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api${path}`);
+        if (res.ok) {
+          const blob = await res.blob();
+          setImageUrl(URL.createObjectURL(blob));
+        }
+      } catch (error) {
+        console.error("Failed to fetch image", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImage();
+
+    return () => {
+      if (imageUrl) {
+        URL.revokeObjectURL(imageUrl);
+      }
+    };
+  }, [path]);
+
+  if (loading) {
+    return <FaSpinner className="animate-spin" />;
+  }
+
+  if (!imageUrl) {
+    return <span>Image not available</span>;
+  }
+
+  return <img src={imageUrl} alt="chat image" className="rounded-lg" />;
+};
 
 export default function AdminChatPage() {
   const [users, setUsers] = useState<UserItem[]>([]);
@@ -361,7 +401,7 @@ export default function AdminChatPage() {
                     }`}
                   >
                     {m.type === 'image' ? (
-                      <img src={m.message} alt="chat image" className="rounded-lg max-w-xs" />
+                      <ChatMessageImage path={m.message} />
                     ) : (
                       m.message
                     )}
