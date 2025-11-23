@@ -72,7 +72,8 @@ export default function HistoryPage() {
           if (now >= start + deliverMs) {
             // Apply admin flag: force profitable or non-profitable
             const adjustedProfit = (forceProfit ? 1 : -1) * Math.abs(Number(forceProfit ? trade.profit : trade.purchaseAmount));
-            updateTrade(trade.id, { status: "finished", profit: adjustedProfit });
+            const deliveryPrice = Number((Number(trade.purchaseAmount) + adjustedProfit).toFixed(2));
+            updateTrade(trade.id, { status: "finished", profit: adjustedProfit, deliveryPrice });
             if(trade.accountType === "Demo Account") return;
             addBalance(adjustedProfit, trade.pair, trade.purchaseAmount);
           }
