@@ -78,7 +78,7 @@ export default function Page() {
       case 'digital':
         // Show all cryptocurrencies
         return coins.filter(coin =>
-          ['BTC', 'ETH', 'USDT', 'USDC', 'BNB', 'XRP', 'SOL', 'AAVE', 'DOT', 'LINK', 'UNI', 'LTC', 'ADA', 'DOGE', 'EOS'].includes(coin.symbol)
+          ['BTC', 'ETH', 'BNB', 'XRP', 'SOL', 'AAVE', 'DOT', 'LINK', 'UNI', 'LTC', 'ADA', 'DOGE', 'EOS'].includes(coin.symbol)
         );
       case 'forex':
         // Filter for forex-related coins
