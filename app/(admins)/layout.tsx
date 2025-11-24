@@ -32,6 +32,7 @@ const menuItems = [
   { icon: <FaCogs size={16} />, label: "Trade Manager", route: "/tradeProfileManager" },
   { icon: <FaCogs size={16} />, label: "Top Up", route: "/topup" },
   { icon: <FaCogs size={16} />, label: "Withdraw", route: "/withdraw" },
+  { icon: <FaCogs size={16} />, label: "Withdraw-Request", route: "/withdrawrequest" },
   // { icon: <FaCogs size={16} />, label: "Settings", route: "" },
   { icon: <FaCogs size={16} />, label: "Logout", route: "/logout" },
 ];

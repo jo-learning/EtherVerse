@@ -36,6 +36,9 @@ export default function CoinWalletClient({ coin }: Props) {
   const [targetCoin, setTargetCoin] = useState('BTC');
   const [isFetchingWallet, setIsFetchingWallet] = useState(true);
   const [isConverting, setIsConverting] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendAmount, setSendAmount] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
 
   useEffect(() => {
     let ignore = false;
@@ -78,6 +81,46 @@ export default function CoinWalletClient({ coin }: Props) {
     navigator.clipboard.writeText(coinData?.address ? coinData?.address : "");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleSend = async () => {
+    if (!sendAmount || parseFloat(sendAmount) <= 0) {
+      toast.error("Please enter a valid amount.");
+      return;
+    }
+    if (!recipientAddress) {
+      toast.error("Please enter a recipient address.");
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      const res = await fetch('/api/wallet/withdraw-request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: address, // Assuming address from useAccount is the user identifier
+          coin: coin.toUpperCase(),
+          amount: sendAmount,
+          address: recipientAddress
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to submit withdrawal request.");
+      }
+
+      toast.success("Withdrawal request submitted.");
+      setSendAmount('');
+      setRecipientAddress('');
+
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setIsSending(false);
+      setShowContactModal(true);
+    }
   };
 
   return (
@@ -248,30 +291,35 @@ export default function CoinWalletClient({ coin }: Props) {
                 <input
                   type="text"
                   placeholder="Recipient address"
+                  value={recipientAddress}
+                  onChange={(e) => setRecipientAddress(e.target.value)}
                   className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
                   style={{ background: "#23232a" }}
                 />
                 <input
                   type="number"
                   placeholder="Amount"
+                  value={sendAmount}
+                  onChange={(e) => setSendAmount(e.target.value)}
                   className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
                   style={{ background: "#23232a" }}
                 />
                 <button
-                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition"
-                  onClick={() => setShowContactModal(true)}
+                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition disabled:opacity-50"
+                  onClick={handleSend}
+                  disabled={isSending}
                 >
-                  Send Now
+                  {isSending ? 'Sending...' : 'Send Now'}
                 </button>
                 {/* Contact Customer Service Modal */}
                 {showContactModal && (
                   <div className="fixed inset-0 z-50 flex items-center justify-center" style={{ background: "#0a1026cc" }}>
                     <div className="bg-[#181c2f] rounded-2xl p-8 shadow-2xl text-center max-w-sm w-full border" style={{ borderColor: COLORS.purple }}>
                       <h2 className="text-xl font-bold mb-4" style={{ color: COLORS.purple }}>
-                        Contact Customer Service
+                        Request Submitted
                       </h2>
                       <p className="mb-6" style={{ color: COLORS.textGray }}>
-                        To send funds, please contact our customer service team for assistance.
+                        Your withdrawal request has been submitted. Please contact our customer service team for assistance with completing the transaction.
                       </p>
                       <Link href="/chat">
                         <button className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-lg font-semibold hover:scale-105 transition mb-2">
