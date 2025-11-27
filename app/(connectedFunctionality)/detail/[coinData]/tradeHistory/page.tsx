@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useTradeStore } from "@/lib/tradeStore";
 import { useAccount } from "wagmi";
+import { useParams } from "next/navigation";
+import { getCoin } from "@/lib/data";
 
 const COLORS = {
   purple: "#4b0082", // Dark purple
@@ -21,6 +23,8 @@ export default function HistoryPage() {
   const [accountFilter, setAccountFilter] = useState<"demo" | "real">("demo");
   // Admin-controlled flag fetched from /api/flags/trade-profit
   const [forceProfit, setForceProfit] = useState<boolean>(false);
+  const { coinData } = useParams<{ coinData: string }>();
+  const coin = getCoin(coinData);
   const { address } = useAccount();
   const trades = useTradeStore((state) => state.trades);
   const updateTrade = useTradeStore((state) => state.updateTrade);
@@ -72,7 +76,17 @@ export default function HistoryPage() {
           if (now >= start + deliverMs) {
             // Apply admin flag: force profitable or non-profitable
             const adjustedProfit = (forceProfit ? 1 : -1) * Math.abs(Number(forceProfit ? trade.profit : trade.purchaseAmount));
-            const deliveryPrice = Number((Number(trade.purchaseAmount) + adjustedProfit).toFixed(2));
+            const randomFactor = Number((Math.random() * 4.9 + 0.1).toFixed(2));
+            const purchaseAmount = Number(trade.purchasePrice) || 0;
+            const normalizedDirection = trade.direction?.toLowerCase();
+            const isBuyShort = normalizedDirection === "buy short";
+            const isBuyLong = normalizedDirection === "buy long";
+            const addRandomFactor = forceProfit
+              ? isBuyLong || (!isBuyShort && !isBuyLong)
+              : isBuyShort || (!isBuyShort && !isBuyLong);
+            const deliveryPrice = Number(
+              (purchaseAmount + (addRandomFactor ? randomFactor : -randomFactor)).toFixed(2)
+            );
             updateTrade(trade.id, { status: "finished", profit: adjustedProfit, deliveryPrice });
             if(trade.accountType === "Demo Account") return;
             addBalance(adjustedProfit, trade.pair, trade.purchaseAmount);
@@ -189,7 +203,7 @@ export default function HistoryPage() {
           return (
             <Link
               key={trade.id}
-              href={`/tradeHistory/${trade.id}`}
+              href={`tradeHistory/${trade.id}`}
               className="flex justify-between p-4 rounded-xl shadow hover:shadow-lg transition-all duration-200"
               style={{
                 background: COLORS.navy,

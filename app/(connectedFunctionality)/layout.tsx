@@ -20,7 +20,7 @@ import { useAccount } from "wagmi";
 
 const menuItems = [
   { icon: <FaUser size={16} />, label: "Account", route: "/account" },
-  { icon: <FaExchangeAlt size={16} />, label: "Trans...", route: "/trade" },
+  { icon: <FaExchangeAlt size={16} />, label: "Trade", route: "/trade" },
   { icon: <MdOutlineDashboard size={18} />, label: "Arbitrage", route: "" },
   { icon: <FaGift size={16} />, label: "Mining", route: "" },
   { icon: <FaChartLine size={16} />, label: "Leverage", route: "/leverage" },

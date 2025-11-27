@@ -250,7 +250,7 @@ export default function CoinDetailPage() {
           </div>
         </div>
         <Link
-          href="/tradeHistory"
+          href={`/detail/${coin.symbol}/tradeHistory`}
           className="ml-auto flex items-center gap-1"
           style={{ color: COLORS.neonGreen }}
         >

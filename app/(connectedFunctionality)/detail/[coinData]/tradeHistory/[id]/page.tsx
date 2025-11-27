@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTradeStore } from "@/lib/tradeStore";
 import { useParams, useRouter } from "next/navigation";
 import CountdownTimer from "@/components/CountdownTimer";
+import { getCoin } from "@/lib/data";
 
 const COLORS = {
   purple: "#4b0082", // Dark purple
@@ -21,6 +22,14 @@ export default function TradeDetailPage() {
   const router = useRouter();
   const trades = useTradeStore((state) => state.trades);
   const trade = trades.find((t) => t.id === Number(id));
+  const { coinData } = useParams<{ coinData: string }>();
+  const coin = getCoin(coinData);
+
+  if (!coin) return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: COLORS.background }}>
+      <p className="text-white">Coin not found</p>
+    </div>
+  );
 
   if (!trade) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: COLORS.background }}>
@@ -37,7 +46,7 @@ export default function TradeDetailPage() {
         borderBottom: `1px solid ${COLORS.purple}`,
       }}>
         <div className="flex items-center">
-          <Link href="/tradeHistory" className="mr-3 p-1 rounded-full hover:bg-gray-700 transition-colors">
+          <Link href={`/detail/${coin.symbol}/tradeHistory`} className="mr-3 p-1 rounded-full hover:bg-gray-700 transition-colors">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={COLORS.textWhite}>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
             </svg>
