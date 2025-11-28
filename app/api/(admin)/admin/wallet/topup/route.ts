@@ -116,16 +116,27 @@ export async function POST(req: NextRequest) {
     const nextBalance = addDecimalStrings(normalizedCurrent, normalizedBalance);
     const updateData = { [symbol]: nextBalance } as Record<string, string>;
 
-    const updatedWallet = await prisma.userWallet.update({
-      where: { id: wallet.id },
-      data: updateData,
-      select: {
-        id: true,
-        userId: true,
-        [symbol]: true,
-        updatedAt: true,
-      },
-    });
+    const [updatedWallet] = await prisma.$transaction([
+      prisma.userWallet.update({
+        where: { id: wallet.id },
+        data: updateData,
+        select: {
+          id: true,
+          userId: true,
+          [symbol]: true,
+          updatedAt: true,
+        },
+      }),
+      prisma.transactionRecord.create({
+        data: {
+          userId: user.id,
+          type: 'topup',
+          coin: symbol,
+          amount: parseFloat(normalizedBalance),
+          status: 'completed'
+        }
+      })
+    ]);
 
     return NextResponse.json({
       ok: true,

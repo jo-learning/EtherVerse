@@ -38,6 +38,7 @@ model User {
   assignments AdminUserAssignment[]
   feedback     Feedback[]
   withdrawRequests WithdrawRequest[]
+  transactionRecords TransactionRecord[]
 }
 
 model userWallet {
@@ -261,4 +262,16 @@ model UserGoogleFA {
   verifiedAt DateTime?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model TransactionRecord {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // "topup" or "withdrawal"
+  coin      String
+  amount    Float
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

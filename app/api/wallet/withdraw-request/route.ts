@@ -53,6 +53,7 @@ export async function GET() {
         user: {
           select: {
             email: true,
+            userId: true,
           },
         },
       },
@@ -85,4 +86,24 @@ export async function PATCH(req: Request) {
     console.error("Update withdraw request error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+        }
+
+        await prisma.withdrawRequest.delete({
+            where: { id },
+        });
+
+        return NextResponse.json({ message: 'Request deleted successfully' });
+    } catch (error) {
+        console.error("Delete withdraw request error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }

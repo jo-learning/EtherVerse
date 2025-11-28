@@ -3,7 +3,7 @@
 import { fetchWallet, getWallet } from "@/lib/data";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { FaQrcode, FaPaperPlane, FaSync, FaWallet, FaCoins, FaLock, FaArrowLeft, FaExchangeAlt } from "react-icons/fa";
+import { FaQrcode, FaPaperPlane, FaSync, FaWallet, FaCoins, FaLock, FaArrowLeft, FaExchangeAlt, FaHistory } from "react-icons/fa";
 import Link from "next/link";
 import { useAccount } from "wagmi";
 import { Toaster, toast } from "react-hot-toast";
@@ -24,10 +24,18 @@ interface Props {
   coin: string;
 }
 
+interface Transaction {
+  id: string;
+  type: string;
+  coin: string;
+  amount: number;
+  createdAt: string;
+}
+
 export default function CoinWalletClient({ coin }: Props) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState<"receive" | "send" | "convert">("receive");
+  const [activeTab, setActiveTab] = useState<"receive" | "send" | "convert" | "history">("receive");
   const staticCoins = getWallet(coin);
   const [coinData, setCoins] = useState(staticCoins);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -39,11 +47,12 @@ export default function CoinWalletClient({ coin }: Props) {
   const [isSending, setIsSending] = useState(false);
   const [sendAmount, setSendAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     let ignore = false;
 
-    const loadWallet = async () => {
+    const loadWalletAndTransactions = async () => {
       if (!address) {
         if (!ignore) {
           setCoins(staticCoins);
@@ -55,13 +64,18 @@ export default function CoinWalletClient({ coin }: Props) {
       setIsFetchingWallet(true);
 
       try {
-        const fetched = await fetchWallet(coin, address);
+        const [fetchedWallet, fetchedTransactions] = await Promise.all([
+          fetchWallet(coin, address),
+          fetch(`/api/transactions/user?userId=${address}`).then(res => res.json())
+        ]);
+
         if (!ignore) {
-          setCoins(fetched);
+          setCoins(fetchedWallet);
+          setTransactions(fetchedTransactions.filter((tx: Transaction) => tx.coin.toLowerCase() === coin.toLowerCase()));
         }
       } catch (error) {
         if (!ignore) {
-          toast.error("Failed to load wallet");
+          toast.error("Failed to load wallet data");
         }
       } finally {
         if (!ignore) {
@@ -70,7 +84,7 @@ export default function CoinWalletClient({ coin }: Props) {
       }
     };
 
-    loadWallet();
+    loadWalletAndTransactions();
 
     return () => {
       ignore = true;
@@ -178,7 +192,7 @@ export default function CoinWalletClient({ coin }: Props) {
 
           {/* Action Tabs */}
           <div className="max-w-2xl w-full mt-6 px-4">
-            <div className="grid grid-cols-3 bg-[#181c2f] rounded-xl p-1 shadow border border-[#23232a]">
+            <div className="grid grid-cols-4 bg-[#181c2f] rounded-xl p-1 shadow border border-[#23232a]">
               {/* Receive Tab */}
               <button
                 onClick={() => setActiveTab("receive")}
@@ -216,6 +230,18 @@ export default function CoinWalletClient({ coin }: Props) {
               >
                 <FaExchangeAlt size={12} />
                 <span className="text-sm  pl-1">Convert</span>
+              </button>
+              {/* History Tab */}
+              <button
+                onClick={() => setActiveTab("history")}
+                className={`py-1 rounded-lg flex flex-row items-center justify-center font-semibold transition-all ${
+                  activeTab === "history"
+                    ? "bg-[#232327] text-yellow-500"
+                    : "text-white hover:text-purple-400"
+                }`}
+              >
+                <FaHistory size={12} />
+                <span className="text-sm  pl-1">History</span>
               </button>
             </div>
           </div>
@@ -473,6 +499,33 @@ export default function CoinWalletClient({ coin }: Props) {
                     </button>
                   </>
                 )}
+              </div>
+            )}
+
+            {activeTab === "history" && (
+              <div>
+                <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: COLORS.purple }}>
+                  <FaHistory /> Transaction History
+                </h3>
+                <div className="overflow-y-auto max-h-96">
+                  {transactions.length > 0 ? (
+                    transactions.map(tx => (
+                      <div key={tx.id} className="flex justify-between items-center p-3 my-2 rounded-lg bg-[#23232a]">
+                        <div>
+                          <p className={`font-bold ${tx.type === 'topup' ? 'text-green-400' : 'text-red-400'}`}>
+                            {tx.type === 'topup' ? 'Top Up' : 'Withdrawal'}
+                          </p>
+                          <p className="text-xs text-gray-400">{new Date(tx.createdAt).toLocaleString()}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold">{tx.amount} {tx.coin.toUpperCase()}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-400">No transactions yet.</p>
+                  )}
+                </div>
               </div>
             )}
           </div>

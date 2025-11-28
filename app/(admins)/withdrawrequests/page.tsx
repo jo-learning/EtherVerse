@@ -12,6 +12,7 @@ interface WithdrawRequest {
   createdAt: string;
   user: {
     email: string;
+    userId: string;
   };
 }
 
@@ -63,6 +64,24 @@ export default function WithdrawRequestsPage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this request?')) {
+      return;
+    }
+    try {
+      const response = await fetch(`/api/wallet/withdraw-request?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to delete request");
+      }
+      setRequests((prevRequests) => prevRequests.filter((req) => req.id !== id));
+    } catch (err: any) {
+      setError(err.message);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
@@ -100,7 +119,7 @@ export default function WithdrawRequestsPage() {
               <tbody>
                 {requests.map((req) => (
                   <tr key={req.id} className="border-b border-gray-200 dark:border-gray-700">
-                    <td className="py-4 px-4">{req.user.email}</td>
+                    <td className="py-4 px-4">{req.user.userId || req.user.email}</td>
                     <td className="py-4 px-4">{req.address}</td>
                     <td className="py-4 px-4">{req.coin}</td>
                     <td className="py-4 px-4">{req.amount}</td>
@@ -121,12 +140,15 @@ export default function WithdrawRequestsPage() {
                       {new Date(req.createdAt).toLocaleString()}
                     </td>
                     <td className="py-4 px-4">
-                      {req.status === 'pending' && (
-                        <div className="flex gap-2">
-                          <button onClick={() => handleStatusChange(req.id, 'approved')} className="text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-600">Approve</button>
-                          <button onClick={() => handleStatusChange(req.id, 'rejected')} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-600">Reject</button>
-                        </div>
-                      )}
+                      <div className="flex gap-2">
+                        {req.status === 'pending' && (
+                          <>
+                            <button onClick={() => handleStatusChange(req.id, 'approved')} className="text-green-500 hover:text-green-700 dark:text-green-400 dark:hover:text-green-600">Approve</button>
+                            <button onClick={() => handleStatusChange(req.id, 'rejected')} className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-600">Reject</button>
+                          </>
+                        )}
+                        <button onClick={() => handleDelete(req.id)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-600">Delete</button>
+                      </div>
                     </td>
                   </tr>
                 ))}

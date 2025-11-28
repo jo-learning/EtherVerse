@@ -12,19 +12,23 @@ export async function POST(req: Request) {
       );
     }
 
-    const userWallet = await prisma.userWallet.findFirst({
+    const user = await prisma.user.findUnique({
+      where: { email: address },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const userWallet = await prisma.userWallet.findUnique({
       where: {
-        OR: [
-          { user: { email: address } },
-        ],
+        userId: user.id,
       },
     });
 
     if (!userWallet) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: "User wallet not found" }, { status: 404 });
     }
-
-   
 
     const currentBalance = Number(userWallet[network as keyof typeof userWallet]);
     if (currentBalance < balance) {
@@ -42,14 +46,25 @@ export async function POST(req: Request) {
       );
     }
 
-    const updatedWallet = await prisma.userWallet.update({
-      where: {
-        id: userWallet.id,
-      },
-      data: {
-        [network]: finalBalance,
-      },
-    });
+    const [updatedWallet] = await prisma.$transaction([
+      prisma.userWallet.update({
+        where: {
+          id: userWallet.id,
+        },
+        data: {
+          [network]: finalBalance,
+        },
+      }),
+      prisma.transactionRecord.create({
+        data: {
+          userId: user.id,
+          type: 'withdrawal',
+          coin: network,
+          amount: balance,
+          status: 'completed'
+        }
+      })
+    ]);
 
     return NextResponse.json(updatedWallet);
   } catch (error) {
