@@ -123,9 +123,42 @@ export default function WithdrawPage() {
               onChange={(e) => setNetwork(e.target.value)}
               className="mt-1 text-blue-500 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option>USDT</option>
-              <option>BTC</option>
-              <option>ETH</option>
+                <option>BTC</option>
+                <option>ETH</option>
+                <option>USDT</option>
+                <option>USDC</option>
+                <option>BNB</option>
+                <option>DAI</option>
+                <option>MATIC</option>
+                <option>XRP</option>
+                <option>SOL</option>
+                <option>ADA</option>
+                <option>DOGE</option>
+                <option>DOT</option>
+                <option>SHIB</option>
+                <option>TRX</option>
+                <option>LTC</option>
+                <option>AVAX</option>
+                <option>WBTC</option>
+                <option>LINK</option>
+                <option>UNI</option>
+                <option>BCH</option>
+                <option>XLM</option>
+                <option>VET</option>
+                <option>THETA</option>
+                <option>FIL</option>
+                <option>ICP</option>
+                <option>AAVE</option>
+                <option>EOS</option>
+                <option>XMR</option>
+                <option>ZEC</option>
+                <option>ALGO</option>
+                <option>ATOM</option>
+                <option>MKR</option>
+                <option>NEO</option>
+                <option>KSM</option>
+                <option>FTM</option>
+                <option>EGLD</option>
               {/* Add other networks as needed */}
             </select>
           </div>

@@ -81,6 +81,15 @@ export default function WalletPage() {
       logo: "https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png",
     },
     {
+      name: "SOL Wallet",
+      network: "",
+      symbol: "SOL",
+      balance: "0.00 SOL",
+      priceUsd: "$0.00",
+      change: "0.0%",
+      logo: "https://assets.coingecko.com/coins/images/4128/large/solana.png",
+    },
+    {
       name: "XRP Wallet",
       network: "",
       symbol: "XRP",

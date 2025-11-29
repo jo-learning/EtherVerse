@@ -124,9 +124,42 @@ export default function TopUpPage() {
               onChange={(e) => setNetwork(e.target.value)}
               className="mt-1 text-blue-500 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
-              <option>USDT</option>
-              <option>BTC</option>
-              <option>ETH</option>
+                <option value="BTC">BTC</option>
+                <option value="ETH">ETH</option>
+                <option value="USDT">USDT</option>
+                <option value="USDC">USDC</option>
+                <option value="BNB">BNB</option>
+                <option value="DAI">DAI</option>
+                <option value="MATIC">MATIC</option>
+                <option value="XRP">XRP</option>
+                <option value="SOL">SOL</option>
+                <option value="ADA">ADA</option>
+                <option value="DOGE">DOGE</option>
+                <option value="DOT">DOT</option>
+                <option value="SHIB">SHIB</option>
+                <option value="TRX">TRX</option>
+                <option value="LTC">LTC</option>
+                <option value="AVAX">AVAX</option>
+                <option value="WBTC">WBTC</option>
+                <option value="LINK">LINK</option>
+                <option value="UNI">UNI</option>
+                <option value="BCH">BCH</option>
+                <option value="XLM">XLM</option>
+                <option value="VET">VET</option>
+                <option value="THETA">THETA</option>
+                <option value="FIL">FIL</option>
+                <option value="ICP">ICP</option>
+                <option value="AAVE">AAVE</option>
+                <option value="EOS">EOS</option>
+                <option value="XMR">XMR</option>
+                <option value="ZEC">ZEC</option>
+                <option value="ALGO">ALGO</option>
+                <option value="ATOM">ATOM</option>
+                <option value="MKR">MKR</option>
+                <option value="NEO">NEO</option>
+                <option value="KSM">KSM</option>
+                <option value="FTM">FTM</option>
+                <option value="EGLD">EGLD</option>
               {/* Add other networks as needed */}
             </select>
           </div>

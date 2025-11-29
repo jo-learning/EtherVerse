@@ -322,14 +322,22 @@ export default function CoinWalletClient({ coin }: Props) {
                   className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
                   style={{ background: "#23232a" }}
                 />
-                <input
-                  type="number"
-                  placeholder="Amount"
-                  value={sendAmount}
-                  onChange={(e) => setSendAmount(e.target.value)}
-                  className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
-                  style={{ background: "#23232a" }}
-                />
+                <div className="relative w-full mb-3">
+                  <input
+                    type="number"
+                    placeholder="Amount"
+                    value={sendAmount}
+                    onChange={(e) => setSendAmount(e.target.value)}
+                    className="w-full p-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
+                    style={{ background: "#23232a" }}
+                  />
+                  <button
+                    onClick={() => setSendAmount(coinData?.balance || '0')}
+                    className="absolute right-3 top-3 text-xs font-bold text-white bg-purple-500 hover:bg-purple-600 px-2 py-1 rounded"
+                  >
+                    MAX
+                  </button>
+                </div>
                 <button
                   className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-500 text-white rounded-xl font-bold shadow-lg hover:scale-105 transition disabled:opacity-50"
                   onClick={handleSend}
@@ -372,16 +380,24 @@ export default function CoinWalletClient({ coin }: Props) {
                     <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: "#22c55e" }}>
                       <FaSync /> Convert USDT to another currency
                     </h3>
-                    <input
-                      type="number"
-                      placeholder="Amount in USDT"
-                      value={convertAmount}
-                      onChange={(e) => setConvertAmount(e.target.value)}
-                      className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
-                      style={{ background: "#23232a" }}
-                      min="0"
-                      step="any"
-                    />
+                    <div className="relative w-full mb-3">
+                      <input
+                        type="number"
+                        placeholder="Amount in USDT"
+                        value={convertAmount}
+                        onChange={(e) => setConvertAmount(e.target.value)}
+                        className="w-full p-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
+                        style={{ background: "#23232a" }}
+                        min="0"
+                        step="any"
+                      />
+                      <button
+                        onClick={() => setConvertAmount(coinData?.balance || '0')}
+                        className="absolute right-3 top-3 text-xs font-bold text-white bg-green-500 hover:bg-green-600 px-2 py-1 rounded"
+                      >
+                        MAX
+                      </button>
+                    </div>
                     <select
                       value={targetCoin}
                       onChange={(e) => setTargetCoin(e.target.value)}
@@ -441,16 +457,24 @@ export default function CoinWalletClient({ coin }: Props) {
                     <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: "#22c55e" }}>
                       <FaSync /> Convert {coin.toUpperCase()} to USDT
                     </h3>
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      value={convertAmount}
-                      onChange={(e) => setConvertAmount(e.target.value)}
-                      className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
-                      style={{ background: "#23232a" }}
-                      min="0"
-                      step="any"
-                    />
+                    <div className="relative w-full mb-3">
+                      <input
+                        type="number"
+                        placeholder="Amount"
+                        value={convertAmount}
+                        onChange={(e) => setConvertAmount(e.target.value)}
+                        className="w-full p-3 rounded-lg bg-[#23232a] border-none text-white placeholder:text-gray-400"
+                        style={{ background: "#23232a" }}
+                        min="0"
+                        step="any"
+                      />
+                      <button
+                        onClick={() => setConvertAmount(coinData?.balance || '0')}
+                        className="absolute right-3 top-3 text-xs font-bold text-white bg-green-500 hover:bg-green-600 px-2 py-1 rounded"
+                      >
+                        MAX
+                      </button>
+                    </div>
                     <select
                       className="w-full p-3 mb-3 rounded-lg bg-[#23232a] border-none text-white"
                       style={{ background: "#23232a" }}

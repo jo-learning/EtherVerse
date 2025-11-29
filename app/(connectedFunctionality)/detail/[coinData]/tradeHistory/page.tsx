@@ -49,19 +49,19 @@ export default function HistoryPage() {
   };
 
   // Fetch the admin-controlled profitability flag regularly
+  const fetchFlag = async (cancelled: boolean) => {
+    try {
+      const res = await fetch('/api/flags/trade-profit', { cache: 'no-store' });
+      const txt = (await res.text()).trim().toLowerCase();
+      if (!cancelled) setForceProfit(txt === 'true');
+    } catch {
+      if (!cancelled) setForceProfit(false);
+    }
+  };
   useEffect(() => {
     let cancelled = false;
-    const fetchFlag = async () => {
-      try {
-        const res = await fetch('/api/flags/trade-profit', { cache: 'no-store' });
-        const txt = (await res.text()).trim().toLowerCase();
-        if (!cancelled) setForceProfit(txt === 'true');
-      } catch {
-        if (!cancelled) setForceProfit(false);
-      }
-    };
-    fetchFlag();
-    const interval = setInterval(fetchFlag, 15000); // refresh every 15s
+    fetchFlag(cancelled);
+    const interval = setInterval(() => fetchFlag(cancelled), 15000); // refresh every 15s
     return () => { cancelled = true; clearInterval(interval); };
   }, []);
 
@@ -70,6 +70,7 @@ export default function HistoryPage() {
     const interval = setInterval(() => {
       trades.forEach((trade) => {
         if (trade.status === "wait") {
+          fetchFlag(false); // Ensure we have the latest flag
           const start = new Date(trade.id).getTime();
           const now = Date.now();
           const deliverMs = trade.deliveryTime * 1000;
