@@ -537,7 +537,7 @@ export default function CoinWalletClient({ coin }: Props) {
                       <div key={tx.id} className="flex justify-between items-center p-3 my-2 rounded-lg bg-[#23232a]">
                         <div>
                           <p className={`font-bold ${tx.type === 'topup' ? 'text-green-400' : 'text-red-400'}`}>
-                            {tx.type === 'topup' ? 'Top Up' : 'Withdrawal'}
+                            {tx.type === 'topup' ? 'Sent' : 'Recieved'}
                           </p>
                           <p className="text-xs text-gray-400">{new Date(tx.createdAt).toLocaleString()}</p>
                         </div>

@@ -86,7 +86,7 @@ export default function RootLayout({
     getUserId();
   }, [address]);
 
-  const showBackButton = (pathname?.split("/")?.length === 3 || pathname?.split("/")?.length === 4);
+  const showBackButton = (pathname?.split("/")?.length === 3 || pathname?.split("/")?.length === 4 || pathname?.split("/")?.length === 5);
   const showSavingButton = (pathname?.split("/")?.length === 3 && pathname?.startsWith("/wallets"));
   let coin = "";
   if (showSavingButton && pathname) {

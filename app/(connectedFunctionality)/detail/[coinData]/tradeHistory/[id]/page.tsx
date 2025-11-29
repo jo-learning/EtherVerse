@@ -46,11 +46,7 @@ export default function TradeDetailPage() {
         borderBottom: `1px solid ${COLORS.purple}`,
       }}>
         <div className="flex items-center">
-          <Link href={`/detail/${coin.symbol}/tradeHistory`} className="mr-3 p-1 rounded-full hover:bg-gray-700 transition-colors">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={COLORS.textWhite}>
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
+          
           <h1 className="text-lg font-semibold">Trade Details</h1>
         </div>
         <span className="text-sm px-3 py-1 rounded-full" 
