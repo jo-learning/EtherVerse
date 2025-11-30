@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTradeStore } from "@/lib/tradeStore";
-import { useParams, useRouter } from "next/navigation";
+import { redirect, useParams, useRouter } from "next/navigation";
 import CountdownTimer from "@/components/CountdownTimer";
 import { getCoin } from "@/lib/data";
 
@@ -145,7 +145,8 @@ export default function TradeDetailPage() {
                 label="Time Left"
                 onComplete={() => {
                   // After completion we refresh to pull updated status/profit from server/store
-                  router.refresh();
+                  // router.refresh();
+                  router.back();
                 }}
                 className="text-sm text-white"
               />

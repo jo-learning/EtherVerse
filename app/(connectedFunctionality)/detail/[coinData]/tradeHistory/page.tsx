@@ -20,7 +20,7 @@ const COLORS = {
 
 export default function HistoryPage() {
   const [tab, setTab] = useState<"wait" | "finished">("finished");
-  const [accountFilter, setAccountFilter] = useState<"demo" | "real">("demo");
+  const [accountFilter, setAccountFilter] = useState<"demo" | "real">("real");
   // Admin-controlled flag fetched from /api/flags/trade-profit
   const [forceProfit, setForceProfit] = useState<boolean>(false);
   const { coinData } = useParams<{ coinData: string }>();
@@ -91,6 +91,7 @@ export default function HistoryPage() {
             updateTrade(trade.id, { status: "finished", profit: adjustedProfit, deliveryPrice });
             if(trade.accountType === "Demo Account") return;
             addBalance(adjustedProfit, trade.pair, trade.purchaseAmount);
+            setTab("finished");
           }
         }
       });
