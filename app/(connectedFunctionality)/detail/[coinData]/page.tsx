@@ -162,10 +162,21 @@ export default function CoinDetailPage() {
       toast.error("Coin unavailable.");
       return;
     }
-    if (!inputValue || isNaN(parseFloat(inputValue))) {
+    const amountValue = parseFloat(inputValue);
+    if (!inputValue || isNaN(amountValue) || amountValue <= 0) {
       toast.error("Enter a valid amount.");
       return;
     }
+
+    const availableBalance = accountType === "Real Account"
+      ? parseFloat(coinWallet?.balance || '0')
+      : 100; // Assuming 100 is the demo balance
+
+    if (amountValue > availableBalance) {
+      toast.error("Amount exceeds available balance.");
+      return;
+    }
+
     const profit = calculateProfit(inputValue, deliveryTime);
 
     addTrade({

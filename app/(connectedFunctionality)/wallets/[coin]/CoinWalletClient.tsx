@@ -48,6 +48,8 @@ export default function CoinWalletClient({ coin }: Props) {
   const [sendAmount, setSendAmount] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [convertHistory, setConvertHistory] = useState<any[]>([]);
+
 
   useEffect(() => {
     let ignore = false;
@@ -85,13 +87,14 @@ export default function CoinWalletClient({ coin }: Props) {
     };
 
     loadWalletAndTransactions();
-
+    const storedHistory = localStorage.getItem('convertHistory');
+    if (storedHistory) {
+      setConvertHistory(JSON.parse(storedHistory));
+    }
     return () => {
       ignore = true;
     };
-  }, [address, coin]);
-
-  const handleCopy = () => {
+  }, [address, coin]);  const handleCopy = () => {
     navigator.clipboard.writeText(coinData?.address ? coinData?.address : "");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -439,7 +442,15 @@ export default function CoinWalletClient({ coin }: Props) {
                             const newBal = (parseFloat(coinData.balance || '0') - amt).toString();
                             setCoins({ ...coinData, balance: newBal });
                           }
-
+                          const newHistory = [...convertHistory, {
+                            from: 'USDT',
+                            to: targetCoin,
+                            amount: amt,
+                            result: data.amountCredited,
+                            date: new Date().toISOString()
+                          }];
+                          setConvertHistory(newHistory);
+                          localStorage.setItem('convertHistory', JSON.stringify(newHistory));
                           setConvertAmount('');
                           toast.success(`Converted ${amt} USDT to ${data.amountCredited.toFixed(6)} ${targetCoin}`);
                         } catch (e) {
@@ -510,6 +521,16 @@ export default function CoinWalletClient({ coin }: Props) {
                             const newBal = (parseFloat(coinData.balance || '0') - amt).toString();
                             setCoins(prev => prev ? ({ ...prev, balance: newBal }) : prev);
                           }
+                          const newHistory = [...convertHistory, {
+                            from: coin.toUpperCase(),
+                            to: 'USDT',
+                            amount: amt,
+                            result: data.usdtCredited,
+                            price: data.priceUsd,
+                            date: new Date().toISOString()
+                          }];
+                          setConvertHistory(newHistory);
+                          localStorage.setItem('convertHistory', JSON.stringify(newHistory));
                           setConvertAmount('');
                           toast.success(`Converted ${amt} ${coin.toUpperCase()} → ${data.usdtCredited.toFixed(6)} USDT @ $${data.priceUsd}`);
                         } catch (e) {
@@ -531,7 +552,7 @@ export default function CoinWalletClient({ coin }: Props) {
                 <h3 className="text-lg font-bold mb-3 flex items-center gap-2" style={{ color: COLORS.purple }}>
                   <FaHistory /> Transaction History
                 </h3>
-                <div className="overflow-y-auto max-h-96">
+                <div className="overflow-y-auto max-h-60">
                   {transactions.length > 0 ? (
                     transactions.map(tx => (
                       <div key={tx.id} className="flex justify-between items-center p-3 my-2 rounded-lg bg-[#23232a]">
@@ -548,6 +569,31 @@ export default function CoinWalletClient({ coin }: Props) {
                     ))
                   ) : (
                     <p className="text-center text-gray-400">No transactions yet.</p>
+                  )}
+                </div>
+
+                <h3 className="text-lg font-bold mt-6 mb-3 flex items-center gap-2" style={{ color: "#22c55e" }}>
+                  <FaExchangeAlt /> Convert History
+                </h3>
+                <div className="overflow-y-auto max-h-60">
+                  {convertHistory.length > 0 ? (
+                    convertHistory.map((item, index) => (
+                      <div key={index} className="flex justify-between items-center p-3 my-2 rounded-lg bg-[#23232a]">
+                        <div>
+                          <p className="font-bold text-white">
+                            {item.amount} {item.from} → {item.result.toFixed(6)} {item.to}
+                          </p>
+                          <p className="text-xs text-gray-400">{new Date(item.date).toLocaleString()}</p>
+                        </div>
+                        {item.price && (
+                          <div className="text-right">
+                            <p className="text-xs text-gray-400">@ ${item.price}</p>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-center text-gray-400">No conversion history yet.</p>
                   )}
                 </div>
               </div>

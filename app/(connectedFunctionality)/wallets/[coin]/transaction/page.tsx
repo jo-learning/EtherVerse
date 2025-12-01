@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { FaArrowDown, FaArrowUp, FaExchangeAlt } from "react-icons/fa";
+import { useAccount } from "wagmi";
+import { Toaster, toast } from "react-hot-toast";
 
 const COLORS = {
   purple: "#4b0082",
@@ -15,57 +17,13 @@ const COLORS = {
   textGray: "#b0b8c1",
 };
 
-// Mock data per coin
-const MOCK_DATA: Record<string, any[]> = {
-  btc: [
-    {
-      id: 1,
-      type: "send",
-      amount: "-0.5",
-      symbol: "BTC",
-      date: "2025-09-05 14:32",
-      address: "bc1qxy...9w0a",
-      status: "Completed",
-      priceUsd: 112199,
-      change: 1.15,
-    },
-    {
-      id: 2,
-      type: "receive",
-      amount: "+1.2",
-      symbol: "BTC",
-      date: "2025-09-04 09:20",
-      address: "bc1qxy...9w0a",
-      status: "Completed",
-      priceUsd: 112199,
-      change: -0.85,
-    },
-  ],
-  eth: [
-    {
-      id: 1,
-      type: "receive",
-      amount: "+2.5",
-      symbol: "ETH",
-      date: "2025-09-05 12:15",
-      address: "0x39f...8aB",
-      status: "Completed",
-      priceUsd: 4450,
-      change: 2.05,
-    },
-    {
-      id: 2,
-      type: "send",
-      amount: "-1.0",
-      symbol: "ETH",
-      date: "2025-09-03 20:45",
-      address: "0x88a...f91",
-      status: "Completed",
-      priceUsd: 4450,
-      change: -1.12,
-    },
-  ],
-};
+interface Transaction {
+  id: string;
+  type: string;
+  coin: string;
+  amount: number;
+  createdAt: string;
+}
 
 const TABS = [
   { key: "all", label: "All" },
@@ -77,15 +35,53 @@ const TABS = [
 export default function CoinTransactionPage() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState("all");
+  const { address } = useAccount();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [convertHistory, setConvertHistory] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Get coin from URL: /wallets/[coin]/transaction
   const coin = pathname.split("/")[2]?.toLowerCase() || "btc";
-  const transactions = MOCK_DATA[coin] || [];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!address) {
+        setIsLoading(false);
+        return;
+      }
+      setIsLoading(true);
+      try {
+        const res = await fetch(`/api/transactions/user?userId=${address}`);
+        if (res.ok) {
+          const allTransactions = await res.json();
+          setTransactions(allTransactions.filter((tx: Transaction) => tx.coin.toLowerCase() === coin));
+        } else {
+          toast.error("Failed to fetch transaction history.");
+        }
+      } catch (error) {
+        toast.error("An error occurred while fetching transaction history.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+
+    const storedHistory = localStorage.getItem('convertHistory');
+    if (storedHistory) {
+      setConvertHistory(JSON.parse(storedHistory));
+    }
+  }, [address, coin]);
+
 
   const filteredTxs =
     activeTab === "all"
       ? transactions
-      : transactions.filter((tx) => tx.type === activeTab);
+      : transactions.filter((tx) => {
+        if (activeTab === 'send') return tx.type !== 'topup';
+        if (activeTab === 'receive') return tx.type === 'topup';
+        return false;
+      });
 
   return (
     <div
@@ -95,6 +91,14 @@ export default function CoinTransactionPage() {
         color: COLORS.textWhite,
       }}
     >
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: { background: "#1f2937", color: "#fff", border: "1px solid #4b0082" },
+          success: { iconTheme: { primary: "#22c55e", secondary: "#1f2937" } },
+          error: { iconTheme: { primary: "#ef4444", secondary: "#1f2937" } },
+        }}
+      />
       <div className="w-full max-w-2xl mx-auto mt-8 px-2 sm:px-4">
         <h2
           className="text-2xl font-bold mb-6 text-center sm:text-left"
@@ -129,7 +133,43 @@ export default function CoinTransactionPage() {
           className="rounded-2xl shadow-lg overflow-hidden border"
           style={{ background: COLORS.navy, borderColor: COLORS.purple }}
         >
-          {filteredTxs.length === 0 ? (
+          {isLoading ? (
+            <div className="p-8 text-center text-gray-400">Loading...</div>
+          ) : activeTab === 'convert' ? (
+            convertHistory.length === 0 ? (
+              <div className="p-8 text-center text-gray-400">No conversion history found.</div>
+            ) : (
+              convertHistory.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b last:border-b-0 gap-2"
+                  style={{ borderColor: COLORS.background }}
+                >
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <span><FaExchangeAlt className="text-blue-400" /></span>
+                    <div>
+                      <div className="font-semibold" style={{ color: COLORS.white }}>
+                        Convert
+                      </div>
+                      <div className="text-xs" style={{ color: COLORS.textGray }}>
+                        {new Date(item.date).toLocaleString()}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right w-full sm:w-auto">
+                    <div className="font-bold text-lg" style={{ color: COLORS.neonGreen }}>
+                      {item.amount} {item.from} → {item.result.toFixed(6)} {item.to}
+                    </div>
+                    {item.price && (
+                      <div className="text-xs mt-1">
+                        <span className="font-medium">@ ${item.price}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )
+          ) : filteredTxs.length === 0 ? (
             <div className="p-8 text-center text-gray-400">No transactions found.</div>
           ) : (
             filteredTxs.map((tx) => (
@@ -138,51 +178,34 @@ export default function CoinTransactionPage() {
                 className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-b last:border-b-0 gap-2"
                 style={{ borderColor: COLORS.background }}
               >
-                {/* Left: Type + Date + Address */}
+                {/* Left: Type + Date */}
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <span>
-                    {tx.type === "send" && <FaArrowUp className="text-red-400" />}
-                    {tx.type === "receive" && <FaArrowDown className="text-green-400" />}
-                    {tx.type === "convert" && <FaExchangeAlt className="text-blue-400" />}
+                    {tx.type !== "topup" && <FaArrowUp className="text-red-400" />}
+                    {tx.type === "topup" && <FaArrowDown className="text-green-400" />}
                   </span>
                   <div>
                     <div className="font-semibold" style={{ color: COLORS.white }}>
-                      {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
+                      {tx.type === 'topup' ? 'Receive' : 'Send'}
                     </div>
                     <div className="text-xs" style={{ color: COLORS.textGray }}>
-                      {tx.date}
-                    </div>
-                    <div className="text-xs break-all" style={{ color: COLORS.textGray }}>
-                      {tx.address}
+                      {new Date(tx.createdAt).toLocaleString()}
                     </div>
                   </div>
                 </div>
 
-                {/* Right: Amount + Status + Price */}
+                {/* Right: Amount */}
                 <div className="text-right w-full sm:w-auto">
                   <div
                     className="font-bold text-lg"
                     style={{
                       color:
-                        tx.type === "send"
+                        tx.type !== "topup"
                           ? "#ff1744"
-                          : tx.type === "receive"
-                          ? "#39FF14"
-                          : COLORS.neonGreen,
+                          : "#39FF14",
                     }}
                   >
-                    {tx.amount} {tx.symbol}
-                  </div>
-                  <div className="text-xs" style={{ color: COLORS.textGray }}>
-                    {tx.status}
-                  </div>
-
-                  {/* Price & change */}
-                  <div className="text-xs mt-1">
-                    <span className="font-medium">${tx.priceUsd.toLocaleString()}</span>{" "}
-                    <span style={{ color: tx.change < 0 ? "#ff1744" : "#39FF14" }}>
-                      {tx.change.toFixed(2)}%
-                    </span>
+                    {tx.type !== 'topup' ? '-' : '+'}{tx.amount} {tx.coin.toUpperCase()}
                   </div>
                 </div>
               </div>
