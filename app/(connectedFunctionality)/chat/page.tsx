@@ -201,8 +201,8 @@ export default function ChatPage() {
             <div key={idx} className={`flex ${msg.who === "user" ? "justify-end" : "justify-start"}`}>
               <div className="flex flex-col">
                 <div style={ msg.who === "user"
-                    ? { background: COLORS.purple, color: COLORS.neonGreen, borderRadius: 20, padding: "8px 16px", maxWidth: "16rem", fontWeight: 500 }
-                    : { background: COLORS.navy, color: COLORS.textWhite, borderRadius: 20, padding: "8px 16px", maxWidth: "16rem", fontWeight: 500, border: `1px solid ${COLORS.purple}` } }>
+                    ? { background: COLORS.purple, color: COLORS.neonGreen, borderRadius: 20, padding: "8px 16px", maxWidth: "16rem", fontWeight: 500, whiteSpace: "pre-wrap" }
+                    : { background: COLORS.navy, color: COLORS.textWhite, borderRadius: 20, padding: "8px 16px", maxWidth: "16rem", fontWeight: 500, border: `1px solid ${COLORS.purple}`, whiteSpace: "pre-wrap" } }>
                   {msg.type === "image" ? (
                     <ChatMessageImage path={msg.message} />
                   ) : (

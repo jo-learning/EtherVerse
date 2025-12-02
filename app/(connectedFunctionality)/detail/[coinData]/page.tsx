@@ -168,6 +168,11 @@ export default function CoinDetailPage() {
       return;
     }
 
+    if (amountValue < 50000 && parseInt(deliveryTime.replace("S", "")) >= 60) {
+      toast.error("Trades with a delivery time of 60s or more require a minimum of 50,000 USDT.");
+      return;
+    }
+
     const availableBalance = accountType === "Real Account"
       ? parseFloat(coinWallet?.balance || '0')
       : 100; // Assuming 100 is the demo balance
@@ -459,8 +464,8 @@ export default function CoinDetailPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto scrollbar-hide mt-6 md:mt-8">
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 pb-2 md:pb-0 items-stretch">
+      <div className="flex-1 overflow-y-auto mt-6 md:mt-8">
+        <div className="flex flex-col md:flex-row gap-6 md:gap-8 pb-2 md:pb-0 items-start">
           <div className="w-full md:w-1/3">
             <div
               className="rounded-2xl border border-purple-500/30 bg-black/25 p-4 md:p-6 space-y-6 shadow-[0_10px_35px_rgba(0,0,0,0.4)]"
@@ -516,17 +521,18 @@ export default function CoinDetailPage() {
                     }}
                   >
                     <option value="30S">30S</option>
-                    {(parseFloat(inputValue || "0") || 0) >= 50000 && (
-                      <>
-                        <option value="60S">60S</option>
-                        <option value="120S">120S</option>
-                        <option value="3600S">1H</option>
-                        <option value="10800S">3H</option>
-                        <option value="21600S">6H</option>
-                        <option value="43200S">12H</option>
-                      </>
-                    )}
+                    <option value="60S">60S</option>
+                    <option value="120S">120S</option>
+                    <option value="3600S">1H</option>
+                    <option value="10800S">3H</option>
+                    <option value="21600S">6H</option>
+                    <option value="43200S">12H</option>
                   </select>
+                  {(parseFloat(inputValue || "0") || 0) < 50000 && parseInt(deliveryTime.replace("S", "")) >= 60 && (
+                    <p className="text-red-500 text-xs mt-1">
+                      Minimum 50,000 USDT for this duration.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
