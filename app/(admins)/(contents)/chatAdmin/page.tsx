@@ -78,6 +78,14 @@ export default function AdminChatPage() {
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get("userId");
+    if (userId) {
+      setSelectedUserId(userId);
+    }
+  }, []);
+
   const fetchUsers = useCallback(async (selectFirstUser = false) => {
     setLoadingUsers(true);
     setError(null);

@@ -5,7 +5,11 @@ import { FaUser, FaComments, FaChartBar } from "react-icons/fa";
 type DashStats = {
   scope: 'global' | 'assigned';
   stats: { users: number; admins?: number; chats: number; assignments?: number };
-  recent: { users: Array<{ id: string; email: string; name: string | null; createdAt: string; userId: number }>; chats: Array<{ id: string; userId: string; who: string; message: string; createdAt: string; adminId?: string | null }> };
+  recent: {
+    users: Array<{ id: string; email: string; name: string | null; createdAt: string; userId: number }>;
+    chats: Array<{ id: string; userId: string; who: string; message: string; createdAt: string; adminId?: string | null }>;
+    unread: Array<{ id: string; userId: string; message: string; createdAt: string }>;
+  };
 };
 
 export default function AdminDashboard() {
@@ -67,16 +71,21 @@ export default function AdminDashboard() {
 
           {/* Recent lists */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
-              <h2 className="text-xl font-bold mb-4 text-purple-700 dark:text-purple-400">Recent Users</h2>
+            <div className={data.recent.unread.length > 0 ? "bg-red-100 dark:bg-red-900 border border-red-400 rounded-xl shadow p-6" : "bg-white dark:bg-gray-800 rounded-xl shadow p-6"}>
+              <h2 className={data.recent.unread.length > 0 ? "text-xl font-bold mb-4 text-red-700 dark:text-red-300" : "text-xl font-bold mb-4 text-purple-700 dark:text-purple-400"}>Unread Messages</h2>
               <ul className="space-y-2">
-                {data.recent.users.map(u => (
-                  <li key={u.id} className="text-sm flex items-center justify-between">
-                    <span>{u.userId}</span>
-                    <span className="text-gray-500 dark:text-gray-400">{new Date(u.createdAt).toLocaleString()}</span>
-                  </li>
-                ))}
-                {!data.recent.users.length && <li className="text-sm text-gray-500">No recent users</li>}
+                {data.recent.unread.length > 0 ? (
+                  data.recent.unread.map(c => (
+                    <li key={c.id} className="text-sm p-2 rounded-lg bg-red-200 dark:bg-red-800">
+                      <a href={`/chatAdmin?userId=${c.userId}`} className="hover:underline">
+                        <span className="font-semibold">[{c.userId}]</span> {c.message}
+                        <span className="ml-2 text-gray-500 dark:text-gray-400">{new Date(c.createdAt).toLocaleString()}</span>
+                      </a>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-sm text-gray-500">No unread messages</li>
+                )}
               </ul>
             </div>
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">

@@ -201,6 +201,7 @@ model chat {
   message   String
   who  String @default("user")
   type      String   @default("text")
+  isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
   admin      Admin?   @relation(fields: [adminId], references: [id])
   adminId    String?

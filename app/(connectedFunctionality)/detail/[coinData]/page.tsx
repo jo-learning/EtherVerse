@@ -387,7 +387,7 @@ export default function CoinDetailPage() {
 
       <div className="flex-shrink-0">
         <div
-          className="rounded-2xl border border-purple-500/30 bg-black/30 p-4 md:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.45)] space-y-6"
+          className="rounded-2xl border border-purple-500/30 bg-black/30 p-4 md:p-6 shadow-[0_16px_40px_rgba(0,0,0,0.45)] space-y-2"
           style={{
             background: "linear-gradient(150deg, rgba(25,31,65,0.95), rgba(12,18,38,0.85))",
             borderColor: "rgba(75, 0, 130, 0.4)",
@@ -465,7 +465,7 @@ export default function CoinDetailPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto mt-6 md:mt-8">
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 pb-2 md:pb-0 items-start">
+        <div className="flex flex-col md:flex-row gap-2 md:gap-8 pb-2 md:pb-0 items-start">
           <div className="w-full md:w-1/3">
             <div
               className="rounded-2xl border border-purple-500/30 bg-black/25 p-4 md:p-6 space-y-6 shadow-[0_10px_35px_rgba(0,0,0,0.4)]"
@@ -478,33 +478,33 @@ export default function CoinDetailPage() {
                 <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
                   Account Type
                 </label>
-                <div className="flex flex-col rounded-lg overflow-hidden gap-2 md:gap-3">
+                <div className="flex flex-row rounded-lg overflow-hidden gap-2 md:gap-3">
                   <button
                     type="button"
-                    className={`py-3 text-center font-semibold rounded-lg transition-all duration-200 md:hover:-translate-y-0.5 ${
+                    className={`py-3 w-full text-center font-semibold rounded-lg transition-all duration-200 md:hover:-translate-y-0.5 ${
                       accountType === "Real Account"
                         ? "bg-green-600 text-white"
                         : "bg-gray-700 text-gray-300"
                     }`}
                     onClick={() => setAccountType("Real Account")}
                   >
-                    Real Account
+                    Real
                   </button>
                   <button
                     type="button"
-                    className={`py-3 text-center font-semibold rounded-lg transition-all duration-200 md:hover:-translate-y-0.5 ${
+                    className={`py-3 w-full text-center font-semibold rounded-lg transition-all duration-200 md:hover:-translate-y-0.5 ${
                       accountType === "Demo Account"
                         ? "bg-blue-600 text-white"
                         : "bg-gray-700 text-gray-300"
                     }`}
                     onClick={() => setAccountType("Demo Account")}
                   >
-                    Demo Account
+                    Demo
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
                 <div>
                   <label className="block text-sm font-medium mb-2" style={{ color: COLORS.textGray }}>
                     Delivery Time
@@ -626,12 +626,12 @@ export default function CoinDetailPage() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-2 mt-4 md:mt-6">
+              <div className="grid grid-cols-3 gap-2 mt-2 md:mt-4">
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, ".", 0, "backspace"].map((item) => (
                   <button
                     key={item}
                     onClick={() => handleNumberInput(item.toString())}
-                    className="p-3 rounded-lg text-lg font-medium h-14 transition-all duration-150 md:hover:-translate-y-0.5"
+                    className="px-3 py-1 rounded-lg  font-medium h-10 transition-all duration-150 md:hover:-translate-y-0.5"
                     style={{
                       background: COLORS.background,
                       color: COLORS.textWhite,
