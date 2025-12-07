@@ -8,7 +8,7 @@ export function useAdminWS(
   const sendMessage = useCallback(
     async (message: string, type: 'text' | 'image' = 'text') => {
       if (!postUserId || !message.trim()) return;
-      const res = await fetch('/api/chat', {
+      const res = await fetch('/api/chatAdmin/messages', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

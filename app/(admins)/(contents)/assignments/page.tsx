@@ -19,7 +19,7 @@ export default function AssignmentsPage() {
     setLoading(true); setError(null);
     try {
       const qs = view==='assigned'? '?assigned=true' : view==='unassigned'? '?assigned=false' : '';
-      const res = await fetch('/api/chat/users'+qs, { cache: 'no-store' });
+      const res = await fetch('/api/chatAdmin/users'+qs, { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load users');
       const data = await res.json();
       setUsers(data.users || []);
@@ -44,7 +44,7 @@ export default function AssignmentsPage() {
     try {
       const body: any = { userId };
       if (adminId) body.adminId = adminId;
-      const res = await fetch('/api/chat/assign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const res = await fetch('/api/chatAdmin/assign', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       if (!res.ok) throw new Error('Failed to assign');
       await fetchUsers();
     } catch (e:any) { setError(e.message); }

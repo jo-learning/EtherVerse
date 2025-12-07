@@ -90,7 +90,7 @@ export default function AdminChatPage() {
     setLoadingUsers(true);
     setError(null);
     try {
-      const res = await fetch("/api/chat/users", { cache: "no-store" });
+      const res = await fetch("/api/chatAdmin/users", { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to load users");
       const data = await res.json();
       setUsers(data.users || []);
@@ -111,7 +111,7 @@ export default function AdminChatPage() {
     try {
       const qp = new URLSearchParams({ userId });
       if (cursor) qp.set("cursor", cursor);
-      const res = await fetch("/api/chat/messages?" + qp.toString(), {
+      const res = await fetch("/api/chatAdmin/messages?" + qp.toString(), {
         cache: "no-store",
       });
       if (!res.ok) throw new Error("Failed to load messages");
