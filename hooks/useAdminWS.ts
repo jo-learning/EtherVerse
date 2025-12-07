@@ -21,6 +21,7 @@ export function useAdminWS(
       }
       // Rely on the server POST handler to broadcast the message back via WS
       console.debug('[WS-ADMIN] sent message via API for userId', postUserId);
+      return res.json();
     },
     [postUserId]
   );

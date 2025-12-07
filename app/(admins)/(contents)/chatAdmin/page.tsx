@@ -166,8 +166,8 @@ export default function AdminChatPage() {
 
   const { sendMessage: sendWSMessage } = useAdminWS(
     selectedUserId,
-    selectedUserId,
-    onWsMessage
+    // selectedUserId,
+    // onWsMessage
   );
 
   const handleSendMessage = async () => {
@@ -177,7 +177,13 @@ export default function AdminChatPage() {
     setSending(true);
     setError(null);
     try {
-      await sendWSMessage(text);
+      const sentMessage = await sendWSMessage(text);
+      setMessages((prevMessages) => [...prevMessages, sentMessage.chat]);
+      setTimeout(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        }
+      }, 50);
     } catch (e: any) {
       setError(e.message || "Failed to send");
       setMsgInput(text);
