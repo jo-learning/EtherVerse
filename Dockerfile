@@ -9,6 +9,11 @@ COPY package*.json ./
 RUN npm ci --production=false
 
 COPY . .
+# 3. ⚠️ ADD THIS CRUCIAL STEP: Generate the Prisma Client
+# This creates the necessary files that 'npm run build' expects to find.
+RUN npx prisma generate
+
+# 4. Run the Next.js build
 RUN npm run build
 
 # Stage 2 — runtime
