@@ -19,7 +19,7 @@ SET client_min_messages = warning;
 SET row_security = off;
 
 --
--- Name: AdminRole; Type: TYPE; Schema: public; Owner: jofili
+-- Name: AdminRole; Type: TYPE; Schema: public; Owner: postgres
 --
 
 CREATE TYPE public."AdminRole" AS ENUM (
@@ -28,14 +28,14 @@ CREATE TYPE public."AdminRole" AS ENUM (
 );
 
 
-ALTER TYPE public."AdminRole" OWNER TO jofili;
+ALTER TYPE public."AdminRole" OWNER TO postgres;
 
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: Admin; Type: TABLE; Schema: public; Owner: jofili
+-- Name: Admin; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Admin" (
@@ -55,10 +55,10 @@ CREATE TABLE public."Admin" (
 );
 
 
-ALTER TABLE public."Admin" OWNER TO jofili;
+ALTER TABLE public."Admin" OWNER TO postgres;
 
 --
--- Name: AdminUserAssignment; Type: TABLE; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."AdminUserAssignment" (
@@ -70,10 +70,10 @@ CREATE TABLE public."AdminUserAssignment" (
 );
 
 
-ALTER TABLE public."AdminUserAssignment" OWNER TO jofili;
+ALTER TABLE public."AdminUserAssignment" OWNER TO postgres;
 
 --
--- Name: FeatureFlag; Type: TABLE; Schema: public; Owner: jofili
+-- Name: FeatureFlag; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."FeatureFlag" (
@@ -85,10 +85,10 @@ CREATE TABLE public."FeatureFlag" (
 );
 
 
-ALTER TABLE public."FeatureFlag" OWNER TO jofili;
+ALTER TABLE public."FeatureFlag" OWNER TO postgres;
 
 --
--- Name: Feedback; Type: TABLE; Schema: public; Owner: jofili
+-- Name: Feedback; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Feedback" (
@@ -101,10 +101,10 @@ CREATE TABLE public."Feedback" (
 );
 
 
-ALTER TABLE public."Feedback" OWNER TO jofili;
+ALTER TABLE public."Feedback" OWNER TO postgres;
 
 --
--- Name: KYC; Type: TABLE; Schema: public; Owner: jofili
+-- Name: KYC; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."KYC" (
@@ -129,10 +129,10 @@ CREATE TABLE public."KYC" (
 );
 
 
-ALTER TABLE public."KYC" OWNER TO jofili;
+ALTER TABLE public."KYC" OWNER TO postgres;
 
 --
--- Name: Notification; Type: TABLE; Schema: public; Owner: jofili
+-- Name: Notification; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Notification" (
@@ -144,10 +144,10 @@ CREATE TABLE public."Notification" (
 );
 
 
-ALTER TABLE public."Notification" OWNER TO jofili;
+ALTER TABLE public."Notification" OWNER TO postgres;
 
 --
--- Name: Settings; Type: TABLE; Schema: public; Owner: jofili
+-- Name: Settings; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Settings" (
@@ -161,10 +161,10 @@ CREATE TABLE public."Settings" (
 );
 
 
-ALTER TABLE public."Settings" OWNER TO jofili;
+ALTER TABLE public."Settings" OWNER TO postgres;
 
 --
--- Name: Transaction; Type: TABLE; Schema: public; Owner: jofili
+-- Name: Transaction; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Transaction" (
@@ -181,10 +181,10 @@ CREATE TABLE public."Transaction" (
 );
 
 
-ALTER TABLE public."Transaction" OWNER TO jofili;
+ALTER TABLE public."Transaction" OWNER TO postgres;
 
 --
--- Name: TransactionRecord; Type: TABLE; Schema: public; Owner: jofili
+-- Name: TransactionRecord; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."TransactionRecord" (
@@ -199,10 +199,10 @@ CREATE TABLE public."TransactionRecord" (
 );
 
 
-ALTER TABLE public."TransactionRecord" OWNER TO jofili;
+ALTER TABLE public."TransactionRecord" OWNER TO postgres;
 
 --
--- Name: User; Type: TABLE; Schema: public; Owner: jofili
+-- Name: User; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."User" (
@@ -218,10 +218,10 @@ CREATE TABLE public."User" (
 );
 
 
-ALTER TABLE public."User" OWNER TO jofili;
+ALTER TABLE public."User" OWNER TO postgres;
 
 --
--- Name: UserGoogleFA; Type: TABLE; Schema: public; Owner: jofili
+-- Name: UserGoogleFA; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."UserGoogleFA" (
@@ -235,10 +235,10 @@ CREATE TABLE public."UserGoogleFA" (
 );
 
 
-ALTER TABLE public."UserGoogleFA" OWNER TO jofili;
+ALTER TABLE public."UserGoogleFA" OWNER TO postgres;
 
 --
--- Name: Wallet; Type: TABLE; Schema: public; Owner: jofili
+-- Name: Wallet; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."Wallet" (
@@ -260,10 +260,10 @@ CREATE TABLE public."Wallet" (
 );
 
 
-ALTER TABLE public."Wallet" OWNER TO jofili;
+ALTER TABLE public."Wallet" OWNER TO postgres;
 
 --
--- Name: WithdrawRequest; Type: TABLE; Schema: public; Owner: jofili
+-- Name: WithdrawRequest; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."WithdrawRequest" (
@@ -278,10 +278,10 @@ CREATE TABLE public."WithdrawRequest" (
 );
 
 
-ALTER TABLE public."WithdrawRequest" OWNER TO jofili;
+ALTER TABLE public."WithdrawRequest" OWNER TO postgres;
 
 --
--- Name: _prisma_migrations; Type: TABLE; Schema: public; Owner: jofili
+-- Name: _prisma_migrations; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public._prisma_migrations (
@@ -296,10 +296,10 @@ CREATE TABLE public._prisma_migrations (
 );
 
 
-ALTER TABLE public._prisma_migrations OWNER TO jofili;
+ALTER TABLE public._prisma_migrations OWNER TO postgres;
 
 --
--- Name: chat; Type: TABLE; Schema: public; Owner: jofili
+-- Name: chat; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.chat (
@@ -314,10 +314,10 @@ CREATE TABLE public.chat (
 );
 
 
-ALTER TABLE public.chat OWNER TO jofili;
+ALTER TABLE public.chat OWNER TO postgres;
 
 --
--- Name: userWallet; Type: TABLE; Schema: public; Owner: jofili
+-- Name: userWallet; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public."userWallet" (
@@ -364,10 +364,10 @@ CREATE TABLE public."userWallet" (
 );
 
 
-ALTER TABLE public."userWallet" OWNER TO jofili;
+ALTER TABLE public."userWallet" OWNER TO postgres;
 
 --
--- Data for Name: Admin; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: Admin; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."Admin" (id, "adminId", email, "hashedPassword", name, role, status, "lastLoginAt", "twoFactorSecret", "resetToken", "resetTokenExpires", "createdAt", "updatedAt") FROM stdin;
@@ -377,7 +377,7 @@ b9131c86-5526-44bc-93e0-8ad65dbbabda	2	superadmin@example.com	pbkdf2$sha256$1200
 
 
 --
--- Data for Name: AdminUserAssignment; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: AdminUserAssignment; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."AdminUserAssignment" (id, "adminId", "userId", "createdAt", active) FROM stdin;
@@ -387,7 +387,7 @@ d41be06c-e8db-4e3a-b3a1-ae1e159db584	b9a332d0-e732-4248-bade-4ccaf20c5e6c	c9f575
 
 
 --
--- Data for Name: FeatureFlag; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: FeatureFlag; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."FeatureFlag" (id, key, enabled, "updatedAt", "updatedBy") FROM stdin;
@@ -396,7 +396,7 @@ c8deeb34-a837-4c60-96c4-b92878d260a9	trade-profit	t	2025-12-05 02:36:55.643	b913
 
 
 --
--- Data for Name: Feedback; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: Feedback; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."Feedback" (id, "userId", message, type, status, "createdAt") FROM stdin;
@@ -404,7 +404,7 @@ COPY public."Feedback" (id, "userId", message, type, status, "createdAt") FROM s
 
 
 --
--- Data for Name: KYC; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: KYC; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."KYC" (id, "userId", "firstName", "lastName", "Brithdate", "Place", "Email", status, "submittedAt", "verifiedAt", "certificateNumber", "certificateType", country, "handHeldPath", "idBackPath", "idFrontPath", metadata, phone) FROM stdin;
@@ -423,7 +423,7 @@ c5c4ba6c-27f0-4bd8-9dc7-f275f952fce4	0274d8bc-5f5c-4ff4-9296-0d49440206c1	Lulex	
 
 
 --
--- Data for Name: Notification; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: Notification; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."Notification" (id, "userId", message, read, "createdAt") FROM stdin;
@@ -431,7 +431,7 @@ COPY public."Notification" (id, "userId", message, read, "createdAt") FROM stdin
 
 
 --
--- Data for Name: Settings; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: Settings; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."Settings" (id, "userId", language, "emailUpdates", "twoFAEnabled", notification, "cacheCleaned") FROM stdin;
@@ -439,7 +439,7 @@ COPY public."Settings" (id, "userId", language, "emailUpdates", "twoFAEnabled", 
 
 
 --
--- Data for Name: Transaction; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: Transaction; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."Transaction" (id, "userId", "walletId", type, amount, status, "createdAt", "updatedAt", "toAddress", "txHash") FROM stdin;
@@ -447,7 +447,7 @@ COPY public."Transaction" (id, "userId", "walletId", type, amount, status, "crea
 
 
 --
--- Data for Name: TransactionRecord; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: TransactionRecord; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."TransactionRecord" (id, "userId", type, coin, amount, status, "createdAt", "updatedAt") FROM stdin;
@@ -471,7 +471,7 @@ e3574f91-0df7-4d0c-8e8e-b5391779d364	4b620c4c-dd00-4bd8-aeb3-a2b3dff0ea45	topup	
 
 
 --
--- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."User" (id, "userId", email, name, avatar, status, "createdAt", "updatedAt", googlefa) FROM stdin;
@@ -509,7 +509,7 @@ bbed72e6-5f71-4a8b-89cc-b9c05c1e90b2	24770130	0xb4B546c4d2FFd83c787981aD92F748bE
 
 
 --
--- Data for Name: UserGoogleFA; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: UserGoogleFA; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."UserGoogleFA" (id, "userId", secret, verified, "verifiedAt", "createdAt", "updatedAt") FROM stdin;
@@ -523,7 +523,7 @@ c36cf1e2-c588-404c-9398-1bd7ee79c053	c9f5754b-011a-4e17-8700-1ee952231774	LVVUKW
 
 
 --
--- Data for Name: Wallet; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: Wallet; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."Wallet" (id, "coinId", balance, profits, frozen, symbol, name, logo, address, "actualBalance", "privateKey", "publicKey", network, "createdAt", "updatedAt") FROM stdin;
@@ -545,7 +545,7 @@ a7c9a5b8-6edd-4dd3-9f01-06dbe6be1e2e	SOL	0	0	0	SOL	SOL Wallet	https://assets.coi
 
 
 --
--- Data for Name: WithdrawRequest; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: WithdrawRequest; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."WithdrawRequest" (id, "userId", coin, amount, status, "createdAt", "updatedAt", address) FROM stdin;
@@ -557,7 +557,7 @@ f1c9110b-5a94-40fc-b938-9a04eae9213b	3fa7f013-ac7e-4d7d-a94b-69b11eda7e93	USDT	1
 
 
 --
--- Data for Name: _prisma_migrations; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: _prisma_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public._prisma_migrations (id, checksum, finished_at, migration_name, logs, rolled_back_at, started_at, applied_steps_count) FROM stdin;
@@ -581,7 +581,7 @@ fe3911e0-d19e-463f-a048-e49bb6a2192d	a17d60d922fd14f9990788ae43793c61fb255cf612a
 
 
 --
--- Data for Name: chat; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: chat; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.chat (id, "userId", message, who, "createdAt", "adminId", type, "isRead") FROM stdin;
@@ -673,7 +673,7 @@ e1b90ac3-6cc6-4408-aa13-5c11fcce71c7	e3f26521-0a70-4ca3-b6f1-c76404d217a4	Hello 
 
 
 --
--- Data for Name: userWallet; Type: TABLE DATA; Schema: public; Owner: jofili
+-- Data for Name: userWallet; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public."userWallet" (id, "BTC", "ETH", "USDT", "USDC", "BNB", "DAI", "MATIC", "XRP", "SOL", "ADA", "DOGE", "DOT", "SHIB", "TRX", "LTC", "AVAX", "WBTC", "LINK", "UNI", "BCH", "XLM", "VET", "THETA", "FIL", "ICP", "AAVE", "EOS", "XMR", "ZEC", "ALGO", "ATOM", "MKR", "NEO", "KSM", "FTM", "EGLD", "createdAt", "updatedAt", "userId") FROM stdin;
@@ -711,7 +711,7 @@ a9ea64ca-3e58-4364-9145-59f86b7ac1fe	0	0	242091.54330999704	0	0	0	0	4783.5446065
 
 
 --
--- Name: AdminUserAssignment AdminUserAssignment_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment AdminUserAssignment_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."AdminUserAssignment"
@@ -719,7 +719,7 @@ ALTER TABLE ONLY public."AdminUserAssignment"
 
 
 --
--- Name: Admin Admin_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Admin Admin_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Admin"
@@ -727,7 +727,7 @@ ALTER TABLE ONLY public."Admin"
 
 
 --
--- Name: FeatureFlag FeatureFlag_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: FeatureFlag FeatureFlag_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."FeatureFlag"
@@ -735,7 +735,7 @@ ALTER TABLE ONLY public."FeatureFlag"
 
 
 --
--- Name: Feedback Feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Feedback Feedback_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Feedback"
@@ -743,7 +743,7 @@ ALTER TABLE ONLY public."Feedback"
 
 
 --
--- Name: KYC KYC_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: KYC KYC_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."KYC"
@@ -751,7 +751,7 @@ ALTER TABLE ONLY public."KYC"
 
 
 --
--- Name: Notification Notification_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Notification Notification_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Notification"
@@ -759,7 +759,7 @@ ALTER TABLE ONLY public."Notification"
 
 
 --
--- Name: Settings Settings_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Settings Settings_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Settings"
@@ -767,7 +767,7 @@ ALTER TABLE ONLY public."Settings"
 
 
 --
--- Name: TransactionRecord TransactionRecord_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: TransactionRecord TransactionRecord_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."TransactionRecord"
@@ -775,7 +775,7 @@ ALTER TABLE ONLY public."TransactionRecord"
 
 
 --
--- Name: Transaction Transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Transaction Transaction_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Transaction"
@@ -783,7 +783,7 @@ ALTER TABLE ONLY public."Transaction"
 
 
 --
--- Name: UserGoogleFA UserGoogleFA_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: UserGoogleFA UserGoogleFA_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."UserGoogleFA"
@@ -791,7 +791,7 @@ ALTER TABLE ONLY public."UserGoogleFA"
 
 
 --
--- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: User User_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."User"
@@ -799,7 +799,7 @@ ALTER TABLE ONLY public."User"
 
 
 --
--- Name: Wallet Wallet_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Wallet Wallet_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Wallet"
@@ -807,7 +807,7 @@ ALTER TABLE ONLY public."Wallet"
 
 
 --
--- Name: WithdrawRequest WithdrawRequest_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: WithdrawRequest WithdrawRequest_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."WithdrawRequest"
@@ -815,7 +815,7 @@ ALTER TABLE ONLY public."WithdrawRequest"
 
 
 --
--- Name: _prisma_migrations _prisma_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: _prisma_migrations _prisma_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public._prisma_migrations
@@ -823,7 +823,7 @@ ALTER TABLE ONLY public._prisma_migrations
 
 
 --
--- Name: chat chat_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: chat chat_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.chat
@@ -831,7 +831,7 @@ ALTER TABLE ONLY public.chat
 
 
 --
--- Name: userWallet userWallet_pkey; Type: CONSTRAINT; Schema: public; Owner: jofili
+-- Name: userWallet userWallet_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."userWallet"
@@ -839,98 +839,98 @@ ALTER TABLE ONLY public."userWallet"
 
 
 --
--- Name: AdminUserAssignment_adminId_idx; Type: INDEX; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment_adminId_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX "AdminUserAssignment_adminId_idx" ON public."AdminUserAssignment" USING btree ("adminId");
 
 
 --
--- Name: AdminUserAssignment_userId_active_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment_userId_active_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "AdminUserAssignment_userId_active_key" ON public."AdminUserAssignment" USING btree ("userId", active);
 
 
 --
--- Name: AdminUserAssignment_userId_idx; Type: INDEX; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment_userId_idx; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX "AdminUserAssignment_userId_idx" ON public."AdminUserAssignment" USING btree ("userId");
 
 
 --
--- Name: Admin_adminId_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: Admin_adminId_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "Admin_adminId_key" ON public."Admin" USING btree ("adminId");
 
 
 --
--- Name: Admin_email_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: Admin_email_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "Admin_email_key" ON public."Admin" USING btree (email);
 
 
 --
--- Name: FeatureFlag_key_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: FeatureFlag_key_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "FeatureFlag_key_key" ON public."FeatureFlag" USING btree (key);
 
 
 --
--- Name: KYC_userId_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: KYC_userId_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "KYC_userId_key" ON public."KYC" USING btree ("userId");
 
 
 --
--- Name: Settings_userId_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: Settings_userId_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "Settings_userId_key" ON public."Settings" USING btree ("userId");
 
 
 --
--- Name: UserGoogleFA_userId_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: UserGoogleFA_userId_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "UserGoogleFA_userId_key" ON public."UserGoogleFA" USING btree ("userId");
 
 
 --
--- Name: User_email_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: User_email_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "User_email_key" ON public."User" USING btree (email);
 
 
 --
--- Name: User_userId_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: User_userId_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "User_userId_key" ON public."User" USING btree ("userId");
 
 
 --
--- Name: Wallet_symbol_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: Wallet_symbol_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "Wallet_symbol_key" ON public."Wallet" USING btree (symbol);
 
 
 --
--- Name: userWallet_userId_key; Type: INDEX; Schema: public; Owner: jofili
+-- Name: userWallet_userId_key; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE UNIQUE INDEX "userWallet_userId_key" ON public."userWallet" USING btree ("userId");
 
 
 --
--- Name: AdminUserAssignment AdminUserAssignment_adminId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment AdminUserAssignment_adminId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."AdminUserAssignment"
@@ -938,7 +938,7 @@ ALTER TABLE ONLY public."AdminUserAssignment"
 
 
 --
--- Name: AdminUserAssignment AdminUserAssignment_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: AdminUserAssignment AdminUserAssignment_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."AdminUserAssignment"
@@ -946,7 +946,7 @@ ALTER TABLE ONLY public."AdminUserAssignment"
 
 
 --
--- Name: Feedback Feedback_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Feedback Feedback_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Feedback"
@@ -954,7 +954,7 @@ ALTER TABLE ONLY public."Feedback"
 
 
 --
--- Name: KYC KYC_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: KYC KYC_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."KYC"
@@ -962,7 +962,7 @@ ALTER TABLE ONLY public."KYC"
 
 
 --
--- Name: Notification Notification_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Notification Notification_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Notification"
@@ -970,7 +970,7 @@ ALTER TABLE ONLY public."Notification"
 
 
 --
--- Name: Settings Settings_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Settings Settings_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Settings"
@@ -978,7 +978,7 @@ ALTER TABLE ONLY public."Settings"
 
 
 --
--- Name: TransactionRecord TransactionRecord_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: TransactionRecord TransactionRecord_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."TransactionRecord"
@@ -986,7 +986,7 @@ ALTER TABLE ONLY public."TransactionRecord"
 
 
 --
--- Name: Transaction Transaction_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Transaction Transaction_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Transaction"
@@ -994,7 +994,7 @@ ALTER TABLE ONLY public."Transaction"
 
 
 --
--- Name: Transaction Transaction_walletId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: Transaction Transaction_walletId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."Transaction"
@@ -1002,7 +1002,7 @@ ALTER TABLE ONLY public."Transaction"
 
 
 --
--- Name: UserGoogleFA UserGoogleFA_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: UserGoogleFA UserGoogleFA_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."UserGoogleFA"
@@ -1010,7 +1010,7 @@ ALTER TABLE ONLY public."UserGoogleFA"
 
 
 --
--- Name: WithdrawRequest WithdrawRequest_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: WithdrawRequest WithdrawRequest_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."WithdrawRequest"
@@ -1018,7 +1018,7 @@ ALTER TABLE ONLY public."WithdrawRequest"
 
 
 --
--- Name: chat chat_adminId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: chat chat_adminId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.chat
@@ -1026,7 +1026,7 @@ ALTER TABLE ONLY public.chat
 
 
 --
--- Name: chat chat_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: chat chat_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.chat
@@ -1034,7 +1034,7 @@ ALTER TABLE ONLY public.chat
 
 
 --
--- Name: userWallet userWallet_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jofili
+-- Name: userWallet userWallet_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public."userWallet"
